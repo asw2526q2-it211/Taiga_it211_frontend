@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import type { Issue } from '../types/api';
 
 interface IssueCardProps {
@@ -47,9 +48,9 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '0.9rem' }}>#{issue.id}</span>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>
-            <a href={`/issues/${issue.id}`} style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>
+            <Link to={`/issues/${issue.id}`} style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>
               {issue.subject}
-            </a>
+            </Link>
           </h3>
           
           {/* Tags (etiquetes) */}

@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/Layout';
 import { IssueList } from './pages/IssueList';
 import { NewIssue } from './pages/NewIssue';
+import { SettingsPage } from './pages/SettingsPage';
 
 /**
  * Component arrel de l'aplicació.
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<IssueList />} />
             <Route path="/issues/new" element={<NewIssue />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </Layout>
       </BrowserRouter>

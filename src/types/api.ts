@@ -90,3 +90,16 @@ export interface Issue {
  * Respostes de llistat de l'API.
  */
 export type IssueListResponse = Issue[];
+
+/**
+ * Representació d'un Status (estat d'incidència) segons l'API.
+ */
+export interface StatusResource {
+  id: number;
+  name: string;
+  slug: string;
+  color: string;
+  closed: boolean;
+  is_default: boolean;
+  order: number;
+}

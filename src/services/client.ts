@@ -1,5 +1,18 @@
 import { env } from '../config/env'
 
+// Variable global per mantenir la clau d'API de l'usuari seleccionat
+let currentApiKey = env.apiKey;
+
+/**
+ * Actualitza la clau d'API que s'utilitzarà en les peticions següents.
+ */
+export const setGlobalApiKey = (key: string) => {
+  currentApiKey = key;
+};
+
+/**
+ * Error personalitzat per a les respostes fallides de l'API.
+ */
 export class ApiError extends Error {
   status: number
   body?: unknown
@@ -34,6 +47,10 @@ function buildUrl(path: string, params?: RequestOptions['params']) {
   return url.toString()
 }
 
+/**
+ * Funció principal per fer peticions fetch al backend.
+ * Afegeix automàticament la URL base i la clau d'API d'autorització.
+ */
 export async function apiRequest<T>(
   path: string,
   { body, params, headers, ...init }: RequestOptions = {},
@@ -43,7 +60,7 @@ export async function apiRequest<T>(
     headers: {
       Accept: 'application/json',
       ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-      ...(env.apiKey ? { 'X-Api-Key': env.apiKey } : {}),
+      ...(currentApiKey ? { 'X-Api-Key': currentApiKey } : {}),
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,

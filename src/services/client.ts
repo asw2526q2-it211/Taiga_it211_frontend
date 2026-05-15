@@ -79,3 +79,34 @@ export async function apiRequest<T>(
 
   return data as T
 }
+
+/**
+ * Petició amb FormData (p. ex. pujada de fitxers adjunts).
+ */
+export async function apiRequestFormData<T>(
+  path: string,
+  formData: FormData,
+  method: 'POST' | 'PUT' = 'POST',
+): Promise<T> {
+  const response = await fetch(buildUrl(path), {
+    method,
+    headers: {
+      Accept: 'application/json',
+      ...(currentApiKey ? { 'X-Api-Key': currentApiKey } : {}),
+    },
+    body: formData,
+  })
+
+  const text = await response.text()
+  const data = text ? (JSON.parse(text) as unknown) : undefined
+
+  if (!response.ok) {
+    throw new ApiError(
+      `API request failed: ${response.status} ${response.statusText}`,
+      response.status,
+      data,
+    )
+  }
+
+  return data as T
+}

@@ -1,27 +1,29 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { UserSelector } from './UserSelector';
 
-type Page = 'issues' | 'settings';
-
 interface LayoutProps {
   children: ReactNode;
-  onNavigate: (page: Page) => void;
-  currentPage: Page;
 }
 
 /**
  * Layout principal de l'aplicació.
  * Defineix l'estructura fixa: la capçalera (Header) amb navegació i l'àrea de contingut.
  */
-export const Layout: React.FC<LayoutProps> = ({ children, onNavigate, currentPage }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <div className="app-container">
       {/* Capçalera amb Logo, Navegació i Selector d'Usuari */}
       <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
           <button
-            onClick={() => onNavigate('issues')}
+            onClick={() => navigate('/')}
             style={{
               background: 'none',
               border: 'none',
@@ -44,15 +46,15 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavigate, currentPag
 
           <nav style={{ display: 'flex', gap: '4px' }}>
             <button
-              onClick={() => onNavigate('issues')}
+              onClick={() => navigate('/')}
               style={{
-                background: currentPage === 'issues' ? '#f4f6f8' : 'none',
+                background: isActive('/') ? '#f4f6f8' : 'none',
                 border: 'none',
                 padding: '6px 14px',
                 borderRadius: '6px',
                 fontSize: '13px',
-                fontWeight: currentPage === 'issues' ? 600 : 400,
-                color: currentPage === 'issues' ? '#009aa6' : '#70728f',
+                fontWeight: isActive('/') ? 600 : 400,
+                color: isActive('/') ? '#009aa6' : '#70728f',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
               }}
@@ -60,15 +62,15 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavigate, currentPag
               Issues
             </button>
             <button
-              onClick={() => onNavigate('settings')}
+              onClick={() => navigate('/settings')}
               style={{
-                background: currentPage === 'settings' ? '#f4f6f8' : 'none',
+                background: isActive('/settings') ? '#f4f6f8' : 'none',
                 border: 'none',
                 padding: '6px 14px',
                 borderRadius: '6px',
                 fontSize: '13px',
-                fontWeight: currentPage === 'settings' ? 600 : 400,
-                color: currentPage === 'settings' ? '#009aa6' : '#70728f',
+                fontWeight: isActive('/settings') ? 600 : 400,
+                color: isActive('/settings') ? '#009aa6' : '#70728f',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
               }}
@@ -81,7 +83,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavigate, currentPag
         <UserSelector />
       </header>
       
-      {/* Contingut principal variable segons la pàgina */}
+      {/* Contingut principal variable segons la pÃ gina */}
       <main className="main-content">
         {children}
       </main>

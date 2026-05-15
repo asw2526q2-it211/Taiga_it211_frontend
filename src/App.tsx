@@ -1,21 +1,25 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/Layout';
 import { IssueList } from './pages/IssueList';
+import { NewIssue } from './pages/NewIssue';
 
 /**
  * Component arrel de l'aplicació.
- * Aquí configurem els proveïdors de context globals.
+ * Aquí configurem els proveïdors de context globals i les rutes.
  */
 const App: React.FC = () => {
   return (
-    // Proveïdor d'autenticació per tenir l'usuari seleccionat a tota l'app
     <AuthProvider>
-      {/* Estructura base de la web */}
-      <Layout>
-        {/* Pàgina de llistat d'incidències */}
-        <IssueList />
-      </Layout>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<IssueList />} />
+            <Route path="/issues/new" element={<NewIssue />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
     </AuthProvider>
   );
 };

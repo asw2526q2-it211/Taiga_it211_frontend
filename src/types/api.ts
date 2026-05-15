@@ -5,6 +5,50 @@ export interface ColorResource {
   id: number;
   name: string;
   color: string;
+  is_default?: boolean;
+  order?: number;
+}
+
+export interface StatusResource extends ColorResource {
+  slug: string;
+  closed: boolean;
+}
+
+export interface ApiUser {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  avatar: string | null;
+}
+
+export interface DueDateRule {
+  id: number;
+  name: string;
+  color: string;
+  days_to_due: number | null;
+  by_default?: string;
+}
+
+export interface ProfileResponse {
+  username: string;
+  first_name: string;
+  last_name: string;
+  bio: string;
+  avatar: string | null;
+}
+
+export interface CreateIssuePayload {
+  subject: string;
+  description?: string;
+  type?: string;
+  status?: string;
+  severity?: string;
+  priority?: string;
+  assigned?: string;
+  duedate?: string;
+  blocked?: boolean;
+  tags?: string[];
 }
 
 /**

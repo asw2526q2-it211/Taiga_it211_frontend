@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../services/client';
 import type { Issue } from '../types/api';
 import { IssueCard } from '../components/IssueCard';
@@ -10,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
  * Gestiona la càrrega de dades i reacciona als canvis d'usuari (API Key).
  */
 export const IssueList: React.FC = () => {
+  const navigate = useNavigate();
   const [issues, setIssues] = useState<Issue[]>([]); // Estat per guardar la llista d'incidències
   const [loading, setLoading] = useState(true);      // Estat de càrrega
   const [error, setError] = useState<string | null>(null); // Estat d'errors
@@ -47,7 +49,11 @@ export const IssueList: React.FC = () => {
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2>Issues</h2>
-          <button className="btn btn-primary">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => navigate('/issues/new')}
+          >
             + NEW ISSUE
           </button>
         </div>

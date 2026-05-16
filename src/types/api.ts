@@ -151,6 +151,17 @@ export interface DetailedIssue extends Omit<Issue, 'is_blocked' | 'modified'> {
 export type IssueListResponse = Issue[];
 
 /**
+ * Representació d'un Priority segons l'API.
+ */
+export interface PriorityResource {
+  id: number;
+  name: string;
+  color: string;
+  order: number;
+  is_default: boolean;
+}
+
+/**
  * Representació d'un Status (estat d'incidència) segons l'API.
  */
 export interface StatusResource {

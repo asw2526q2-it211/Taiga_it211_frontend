@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiRequest } from '../services/client';
 import type { PriorityResource } from '../types/api';
+import '../styles/settings.css';
 
 /* ─── Estat intern per al formulari d'edició ─── */
 interface EditingState {
-  id: number | null;       // null = afegint, number = editant
+  id: number | null;
   name: string;
   color: string;
   order: number;
@@ -21,17 +22,14 @@ const INITIAL_EDITING: EditingState = {
 
 /**
  * Component de gestió de prioritats (Priorities).
- * Permet llistar, crear, editar i eliminar prioritats d'incidències
- * mitjançant l'API REST.
+ * Tots els estils provenen de settings.css (CSS custom properties).
  */
 export const PrioritySettings: React.FC = () => {
   const [priorities, setPriorities] = useState<PriorityResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Estat del formulari inline (creació o edició)
   const [editing, setEditing] = useState<EditingState>({ ...INITIAL_EDITING });
-  // Quan true, mostra el formulari de creació
   const [showAddForm, setShowAddForm] = useState(false);
 
   /* ── Carregar llistat ── */
@@ -142,358 +140,179 @@ export const PrioritySettings: React.FC = () => {
     }
   };
 
-  /* ── Estils ── */
-  const s: Record<string, React.CSSProperties> = {
-    sectionTitle: {
-      fontSize: '22px', fontWeight: 600, color: '#009aa6', margin: '0 0 6px 0',
-    },
-    sectionDesc: {
-      fontSize: '13.5px', color: '#8c8fa5', margin: '0 0 28px 0',
-    },
-    headerBar: {
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      background: '#d3d7e0', borderRadius: '3px 3px 0 0', padding: '10px 18px',
-    },
-    headerLabel: {
-      fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em',
-      textTransform: 'uppercase', color: '#555770',
-    },
-    addBtn: {
-      background: '#4dc1ae', color: '#fff', border: 'none', borderRadius: '3px',
-      fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em',
-      textTransform: 'uppercase', padding: '7px 14px', cursor: 'pointer',
-    },
-    colHeaders: {
-      display: 'grid',
-      gridTemplateColumns: '32px 80px 1fr 120px 120px',
-      alignItems: 'center', padding: '10px 18px 10px 8px',
-      borderBottom: '1px solid #e5e7ef',
-    },
-    colHeader: { fontSize: '12px', fontWeight: 700, color: '#555770' },
-    row: {
-      display: 'grid',
-      gridTemplateColumns: '32px 80px 1fr 120px 120px',
-      alignItems: 'center', padding: '10px 18px 10px 8px',
-      borderBottom: '1px solid #edf0f5', transition: 'background 0.12s',
-    },
-    dragHandle: {
-      color: '#bbbdd0', fontSize: '15px', textAlign: 'center', userSelect: 'none',
-    },
-    colorSwatch: {
-      width: '36px', height: '26px', borderRadius: '4px',
-      border: '1px solid rgba(0,0,0,0.1)', display: 'inline-block',
-    },
-    name: { fontSize: '14px', color: '#333' },
-    defaultBadge: {
-      display: 'inline-block', background: '#e6f9f7', color: '#009aa6',
-      border: '1px solid #b0e8e2', borderRadius: '10px', fontSize: '11px',
-      fontWeight: 700, padding: '2px 10px',
-    },
-    setDefaultBtn: {
-      background: 'none', border: '1px solid #c5c8d8', borderRadius: '10px',
-      fontSize: '11px', color: '#7a7d96', padding: '2px 10px', cursor: 'pointer',
-    },
-    actionBtn: {
-      background: 'none', border: 'none', padding: '4px 6px', cursor: 'pointer',
-      borderRadius: '3px', fontSize: '16px', lineHeight: '1',
-      textDecoration: 'none', display: 'inline-flex', alignItems: 'center',
-    },
-    inlineForm: {
-      background: '#f5f7fb', border: '1px solid #d5d8e8', borderRadius: '4px',
-      padding: '18px 20px', margin: '8px 0',
-    },
-    formTitle: {
-      fontSize: '13px', fontWeight: 700, color: '#555770',
-      textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 14px 0',
-    },
-    formRow: {
-      display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap',
-    },
-    formGroup: { display: 'flex', flexDirection: 'column', gap: '4px' },
-    formLabel: {
-      fontSize: '11px', fontWeight: 600, color: '#777',
-      textTransform: 'uppercase', letterSpacing: '0.06em',
-    },
-    formInput: {
-      border: '1px solid #ccc', borderRadius: '3px', padding: '6px 10px',
-      fontSize: '13px', color: '#333', width: '180px',
-    },
-    formNumber: {
-      border: '1px solid #ccc', borderRadius: '3px', padding: '6px 10px',
-      fontSize: '13px', color: '#333', width: '80px',
-    },
-    formColor: {
-      width: '48px', height: '34px', border: '1px solid #ccc',
-      borderRadius: '3px', padding: '2px', cursor: 'pointer',
-    },
-    formCheckGroup: {
-      display: 'flex', alignItems: 'center', gap: '8px',
-      paddingBottom: '6px', fontSize: '13px', color: '#555',
-    },
-    formActions: {
-      display: 'flex', gap: '8px', alignItems: 'center', paddingBottom: '2px',
-    },
-    saveBtn: {
-      background: '#009aa6', color: '#fff', border: 'none', borderRadius: '3px',
-      fontSize: '12px', fontWeight: 700, padding: '7px 18px', cursor: 'pointer',
-      textTransform: 'uppercase', letterSpacing: '0.05em',
-    },
-    cancelLink: {
-      fontSize: '12px', color: '#888', textDecoration: 'none',
-      padding: '7px 6px', cursor: 'pointer', background: 'none', border: 'none',
-    },
-    actions: {
-      display: 'flex', gap: '10px', justifyContent: 'flex-end', alignItems: 'center',
-    },
-    empty: { padding: '20px 18px', color: '#aaa', fontSize: '13px' },
-    isEditingRow: { background: '#f0fafa', borderLeft: '3px solid #009aa6' },
-  };
-
+  /* ── Renderitzat ── */
   return (
     <div>
-      {/* ── Responsive styles ── */}
-      <style>{`
-        .priorities-col-headers,
-        .priorities-row {
-          display: grid;
-          grid-template-columns: 32px 80px 1fr 120px 120px;
-          align-items: center;
-        }
-
-        .priorities-col-headers {
-          padding: 10px 18px 10px 8px;
-          border-bottom: 1px solid #e5e7ef;
-        }
-
-        .priorities-row {
-          padding: 10px 18px 10px 8px;
-          border-bottom: 1px solid #edf0f5;
-          transition: background 0.12s;
-        }
-
-        /* Scrollable on small screens */
-        @media (max-width: 680px) {
-          .priorities-grid-scroll {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 0 -16px;
-            padding: 0 16px;
-          }
-
-          .priorities-col-headers,
-          .priorities-row {
-            min-width: 472px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .priorities-grid-scroll {
-            margin: 0 -12px;
-            padding: 0 12px;
-          }
-        }
-      `}</style>
-
-      <h1 style={s.sectionTitle}>Priorities</h1>
-      <p style={s.sectionDesc}>Specify the priorities your issues will have.</p>
+      <h1 className="settings-section-title">Priorities</h1>
+      <p className="settings-section-desc">Specify the priorities your issues will have.</p>
 
       {error && (
-        <div style={{
-          color: '#e3405c', padding: '10px 14px', background: '#fce8eb',
-          borderRadius: '4px', marginBottom: '16px', fontSize: '13px',
-        }}>
-          {error}
-          <button
-            onClick={() => setError(null)}
-            style={{
-              marginLeft: '12px', background: 'none', border: 'none',
-              color: '#e3405c', cursor: 'pointer', fontWeight: 600,
-            }}
-          >
+        <div className="set-error-banner">
+          <span>{error}</span>
+          <button className="set-error-dismiss" onClick={() => setError(null)}>
             Dismiss
           </button>
         </div>
       )}
 
       {/* ── Header bar ── */}
-      <div style={s.headerBar}>
-        <span style={s.headerLabel}>Issue Priorities</span>
-        <button style={s.addBtn} onClick={handleAddNew}>ADD NEW PRIORITY</button>
+      <div className="settings-header-bar">
+        <span className="settings-header-label">Issue Priorities</span>
+        <button className="settings-add-btn" onClick={handleAddNew}>ADD NEW PRIORITY</button>
       </div>
 
-      {/* ── Column headers + Rows wrapped in scrollable container ── */}
+      {/* ── Graella ── */}
       <div className="priorities-grid-scroll">
-        {/* ── Column headers ── */}
         <div className="priorities-col-headers">
           <div />
-          <div style={s.colHeader}>Color</div>
-          <div style={s.colHeader}>Name</div>
-          <div style={s.colHeader}>Default</div>
+          <div className="set-col-header">Color</div>
+          <div className="set-col-header">Name</div>
+          <div className="set-col-header">Default</div>
           <div />
         </div>
 
-        {/* ── Llistat ── */}
         {loading ? (
-          <div style={{ padding: '24px 18px', color: '#888', fontSize: '13px' }}>
-            Loading priorities...
-          </div>
+          <div className="set-loading">Loading priorities...</div>
         ) : priorities.length === 0 && !showAddForm ? (
-          <div style={s.empty}>No priorities defined yet.</div>
+          <div className="set-empty">No priorities defined yet.</div>
         ) : (
-        priorities.map((p) => {
-          const isEditingThis = editing.id === p.id && !showAddForm;
-          return (
-            <div
-              key={p.id}
-              className={`priorities-row${isEditingThis ? ' is-editing' : ''}`}
-              style={{
-                ...(isEditingThis ? s.isEditingRow : {}),
-              }}
-              onMouseEnter={(e) => {
-                if (!isEditingThis) (e.currentTarget as HTMLElement).style.background = '#f0fafa';
-              }}
-              onMouseLeave={(e) => {
-                if (!isEditingThis) (e.currentTarget as HTMLElement).style.background = '';
-              }}
-            >
-              {isEditingThis ? (
-                /* ── Formulari inline d'edició ── */
-                <>
-                  <div style={s.dragHandle}>⋮⋮</div>
-                  <div />
-                  <div style={{ gridColumn: '3 / span 3' }}>
-                    <div style={{ ...s.inlineForm, margin: 0 }}>
-                      <p style={s.formTitle}>Edit Priority</p>
-                      <form onSubmit={handleSave}>
-                        <div style={s.formRow}>
-                          <div style={s.formGroup}>
-                            <label style={s.formLabel}>Name</label>
-                            <input
-                              type="text"
-                              style={s.formInput}
-                              value={editing.name}
-                              required
-                              onChange={(e) =>
-                                setEditing((prev) => ({ ...prev, name: e.target.value }))
-                              }
-                            />
+          priorities.map((p) => {
+            const isEditingThis = editing.id === p.id && !showAddForm;
+            return (
+              <div
+                key={p.id}
+                className={`priorities-row${isEditingThis ? ' is-editing' : ''}`}
+              >
+                {isEditingThis ? (
+                  /* ── Formulari inline d'edició ── */
+                  <>
+                    <div className="set-drag-handle">⋮⋮</div>
+                    <div />
+                    <div style={{ gridColumn: '3 / span 3' }}>
+                      <div className="set-inline-form" style={{ margin: 0 }}>
+                        <p className="set-inline-form-title">Edit Priority</p>
+                        <form onSubmit={handleSave}>
+                          <div className="set-form-row">
+                            <div className="set-form-group">
+                              <label>Name</label>
+                              <input
+                                type="text"
+                                className="set-form-input"
+                                value={editing.name}
+                                required
+                                onChange={(e) =>
+                                  setEditing((prev) => ({ ...prev, name: e.target.value }))
+                                }
+                              />
+                            </div>
+                            <div className="set-form-group">
+                              <label>Color</label>
+                              <input
+                                type="color"
+                                className="set-form-color larger"
+                                value={editing.color}
+                                onChange={(e) =>
+                                  setEditing((prev) => ({ ...prev, color: e.target.value }))
+                                }
+                              />
+                            </div>
+                            <div className="set-form-group">
+                              <label>Order</label>
+                              <input
+                                type="number"
+                                className="set-form-number"
+                                value={editing.order}
+                                min={1}
+                                max={priorities.length}
+                                onChange={(e) =>
+                                  setEditing((prev) => ({
+                                    ...prev,
+                                    order: parseInt(e.target.value, 10) || 1,
+                                  }))
+                                }
+                              />
+                            </div>
+                            <div className="set-form-check">
+                              <input
+                                type="checkbox"
+                                id="edit-default-check"
+                                checked={editing.is_default}
+                                onChange={(e) =>
+                                  setEditing((prev) => ({
+                                    ...prev,
+                                    is_default: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <label htmlFor="edit-default-check">Set as default</label>
+                            </div>
+                            <div className="set-form-actions">
+                              <button type="submit" className="set-save-btn">Save</button>
+                              <button type="button" className="set-cancel-link" onClick={handleCancel}>
+                                Cancel
+                              </button>
+                            </div>
                           </div>
-                          <div style={s.formGroup}>
-                            <label style={s.formLabel}>Color</label>
-                            <input
-                              type="color"
-                              style={s.formColor}
-                              value={editing.color}
-                              onChange={(e) =>
-                                setEditing((prev) => ({ ...prev, color: e.target.value }))
-                              }
-                            />
-                          </div>
-                          <div style={s.formGroup}>
-                            <label style={s.formLabel}>Order</label>
-                            <input
-                              type="number"
-                              style={s.formNumber}
-                              value={editing.order}
-                              min={1}
-                              max={priorities.length}
-                              onChange={(e) =>
-                                setEditing((prev) => ({
-                                  ...prev,
-                                  order: parseInt(e.target.value, 10) || 1,
-                                }))
-                              }
-                            />
-                          </div>
-                          <div style={s.formCheckGroup}>
-                            <input
-                              type="checkbox"
-                              id="edit-default-check"
-                              checked={editing.is_default}
-                              onChange={(e) =>
-                                setEditing((prev) => ({
-                                  ...prev,
-                                  is_default: e.target.checked,
-                                }))
-                              }
-                            />
-                            <label
-                              htmlFor="edit-default-check"
-                              style={{
-                                textTransform: 'none', letterSpacing: 0,
-                                fontSize: '13px', color: '#555',
-                              }}
-                            >
-                              Set as default
-                            </label>
-                          </div>
-                          <div style={s.formActions}>
-                            <button type="submit" style={s.saveBtn}>Save</button>
-                            <button type="button" style={s.cancelLink} onClick={handleCancel}>
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      </form>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                </>
-              ) : (
-                /* ── Visualització normal ── */
-                <>
-                  <div style={s.dragHandle}>⋮⋮</div>
-                  <div>
-                    <span style={{ ...s.colorSwatch, backgroundColor: p.color }} />
-                  </div>
-                  <div style={s.name}>{p.name}</div>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                    fontSize: '12px', color: '#555',
-                  }}>
-                    {p.is_default ? (
-                      <span style={s.defaultBadge}>Default</span>
-                    ) : (
-                      <button style={s.setDefaultBtn} onClick={() => handleSetDefault(p)}>
-                        Set default
+                  </>
+                ) : (
+                  /* ── Visualització normal ── */
+                  <>
+                    <div className="set-drag-handle">⋮⋮</div>
+                    <div>
+                      <span
+                        className="set-color-swatch"
+                        style={{ backgroundColor: p.color }}
+                      />
+                    </div>
+                    <div className="set-name">{p.name}</div>
+                    <div className="set-default-cell">
+                      {p.is_default ? (
+                        <span className="set-default-badge">Default</span>
+                      ) : (
+                        <button className="set-default-btn" onClick={() => handleSetDefault(p)}>
+                          Set default
+                        </button>
+                      )}
+                    </div>
+                    <div className="set-actions">
+                      <button
+                        className="set-action-btn edit"
+                        title="Edit"
+                        onClick={() => handleEdit(p)}
+                      >
+                        ✏
                       </button>
-                    )}
-                  </div>
-                  <div style={s.actions}>
-                    <button
-                      style={{ ...s.actionBtn, color: '#7a7d96' }}
-                      title="Edit"
-                      onClick={() => handleEdit(p)}
-                    >
-                      ✏
-                    </button>
-                    <button
-                      style={{ ...s.actionBtn, color: '#e05c5c' }}
-                      title="Delete"
-                      onClick={() => handleDelete(p)}
-                    >
-                      🗑
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })
-      )}
+                      <button
+                        className="set-action-btn delete"
+                        title="Delete"
+                        onClick={() => handleDelete(p)}
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* ── Formulari de creació ── */}
       {showAddForm && (
         <div style={{ padding: '12px 0 0 0' }}>
-          <div style={s.inlineForm}>
-            <p style={s.formTitle}>New Priority</p>
+          <div className="set-inline-form">
+            <p className="set-inline-form-title">New Priority</p>
             <form onSubmit={handleSave}>
-              <div style={s.formRow}>
-                <div style={s.formGroup}>
-                  <label style={s.formLabel}>Name</label>
+              <div className="set-form-row">
+                <div className="set-form-group">
+                  <label>Name</label>
                   <input
                     type="text"
-                    style={s.formInput}
+                    className="set-form-input"
                     placeholder="Priority name"
                     value={editing.name}
                     required
@@ -502,22 +321,22 @@ export const PrioritySettings: React.FC = () => {
                     }
                   />
                 </div>
-                <div style={s.formGroup}>
-                  <label style={s.formLabel}>Color</label>
+                <div className="set-form-group">
+                  <label>Color</label>
                   <input
                     type="color"
-                    style={s.formColor}
+                    className="set-form-color larger"
                     value={editing.color}
                     onChange={(e) =>
                       setEditing((prev) => ({ ...prev, color: e.target.value }))
                     }
                   />
                 </div>
-                <div style={s.formGroup}>
-                  <label style={s.formLabel}>Order</label>
+                <div className="set-form-group">
+                  <label>Order</label>
                   <input
                     type="number"
-                    style={s.formNumber}
+                    className="set-form-number"
                     value={editing.order}
                     min={1}
                     max={priorities.length + 1}
@@ -529,7 +348,7 @@ export const PrioritySettings: React.FC = () => {
                     }
                   />
                 </div>
-                <div style={s.formCheckGroup}>
+                <div className="set-form-check">
                   <input
                     type="checkbox"
                     id="add-default-check"
@@ -541,19 +360,11 @@ export const PrioritySettings: React.FC = () => {
                       }))
                     }
                   />
-                  <label
-                    htmlFor="add-default-check"
-                    style={{
-                      textTransform: 'none', letterSpacing: 0,
-                      fontSize: '13px', color: '#555',
-                    }}
-                  >
-                    Set as default
-                  </label>
+                  <label htmlFor="add-default-check">Set as default</label>
                 </div>
-                <div style={s.formActions}>
-                  <button type="submit" style={s.saveBtn}>Add</button>
-                  <button type="button" style={s.cancelLink} onClick={handleCancel}>
+                <div className="set-form-actions">
+                  <button type="submit" className="set-save-btn">Add</button>
+                  <button type="button" className="set-cancel-link" onClick={handleCancel}>
                     Cancel
                   </button>
                 </div>

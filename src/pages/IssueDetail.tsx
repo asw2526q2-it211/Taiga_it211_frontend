@@ -8,7 +8,7 @@ import { UserSelectionModal } from '../components/UserSelectionModal';
 export const IssueDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { currentUser, profile: ownProfile } = useAuth();
   
   const [issue, setIssue] = useState<DetailedIssue | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,6 +26,8 @@ export const IssueDetail: React.FC = () => {
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [descInput, setDescInput] = useState('');
   const [newComment, setNewComment] = useState('');
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [commentDraft, setCommentDraft] = useState('');
 
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isWatchersModalOpen, setIsWatchersModalOpen] = useState(false);
@@ -237,6 +239,45 @@ export const IssueDetail: React.FC = () => {
     }
   };
 
+  const handleStartEditComment = (commentId: number, text: string) => {
+    setEditingCommentId(commentId);
+    setCommentDraft(text);
+  };
+
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null);
+    setCommentDraft('');
+  };
+
+  const handleUpdateComment = async (commentId: number) => {
+    if (!issue || !commentDraft.trim()) return;
+    try {
+      await apiRequest(`issues/${issue.id}/comments/${commentId}`, {
+        method: 'PUT',
+        body: { text: commentDraft }
+      });
+      handleCancelEditComment();
+      fetchAllData();
+    } catch (error) {
+      console.error(error);
+      alert('Forbidden: Only the comment creator can edit this comment.');
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (!issue) return;
+    try {
+      await apiRequest(`issues/${issue.id}/comments/${commentId}`, { method: 'DELETE' });
+      if (editingCommentId === commentId) {
+        handleCancelEditComment();
+      }
+      fetchAllData();
+    } catch (error) {
+      console.error(error);
+      alert('Forbidden: Only the comment creator can delete this comment.');
+    }
+  };
+
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Carregant detall de la incidència...</div>;
   if (error || !issue) return <div style={{ padding: '2rem', color: 'var(--color-critical)' }}>Error: {error || 'Issue not found'}</div>;
 
@@ -358,7 +399,11 @@ export const IssueDetail: React.FC = () => {
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {issue.comments.map(c => (
+                  {issue.comments.map(c => {
+                    const canEditComment = ownProfile?.username === c.user;
+                    const isEditingComment = editingCommentId === c.id;
+
+                    return (
                     <div key={c.id} style={{ padding: '1rem', backgroundColor: 'var(--bg-primary)', borderRadius: '4px', display: 'flex', gap: '1rem' }}>
                       <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#eee', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {getUserAvatar(c.user) ? (
@@ -368,11 +413,54 @@ export const IssueDetail: React.FC = () => {
                         )}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 600, marginBottom: '0.5rem', fontSize: '0.85rem' }}>{c.user} <span style={{ color: 'var(--text-secondary)', fontWeight: 'normal' }}>{new Date(c.created_at).toLocaleString()}</span></div>
-                        <div>{c.text}</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                          <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{c.user} <span style={{ color: 'var(--text-secondary)', fontWeight: 'normal' }}>{new Date(c.created_at).toLocaleString()}</span></div>
+                          {canEditComment && (
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleStartEditComment(c.id, c.text)}
+                                title="Edit comment"
+                                style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+                              >
+                                <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, fill: 'currentColor' }}>
+                                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                </svg>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteComment(c.id)}
+                                title="Delete comment"
+                                style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+                              >
+                                <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, stroke: 'currentColor', fill: 'none', strokeWidth: 2 }}>
+                                  <polyline points="3 6 5 6 21 6" />
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        {isEditingComment ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <textarea
+                              value={commentDraft}
+                              onChange={e => setCommentDraft(e.target.value)}
+                              style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border-color)', resize: 'vertical', fontFamily: 'inherit' }}
+                              required
+                            />
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button onClick={() => handleUpdateComment(c.id)} className="sidebar-btn" style={{ backgroundColor: 'var(--color-teal)', color: 'white' }}>Save</button>
+                              <button onClick={handleCancelEditComment} className="sidebar-btn">Cancel</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ whiteSpace: 'pre-wrap' }}>{c.text}</div>
+                        )}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

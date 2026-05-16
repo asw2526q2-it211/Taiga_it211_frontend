@@ -55,3 +55,19 @@ export const fetchUserWatchedIssues = (username: string) =>
 
 export const fetchUserComments = (username: string) =>
   apiRequest<UserCommentItem[]>(`users/${encodeURIComponent(username)}/comments`);
+
+export const updateIssueComment = (
+  issueId: number,
+  commentId: number,
+  text: string,
+) =>
+  apiRequest<UserCommentItem>(`issues/${issueId}/comments/${commentId}`, {
+    method: 'PUT',
+    body: { text },
+  });
+
+export const deleteIssueComment = (issueId: number, commentId: number) =>
+  apiRequest<{ message: string; comment_id: number }>(
+    `issues/${issueId}/comments/${commentId}`,
+    { method: 'DELETE' },
+  );

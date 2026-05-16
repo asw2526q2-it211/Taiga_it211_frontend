@@ -251,6 +251,49 @@ export const PrioritySettings: React.FC = () => {
 
   return (
     <div>
+      {/* ── Responsive styles ── */}
+      <style>{`
+        .priorities-col-headers,
+        .priorities-row {
+          display: grid;
+          grid-template-columns: 32px 80px 1fr 120px 120px;
+          align-items: center;
+        }
+
+        .priorities-col-headers {
+          padding: 10px 18px 10px 8px;
+          border-bottom: 1px solid #e5e7ef;
+        }
+
+        .priorities-row {
+          padding: 10px 18px 10px 8px;
+          border-bottom: 1px solid #edf0f5;
+          transition: background 0.12s;
+        }
+
+        /* Scrollable on small screens */
+        @media (max-width: 680px) {
+          .priorities-grid-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -16px;
+            padding: 0 16px;
+          }
+
+          .priorities-col-headers,
+          .priorities-row {
+            min-width: 472px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .priorities-grid-scroll {
+            margin: 0 -12px;
+            padding: 0 12px;
+          }
+        }
+      `}</style>
+
       <h1 style={s.sectionTitle}>Priorities</h1>
       <p style={s.sectionDesc}>Specify the priorities your issues will have.</p>
 
@@ -278,30 +321,32 @@ export const PrioritySettings: React.FC = () => {
         <button style={s.addBtn} onClick={handleAddNew}>ADD NEW PRIORITY</button>
       </div>
 
-      {/* ── Column headers ── */}
-      <div style={s.colHeaders}>
-        <div />
-        <div style={s.colHeader}>Color</div>
-        <div style={s.colHeader}>Name</div>
-        <div style={s.colHeader}>Default</div>
-        <div />
-      </div>
-
-      {/* ── Llistat ── */}
-      {loading ? (
-        <div style={{ padding: '24px 18px', color: '#888', fontSize: '13px' }}>
-          Loading priorities...
+      {/* ── Column headers + Rows wrapped in scrollable container ── */}
+      <div className="priorities-grid-scroll">
+        {/* ── Column headers ── */}
+        <div className="priorities-col-headers">
+          <div />
+          <div style={s.colHeader}>Color</div>
+          <div style={s.colHeader}>Name</div>
+          <div style={s.colHeader}>Default</div>
+          <div />
         </div>
-      ) : priorities.length === 0 && !showAddForm ? (
-        <div style={s.empty}>No priorities defined yet.</div>
-      ) : (
+
+        {/* ── Llistat ── */}
+        {loading ? (
+          <div style={{ padding: '24px 18px', color: '#888', fontSize: '13px' }}>
+            Loading priorities...
+          </div>
+        ) : priorities.length === 0 && !showAddForm ? (
+          <div style={s.empty}>No priorities defined yet.</div>
+        ) : (
         priorities.map((p) => {
           const isEditingThis = editing.id === p.id && !showAddForm;
           return (
             <div
               key={p.id}
+              className={`priorities-row${isEditingThis ? ' is-editing' : ''}`}
               style={{
-                ...s.row,
                 ...(isEditingThis ? s.isEditingRow : {}),
               }}
               onMouseEnter={(e) => {
@@ -435,6 +480,7 @@ export const PrioritySettings: React.FC = () => {
           );
         })
       )}
+      </div>
 
       {/* ── Formulari de creació ── */}
       {showAddForm && (

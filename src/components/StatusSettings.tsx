@@ -31,9 +31,7 @@ export const StatusSettings: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Estat del formulari inline (creació o edició)
   const [editing, setEditing] = useState<EditingState>({ ...INITIAL_EDITING });
-  // Quan true, mostra el formulari de creació
   const [showAddForm, setShowAddForm] = useState(false);
 
   /* ── Carregar llistat ── */
@@ -301,7 +299,7 @@ export const StatusSettings: React.FC = () => {
       display: 'flex',
       gap: '16px',
       alignItems: 'flex-end',
-      flexWrap: 'nowrap' as const,
+      flexWrap: 'wrap' as const,
     },
     formGroup: {
       display: 'flex',
@@ -400,6 +398,53 @@ export const StatusSettings: React.FC = () => {
 
   return (
     <div>
+      {/* ── Responsive styles ── */}
+      <style>{`
+        .statuses-grid-wrapper {
+          min-width: 0;
+        }
+
+        .statuses-col-headers,
+        .statuses-row {
+          display: grid;
+          grid-template-columns: 32px 70px 150px 70px 150px 120px 1fr 100px;
+          align-items: center;
+        }
+
+        .statuses-col-headers {
+          padding: 10px 18px 10px 8px;
+          border-bottom: 1px solid #e5e7ef;
+        }
+
+        .statuses-row {
+          padding: 10px 18px 10px 8px;
+          border-bottom: 1px solid #edf0f5;
+          transition: background 0.12s;
+        }
+
+        /* Scrollable on small screens */
+        @media (max-width: 900px) {
+          .statuses-grid-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -16px;
+            padding: 0 16px;
+          }
+
+          .statuses-col-headers,
+          .statuses-row {
+            min-width: 692px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .statuses-grid-scroll {
+            margin: 0 -12px;
+            padding: 0 12px;
+          }
+        }
+      `}</style>
+
       <h1 style={styles.sectionTitle}>Statuses</h1>
       <p style={styles.sectionDesc}>Add, remove or edit the name of the issue statuses.</p>
 
@@ -439,35 +484,37 @@ export const StatusSettings: React.FC = () => {
         </button>
       </div>
 
-      {/* ── Column headers ── */}
-      <div style={styles.colHeaders}>
-        <div />
-        <div style={{ ...styles.colHeader, textAlign: 'center' as const }}>Color</div>
-        <div style={styles.colHeader}>Name</div>
-        <div style={{ ...styles.colHeader, textAlign: 'center' as const }}>Order</div>
-        <div style={styles.colHeader}>Slug</div>
-        <div style={styles.colHeader}>Default</div>
-        <div style={{ ...styles.colHeader, textAlign: 'center' as const }}>Is closed?</div>
-        <div />
-      </div>
+      {/* ── Column headers + Rows wrapped in scrollable container ── */}
+      <div className="statuses-grid-scroll">
+        {/* ── Column headers ── */}
+        <div className="statuses-col-headers">
+          <div />
+          <div style={{ ...styles.colHeader, textAlign: 'center' as const }}>Color</div>
+          <div style={styles.colHeader}>Name</div>
+          <div style={{ ...styles.colHeader, textAlign: 'center' as const }}>Order</div>
+          <div style={styles.colHeader}>Slug</div>
+          <div style={styles.colHeader}>Default</div>
+          <div style={{ ...styles.colHeader, textAlign: 'center' as const }}>Is closed?</div>
+          <div />
+        </div>
 
-      {/* ── Llistat ── */}
-      {loading ? (
-        <div style={{ padding: '24px 18px', color: '#888', fontSize: '13px' }}>Loading statuses...</div>
-      ) : statuses.length === 0 && !showAddForm ? (
-        <div style={styles.empty}>No statuses defined yet.</div>
-      ) : (
-        statuses.map((st) => {
-          const isEditingThis = editing.id === st.id && !showAddForm;
-          return (
-            <div
-              key={st.id}
-              style={{
-                ...styles.row,
-                ...(isEditingThis ? styles.isEditingRow : {}),
-              }}
-              onMouseEnter={(e) => {
-                if (!isEditingThis) {
+        {/* ── Llistat ── */}
+        {loading ? (
+          <div style={{ padding: '24px 18px', color: '#888', fontSize: '13px' }}>Loading statuses...</div>
+        ) : statuses.length === 0 && !showAddForm ? (
+          <div style={styles.empty}>No statuses defined yet.</div>
+        ) : (
+          statuses.map((st) => {
+            const isEditingThis = editing.id === st.id && !showAddForm;
+            return (
+              <div
+                key={st.id}
+                className={`statuses-row${isEditingThis ? ' is-editing' : ''}`}
+                style={{
+                  ...(isEditingThis ? styles.isEditingRow : {}),
+                }}
+                onMouseEnter={(e) => {
+                  if (!isEditingThis) {
                   (e.currentTarget as HTMLElement).style.background = '#f0fafa';
                 }
               }}
@@ -647,8 +694,9 @@ export const StatusSettings: React.FC = () => {
           );
         })
       )}
+    </div>
 
-      {/* ── Formulari de creació ── */}
+    {/* ── Formulari de creació ── */}
       {showAddForm && (
         <div style={{ padding: '12px 0 0 0' }}>
           <div style={styles.inlineForm}>

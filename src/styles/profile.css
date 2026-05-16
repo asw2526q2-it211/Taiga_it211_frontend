@@ -421,7 +421,7 @@
 
 .profile-comment-header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   margin-bottom: 8px;
@@ -440,6 +440,7 @@
 .profile-comment-date {
   color: #70728f;
   font-size: 13px;
+  margin-left: 10px;
 }
 
 .profile-comment-text {
@@ -447,6 +448,85 @@
   font-size: 15px;
   line-height: 1.5;
   white-space: pre-wrap;
+}
+
+.profile-comment-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.profile-comment-action-btn {
+  background: none;
+  border: none;
+  color: #70728f;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.profile-comment-action-btn:hover {
+  color: #009aa6;
+}
+
+.profile-comment-action-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.profile-comment-action-btn .profile-trash-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.profile-comment-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-comment-edit-form textarea {
+  width: 100%;
+  border: 1px solid #d8dee9;
+  padding: 15px;
+  color: #434456;
+  font-size: 14px;
+  font-family: inherit;
+  min-height: 80px;
+  box-sizing: border-box;
+  outline: none;
+  resize: vertical;
+}
+
+.profile-comment-edit-form textarea:focus {
+  border-color: #009aa6;
+}
+
+.profile-comment-edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.profile-comment-save-btn,
+.profile-comment-cancel-btn {
+  border: none;
+  padding: 6px 16px;
+  border-radius: 3px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.profile-comment-save-btn {
+  background: #7de8cc;
+  color: #2e3440;
+}
+
+.profile-comment-cancel-btn {
+  background: #d8dee9;
+  color: #4c566a;
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────── */

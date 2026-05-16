@@ -3,10 +3,12 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 import { resolveMediaUrl } from '../config/env';
 import {
+  deleteIssueComment,
   fetchUserAssignedIssues,
   fetchUserComments,
   fetchUserProfile,
   fetchUserWatchedIssues,
+  updateIssueComment,
   updateProfileAvatar,
   updateProfileBio,
 } from '../services/profile';
@@ -251,6 +253,8 @@ export const ProfilePage: React.FC = () => {
   const [savingAvatar, setSavingAvatar] = useState(false);
   const [pendingAvatar, setPendingAvatar] = useState<File | null>(null);
   const [apiKeyCopied, setApiKeyCopied] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [commentDraft, setCommentDraft] = useState('');
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
@@ -370,6 +374,39 @@ export const ProfilePage: React.FC = () => {
       setTimeout(() => setApiKeyCopied(false), 2000);
     } catch (err) {
       console.warn('Clipboard copy failed', err);
+    }
+  };
+
+  const handleStartEditComment = (comment: UserCommentItem) => {
+    setEditingCommentId(comment.id);
+    setCommentDraft(comment.text);
+  };
+
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null);
+    setCommentDraft('');
+  };
+
+  const handleUpdateComment = async (comment: UserCommentItem) => {
+    if (!commentDraft.trim()) return;
+    try {
+      await updateIssueComment(comment.issue_id, comment.id, commentDraft);
+      handleCancelEditComment();
+      await loadAll();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Could not update comment');
+    }
+  };
+
+  const handleDeleteComment = async (comment: UserCommentItem) => {
+    try {
+      await deleteIssueComment(comment.issue_id, comment.id);
+      if (editingCommentId === comment.id) {
+        handleCancelEditComment();
+      }
+      await loadAll();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Could not delete comment');
     }
   };
 
@@ -632,22 +669,81 @@ export const ProfilePage: React.FC = () => {
             {comments.length === 0 ? (
               <div className="profile-empty">No comments found.</div>
             ) : (
-              comments.map((comment) => (
-                <div key={comment.id} className="profile-comment-item">
-                  <div className="profile-comment-header">
-                    <Link
-                      to={`/issues/${comment.issue_id}`}
-                      className="profile-comment-link"
-                    >
-                      #{comment.issue_id}
-                    </Link>
-                    <span className="profile-comment-date">
-                      {formatDateTime(comment.created_at)}
-                    </span>
+              comments.map((comment) => {
+                const isEditingComment = editingCommentId === comment.id;
+
+                return (
+                  <div key={comment.id} className="profile-comment-item">
+                    <div className="profile-comment-header">
+                      <div>
+                        <Link
+                          to={`/issues/${comment.issue_id}`}
+                          className="profile-comment-link"
+                        >
+                          #{comment.issue_id}
+                        </Link>
+                        <span className="profile-comment-date">
+                          {formatDateTime(comment.created_at)}
+                        </span>
+                      </div>
+
+                      {isOwner && (
+                        <div className="profile-comment-actions">
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditComment(comment)}
+                            className="profile-comment-action-btn"
+                            title="Edit comment"
+                          >
+                            <svg viewBox="0 0 24 24">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteComment(comment)}
+                            className="profile-comment-action-btn"
+                            title="Delete comment"
+                          >
+                            <svg viewBox="0 0 24 24" className="profile-trash-icon">
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {isEditingComment ? (
+                      <div className="profile-comment-edit-form">
+                        <textarea
+                          value={commentDraft}
+                          onChange={(e) => setCommentDraft(e.target.value)}
+                          required
+                        />
+                        <div className="profile-comment-edit-actions">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateComment(comment)}
+                            className="profile-comment-save-btn"
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleCancelEditComment}
+                            className="profile-comment-cancel-btn"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="profile-comment-text">{comment.text}</div>
+                    )}
                   </div>
-                  <div className="profile-comment-text">{comment.text}</div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         )}

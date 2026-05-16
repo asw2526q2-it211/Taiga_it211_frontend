@@ -38,6 +38,51 @@ export interface ProfileResponse {
   avatar: string | null;
 }
 
+/**
+ * Detalls del perfil propi (inclou la clau d'API). Retornat per `GET /profile`.
+ */
+export interface CurrentProfile {
+  username: string;
+  first_name: string;
+  last_name: string;
+  bio: string;
+  avatar: string | null;
+  api_key: string;
+}
+
+/**
+ * Estadístiques d'activitat d'un usuari (taula de la barra lateral del perfil).
+ */
+export interface UserProfileStats {
+  comments: number;
+  created_issues: number;
+  assigned_issues: number;
+  watched_issues: number;
+}
+
+/**
+ * Resposta de `GET /users/{username}`.
+ */
+export interface UserProfileDetail {
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  bio: string;
+  avatar: string | null;
+  stats: UserProfileStats;
+}
+
+/**
+ * Element retornat per `GET /users/{username}/comments`.
+ */
+export interface UserCommentItem {
+  id: number;
+  issue_id: number;
+  text: string;
+  created_at: string;
+}
+
 export interface CreateIssuePayload {
   subject: string;
   description?: string;

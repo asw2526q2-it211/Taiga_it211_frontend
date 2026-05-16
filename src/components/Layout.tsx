@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { UserSelector } from './UserSelector';
+import { useAuth } from '../context/AuthContext';
+import { resolveMediaUrl } from '../config/env';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,13 +11,19 @@ interface LayoutProps {
 
 /**
  * Layout principal de l'aplicació.
- * Defineix l'estructura fixa: la capçalera (Header) amb navegació i l'àrea de contingut.
+ * Defineix l'estructura fixa: la capçalera (Header) amb navegació, el botó d'avatar
+ * que porta a la pàgina de perfil i l'àrea de contingut.
  */
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { profile } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
+
+  const avatarUrl = resolveMediaUrl(profile?.avatar ?? null);
+  const initial = (profile?.username ?? '?').charAt(0).toUpperCase();
+  const profileHref = profile ? `/profile/${profile.username}` : '/';
 
   return (
     <div className="app-container">
@@ -80,10 +88,57 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </nav>
         </div>
 
-        <UserSelector />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <UserSelector />
+
+          {/* Avatar de l'usuari hardcoded; navega cap a la seva pàgina de perfil */}
+          <button
+            type="button"
+            onClick={() => navigate(profileHref)}
+            disabled={!profile}
+            title={profile ? `View profile (@${profile.username})` : 'Loading profile…'}
+            aria-label="Open my profile"
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: profile ? 'pointer' : 'default',
+              display: 'inline-flex',
+            }}
+          >
+            <span
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#222',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: 14,
+                border: '2px solid var(--border-color)',
+                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                boxShadow: 'var(--shadow-sm)',
+              }}
+            >
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={profile?.username ?? 'avatar'}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <span>{initial}</span>
+              )}
+            </span>
+          </button>
+        </div>
       </header>
-      
-      {/* Contingut principal variable segons la pÃ gina */}
+
+      {/* Contingut principal variable segons la pàgina */}
       <main className="main-content">
         {children}
       </main>

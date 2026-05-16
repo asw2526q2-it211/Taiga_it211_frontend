@@ -6,6 +6,7 @@ import { IssueList } from './pages/IssueList';
 import { IssueDetail } from './pages/IssueDetail';
 import { NewIssue } from './pages/NewIssue';
 import { SettingsPage } from './pages/SettingsPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 /**
  * Component arrel de l'aplicació.
@@ -25,6 +26,8 @@ const App: React.FC = () => {
             <Route path="/issues/:id" element={<IssueDetail />} />
             {/* Pàgina de configuració */}
             <Route path="/settings" element={<SettingsPage />} />
+            {/* Pàgina del perfil d'un usuari */}
+            <Route path="/profile/:username" element={<ProfilePage />} />
           </Routes>
         </Layout>
       </BrowserRouter>

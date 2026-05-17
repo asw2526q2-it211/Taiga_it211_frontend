@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StatusSettings } from '../components/StatusSettings';
 import { PrioritySettings } from '../components/PrioritySettings';
+import { TypeSettings } from '../components/TypeSettings';
 import '../styles/settings.css';
 
 /* ─── Configuració de les pestanyes de configuració ─── */
@@ -33,7 +34,7 @@ export const SettingsPage: React.FC = () => {
       case 'priorities':
         return <PrioritySettings />;
       case 'types':
-        return <PlaceholderTab title="Types" description="Manage issue types." />;
+        return <TypeSettings />;
       case 'severities':
         return <PlaceholderTab title="Severities" description="Manage issue severities." />;
       case 'tags':

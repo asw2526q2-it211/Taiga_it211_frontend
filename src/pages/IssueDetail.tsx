@@ -876,7 +876,7 @@ export const IssueDetail: React.FC = () => {
                     fontSize: '1.1rem', 
                     fontWeight: 700, 
                     padding: '0.45rem 2.25rem 0.45rem 1rem', 
-                    borderRadius: '24px', 
+                    borderRadius: '8px', 
                     border: `2px solid ${statusColor}`, 
                     backgroundColor: `${statusColor}18`,
                     color: 'var(--text-primary)',

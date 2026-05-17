@@ -873,29 +873,110 @@ export const IssueDetail: React.FC = () => {
         {/* Properties list */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            <span>type</span>
-            <select value={issue.type || ''} onChange={(e) => handleUpdateField('type', e.target.value)} className="property-select">
-              <option value="">--</option>
-              {types.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}
-            </select>
-          </div>
+          {/* Type */}
+          {(() => {
+            const selectedColor = types.find(t => t.name === issue.type)?.color || '#cccccc';
+            return (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ 
+                    width: '10px', 
+                    height: '10px', 
+                    borderRadius: '50%', 
+                    backgroundColor: selectedColor,
+                    display: 'inline-block',
+                    flexShrink: 0,
+                    transition: 'background-color 0.2s ease'
+                  }} />
+                  <span>type</span>
+                </div>
+                <select 
+                  value={issue.type || ''} 
+                  onChange={(e) => handleUpdateField('type', e.target.value)} 
+                  className="property-select"
+                  style={{
+                    border: `1px solid ${selectedColor}`,
+                    backgroundColor: `${selectedColor}15`,
+                    color: 'var(--text-primary)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <option value="">--</option>
+                  {types.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}
+                </select>
+              </div>
+            );
+          })()}
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            <span>severity</span>
-            <select value={issue.severity || ''} onChange={(e) => handleUpdateField('severity', e.target.value)} className="property-select">
-              <option value="">--</option>
-              {severities.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-            </select>
-          </div>
+          {/* Severity */}
+          {(() => {
+            const selectedColor = severities.find(s => s.name === issue.severity)?.color || '#cccccc';
+            return (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ 
+                    width: '10px', 
+                    height: '10px', 
+                    borderRadius: '50%', 
+                    backgroundColor: selectedColor,
+                    display: 'inline-block',
+                    flexShrink: 0,
+                    transition: 'background-color 0.2s ease'
+                  }} />
+                  <span>severity</span>
+                </div>
+                <select 
+                  value={issue.severity || ''} 
+                  onChange={(e) => handleUpdateField('severity', e.target.value)} 
+                  className="property-select"
+                  style={{
+                    border: `1px solid ${selectedColor}`,
+                    backgroundColor: `${selectedColor}15`,
+                    color: 'var(--text-primary)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <option value="">--</option>
+                  {severities.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                </select>
+              </div>
+            );
+          })()}
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            <span>priority</span>
-            <select value={issue.priority || ''} onChange={(e) => handleUpdateField('priority', e.target.value)} className="property-select">
-              <option value="">--</option>
-              {priorities.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
-            </select>
-          </div>
+          {/* Priority */}
+          {(() => {
+            const selectedColor = priorities.find(p => p.name === issue.priority)?.color || '#cccccc';
+            return (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ 
+                    width: '10px', 
+                    height: '10px', 
+                    borderRadius: '50%', 
+                    backgroundColor: selectedColor,
+                    display: 'inline-block',
+                    flexShrink: 0,
+                    transition: 'background-color 0.2s ease'
+                  }} />
+                  <span>priority</span>
+                </div>
+                <select 
+                  value={issue.priority || ''} 
+                  onChange={(e) => handleUpdateField('priority', e.target.value)} 
+                  className="property-select"
+                  style={{
+                    border: `1px solid ${selectedColor}`,
+                    backgroundColor: `${selectedColor}15`,
+                    color: 'var(--text-primary)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <option value="">--</option>
+                  {priorities.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                </select>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Assigned */}

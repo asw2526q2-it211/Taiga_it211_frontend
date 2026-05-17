@@ -219,24 +219,34 @@ button {
 }
 
 .property-select {
-  background-color: transparent;
-  border: 1px solid transparent;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.25rem;
-  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 1.75rem 0.35rem 0.75rem;
+  border-radius: 16px;
   cursor: pointer;
-  text-align: right;
+  text-align: left;
   transition: all 0.2s ease;
   appearance: none;
   -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 0.75em;
+  min-width: 120px;
+  outline: none;
 }
 
-.property-select:hover, .property-select:focus {
-  background-color: var(--bg-surface);
-  border-color: var(--border-color);
+.property-select:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.property-select:focus {
+  box-shadow: 0 0 0 2px rgba(20, 163, 142, 0.15);
 }
 
 /* Modal Styles */

@@ -848,7 +848,7 @@ export const NewIssue: React.FC = () => {
         users={users.map(u => ({
           id: u.id,
           username: u.username,
-          avatar: u.avatar ? (u.avatar.startsWith('/') ? `https://taiga-it211.onrender.com${u.avatar}` : u.avatar) : null,
+          avatar: u.avatar ? (u.avatar.startsWith('/') ? `https://taiga-it211.onrender.com${u.avatar}` : u.avatar) : undefined,
           first_name: u.first_name,
           last_name: u.last_name
         }))}

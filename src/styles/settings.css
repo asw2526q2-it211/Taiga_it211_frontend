@@ -198,6 +198,92 @@
   border-left: 3px solid var(--set-editing-border, #009aa6);
 }
 
+/* ─── Graella de tags (3 columnes: color, name, actions) ─── */
+.tags-grid-scroll {
+  min-width: 0;
+}
+
+.tags-col-headers {
+  display: grid;
+  grid-template-columns: 80px 1fr 250px;
+  align-items: center;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--set-grid-border-color, #e5e7ef);
+}
+
+.tags-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 250px;
+  align-items: center;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--set-grid-border-color, #edf0f5);
+  transition: background 0.12s;
+}
+
+.tags-row:hover {
+  background: var(--set-bg-row-hover, #f0fafa);
+}
+
+.tags-row.is-editing {
+  background: var(--set-bg-row-editing, #f0fafa);
+  border-left: 3px solid var(--set-editing-border, #009aa6);
+}
+
+.tags-row.is-merge-target {
+  background: var(--set-bg-row-hover, #f0fafa);
+  border-left: 3px solid var(--color-mint, #4dc1ae);
+}
+
+.tags-color-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.tags-merge-hint {
+  font-size: 11px;
+  color: var(--set-text-secondary, #555);
+  margin-right: 10px;
+}
+
+.set-action-btn.merge {
+  color: var(--set-edit-btn-color, #7a7d96);
+  font-size: 18px;
+}
+
+.set-action-btn.merge:hover {
+  background: #eef0f8;
+  color: #444;
+}
+
+.set-merge-btn {
+  background: var(--color-mint, #4dc1ae);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm, 3px);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 7px 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+
+.set-merge-btn:hover {
+  background: #3aab99;
+}
+
+.tags-merge-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-teal, #009aa6);
+}
+
 /* ─── Subcomponents de la graella ─── */
 .set-col-header {
   font-size: 12px;
@@ -639,6 +725,28 @@
 
 @media (max-width: 480px) {
   .priorities-grid-scroll {
+    margin: 0 -12px;
+    padding: 0 12px;
+  }
+}
+
+/* ─── Tags grid scroll ─── */
+@media (max-width: 680px) {
+  .tags-grid-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .tags-col-headers,
+  .tags-row {
+    min-width: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tags-grid-scroll {
     margin: 0 -12px;
     padding: 0 12px;
   }

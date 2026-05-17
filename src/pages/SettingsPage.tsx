@@ -3,6 +3,7 @@ import { StatusSettings } from '../components/StatusSettings';
 import { PrioritySettings } from '../components/PrioritySettings';
 import { TypeSettings } from '../components/TypeSettings';
 import { SeveritySettings } from '../components/SeveritySettings';
+import { TagSettings } from '../components/TagSettings';
 import '../styles/settings.css';
 
 /* ─── Configuració de les pestanyes de configuració ─── */
@@ -39,7 +40,7 @@ export const SettingsPage: React.FC = () => {
       case 'severities':
         return <SeveritySettings />;
       case 'tags':
-        return <PlaceholderTab title="Tags" description="Manage issue tags." />;
+        return <TagSettings />;
       case 'due-dates':
         return <PlaceholderTab title="Due Dates" description="Manage due date presets." />;
       default:

@@ -30,12 +30,9 @@ export const IssueList: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    const loadAll = async () => {
-      setLoading(true);
-      setError(null);
+    const loadMeta = async () => {
       try {
-        const [issuesRes, typesRes, sevRes, priRes, statRes, usersRes] = await Promise.all([
-          apiRequest<Issue[]>('issues/'),
+        const [typesRes, sevRes, priRes, statRes, usersRes] = await Promise.all([
           apiRequest<ColorResource[]>('types/'),
           apiRequest<ColorResource[]>('severities/'),
           apiRequest<ColorResource[]>('priorities/'),
@@ -43,12 +40,35 @@ export const IssueList: React.FC = () => {
           apiRequest<ApiUser[]>('users/'),
         ]);
 
-        setIssues(issuesRes);
         setTypes(typesRes);
         setSeverities(sevRes);
         setPriorities(priRes);
         setStatuses(statRes);
         setUsers(usersRes);
+      } catch (err) {
+        console.error('Failed to load metadata', err);
+      }
+    };
+
+    loadMeta();
+  }, [currentUser]);
+
+  useEffect(() => {
+    const fetchIssues = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        let url = 'issues/';
+        const trimmed = searchQuery.trim();
+        if (trimmed) {
+          if (/^\d+$/.test(trimmed)) {
+            url += `?id=${trimmed}`;
+          } else {
+            url += `?subject=${encodeURIComponent(trimmed)}`;
+          }
+        }
+        const issuesRes = await apiRequest<Issue[]>(url);
+        setIssues(issuesRes);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -60,18 +80,14 @@ export const IssueList: React.FC = () => {
       }
     };
 
-    loadAll();
-  }, [currentUser]);
+    const timer = setTimeout(() => {
+      fetchIssues();
+    }, 300);
 
-  // Filtre en temps real
-  const filteredIssues = issues.filter(issue => {
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return true;
-    return (
-      issue.subject.toLowerCase().includes(query) ||
-      String(issue.id).includes(query)
-    );
-  });
+    return () => clearTimeout(timer);
+  }, [searchQuery, currentUser]);
+
+  const filteredIssues = issues;
 
   // Helpers de format i colors
   const formatDate = (isoStr: string) => {
@@ -94,6 +110,52 @@ export const IssueList: React.FC = () => {
     const due = new Date(dueDateStr);
     due.setHours(0, 0, 0, 0);
     return due.getTime() < today.getTime();
+  };
+
+  const handleStatusChange = async (issueId: number, newStatus: string) => {
+    try {
+      setError(null);
+      await apiRequest(`issues/${issueId}/`, {
+        method: 'PUT',
+        body: { status: newStatus }
+      });
+      setIssues(prev => prev.map(issue => {
+        if (issue.id === issueId) {
+          return { ...issue, status: newStatus };
+        }
+        return issue;
+      }));
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to update status.');
+      }
+      setTimeout(() => setError(null), 5000);
+    }
+  };
+
+  const handleAssigneeChange = async (issueId: number, newAssignee: string) => {
+    try {
+      setError(null);
+      await apiRequest(`issues/${issueId}/`, {
+        method: 'PUT',
+        body: { assigned: newAssignee || null }
+      });
+      setIssues(prev => prev.map(issue => {
+        if (issue.id === issueId) {
+          return { ...issue, assigned: newAssignee || null };
+        }
+        return issue;
+      }));
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to update assignee.');
+      }
+      setTimeout(() => setError(null), 5000);
+    }
   };
 
   return (
@@ -425,7 +487,10 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 5. Status dropdown chevron */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', overflow: 'hidden' }}>
+                    <div 
+                      style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.35rem', overflow: 'hidden' }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <span style={{ 
                         fontWeight: 700, 
                         fontSize: '0.8rem', 
@@ -439,6 +504,28 @@ export const IssueList: React.FC = () => {
                       <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', flexShrink: 0 }}>
                         ▼
                       </span>
+                      <select
+                        value={issue.status || ''}
+                        onChange={(e) => handleStatusChange(issue.id, e.target.value)}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          opacity: 0,
+                          cursor: 'pointer',
+                          border: 'none',
+                          outline: 'none'
+                        }}
+                      >
+                        <option value="" disabled>Select Status</option>
+                        {statuses.map(st => (
+                          <option key={st.id} value={st.name}>
+                            {st.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     {/* 6. Date Modified */}
@@ -447,7 +534,10 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 7. Assignee User Avatar + drop indicator */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <div 
+                      style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {assigneeUser ? (
                         <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', backgroundColor: '#c5a3cd', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           {assigneeUser.avatar ? (
@@ -481,6 +571,28 @@ export const IssueList: React.FC = () => {
                       <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', flexShrink: 0 }}>
                         ▼
                       </span>
+                      <select
+                        value={issue.assigned || ''}
+                        onChange={(e) => handleAssigneeChange(issue.id, e.target.value)}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          opacity: 0,
+                          cursor: 'pointer',
+                          border: 'none',
+                          outline: 'none'
+                        }}
+                      >
+                        <option value="">Unassigned</option>
+                        {users.map(u => (
+                          <option key={u.id} value={u.username}>
+                            {u.first_name ? `${u.first_name} ${u.last_name || ''}` : u.username}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 );

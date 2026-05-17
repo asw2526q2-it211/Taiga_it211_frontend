@@ -23,8 +23,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 11 # La versión que tienes en tu package.json
 
       - name: Install dependencies
         run: pnpm install

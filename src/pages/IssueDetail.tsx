@@ -21,6 +21,7 @@ export const IssueDetail: React.FC = () => {
   const [priorities, setPriorities] = useState<PriorityItem[]>([]);
   const [users, setUsers] = useState<UserResource[]>([]);
   const [globalTags, setGlobalTags] = useState<{ id: number; name: string; color: string }[]>([]);
+  const [dueDates, setDueDates] = useState<{ id: number; name: string; color: string; days_to_due: number | null; by_default: string }[]>([]);
 
   // Local UI State
   const [activeTab, setActiveTab] = useState<'comments' | 'activities'>('comments');
@@ -110,14 +111,15 @@ export const IssueDetail: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const [issueData, statusData, typeData, sevData, prioData, userData, tagsData] = await Promise.all([
+      const [issueData, statusData, typeData, sevData, prioData, userData, tagsData, dueDatesData] = await Promise.all([
         apiRequest<DetailedIssue>(`issues/${id}`),
         apiRequest<StatusItem[]>('statuses'),
         apiRequest<TypeItem[]>('types'),
         apiRequest<SeverityItem[]>('severities'),
         apiRequest<PriorityItem[]>('priorities'),
         apiRequest<UserResource[]>('users'),
-        apiRequest<{ id: number; name: string; color: string }[]>('tags')
+        apiRequest<{ id: number; name: string; color: string }[]>('tags'),
+        apiRequest<{ id: number; name: string; color: string; days_to_due: number | null; by_default: string }[]>('duedates')
       ]);
       setIssue(issueData);
       setStatuses(statusData);
@@ -126,6 +128,7 @@ export const IssueDetail: React.FC = () => {
       setPriorities(prioData);
       setUsers(userData);
       setGlobalTags(tagsData);
+      setDueDates(dueDatesData);
       setDescInput(issueData.description || '');
       setSubjectInput(issueData.subject || '');
     } catch (err: unknown) {
@@ -650,15 +653,92 @@ export const IssueDetail: React.FC = () => {
           </div>
           <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             <div>Created by <span style={{ color: 'var(--color-teal)' }}>{issue.created_by}</span></div>
-            <div style={{ marginTop: '0.25rem' }}>
-              <input 
-                type="date" 
-                value={issue.due_date || ''} 
-                onChange={handleDueDateChange}
-                style={{ border: '1px solid var(--border-color)', borderRadius: '4px', padding: '2px 4px', fontSize: '0.75rem', color: 'inherit' }}
-                title="Due Date"
-              />
-            </div>
+            {(() => {
+              // Resolve due date color, name, and days text
+              const defaultRule = dueDates.find(r => r.by_default === 'Past' || r.days_to_due === null) 
+                                || dueDates.find(r => r.name.toLowerCase() === 'default') 
+                                || { name: 'Default', color: '#009aa6' };
+
+              let color = '#718096'; // Neutral slate gray
+              let text = 'No due date';
+              let name = 'No limit';
+              let bg = '#f3f4f6';
+
+              if (issue.due_date) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const due = new Date(issue.due_date);
+                due.setHours(0, 0, 0, 0);
+                
+                const diffTime = due.getTime() - today.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                // Sort rules excluding defaults, by days_to_due ascending
+                const sortedRules = [...dueDates]
+                  .filter(r => r.days_to_due !== null && r.days_to_due !== undefined)
+                  .sort((a, b) => (a.days_to_due || 0) - (b.days_to_due || 0));
+
+                let matchedRule = null;
+                for (const rule of sortedRules) {
+                  if (rule.days_to_due !== null && diffDays <= rule.days_to_due) {
+                    matchedRule = rule;
+                    break;
+                  }
+                }
+
+                if (!matchedRule) {
+                  matchedRule = defaultRule;
+                }
+
+                color = matchedRule.color;
+                name = matchedRule.name;
+                bg = `${color}15`;
+
+                if (diffDays === 0) {
+                  text = 'Due today';
+                } else if (diffDays < 0) {
+                  text = `Overdue by ${Math.abs(diffDays)}d`;
+                } else {
+                  text = `${diffDays}d left`;
+                }
+              }
+
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem', marginTop: '0.5rem' }}>
+                  <input 
+                    type="date" 
+                    value={issue.due_date || ''} 
+                    onChange={handleDueDateChange}
+                    style={{
+                      border: `1px solid ${issue.due_date ? color : 'var(--border-color)'}`,
+                      backgroundColor: bg,
+                      color: issue.due_date ? color : 'var(--text-primary)',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      padding: '0.35rem 0.5rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      outline: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                    title="Due Date"
+                  />
+                  {issue.due_date && (
+                    <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                      <span>{text} (Rule: <strong>{name}</strong>)</span>
+                      <button 
+                        onClick={() => handleUpdateField('duedate', null)}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center' }}
+                        title="Remove due date"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
 

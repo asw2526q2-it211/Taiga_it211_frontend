@@ -7,6 +7,7 @@ import { IssueDetail } from './pages/IssueDetail';
 import { NewIssue } from './pages/NewIssue';
 import { SettingsPage } from './pages/SettingsPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { BulkInsert } from './pages/BulkInsert';
 
 /**
  * Component arrel de l'aplicació.
@@ -22,6 +23,8 @@ const App: React.FC = () => {
             <Route path="/" element={<IssueList />} />
             {/* Pàgina de creació d'incidència */}
             <Route path="/issues/new" element={<NewIssue />} />
+            {/* Inserció massiva d'incidències */}
+            <Route path="/issues/bulk" element={<BulkInsert />} />
             {/* Pàgina de detall d'incidència */}
             <Route path="/issues/:id" element={<IssueDetail />} />
             {/* Pàgina de configuració */}

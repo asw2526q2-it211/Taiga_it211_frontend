@@ -29,6 +29,54 @@ export const IssueList: React.FC = () => {
   const [showTags, setShowTags] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Draft and committed filter selections for the dynamic sidebar
+  const [draftFilters, setDraftFilters] = useState({
+    types: [] as string[],
+    severities: [] as string[],
+    priorities: [] as string[],
+    statuses: [] as string[],
+    tags: [] as string[],
+    assignees: [] as string[],
+    creators: [] as string[],
+  });
+  const [appliedFilters, setAppliedFilters] = useState({
+    types: [] as string[],
+    severities: [] as string[],
+    priorities: [] as string[],
+    statuses: [] as string[],
+    tags: [] as string[],
+    assignees: [] as string[],
+    creators: [] as string[],
+  });
+
+  const handleToggleFilter = (category: 'types' | 'severities' | 'priorities' | 'statuses' | 'tags' | 'assignees' | 'creators', value: string) => {
+    setDraftFilters(prev => {
+      const currentList = prev[category];
+      const newList = currentList.includes(value)
+        ? currentList.filter(item => item !== value)
+        : [...currentList, value];
+      return { ...prev, [category]: newList };
+    });
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedFilters({ ...draftFilters });
+  };
+
+  const handleClearFilters = () => {
+    const cleared = {
+      types: [],
+      severities: [],
+      priorities: [],
+      statuses: [],
+      tags: [],
+      assignees: [],
+      creators: [],
+    };
+    setDraftFilters(cleared);
+    setAppliedFilters(cleared);
+  };
+
   useEffect(() => {
     const loadMeta = async () => {
       try {
@@ -87,7 +135,24 @@ export const IssueList: React.FC = () => {
     return () => clearTimeout(timer);
   }, [searchQuery, currentUser]);
 
-  const filteredIssues = issues;
+  const allTags = Array.from(new Set(
+    issues.flatMap(issue => (issue.tags || []).map(t => t.name))
+  ));
+
+  const filteredIssues = issues.filter(issue => {
+    if (appliedFilters.types.length > 0 && !appliedFilters.types.includes(issue.type || '')) return false;
+    if (appliedFilters.severities.length > 0 && !appliedFilters.severities.includes(issue.severity || '')) return false;
+    if (appliedFilters.priorities.length > 0 && !appliedFilters.priorities.includes(issue.priority || '')) return false;
+    if (appliedFilters.statuses.length > 0 && !appliedFilters.statuses.includes(issue.status || '')) return false;
+    if (appliedFilters.assignees.length > 0 && !appliedFilters.assignees.includes(issue.assigned || '')) return false;
+    if (appliedFilters.creators.length > 0 && !appliedFilters.creators.includes(issue.creator || '')) return false;
+    if (appliedFilters.tags.length > 0) {
+      const issueTagNames = (issue.tags || []).map(t => t.name);
+      const hasTag = appliedFilters.tags.some(t => issueTagNames.includes(t));
+      if (!hasTag) return false;
+    }
+    return true;
+  });
 
   // Helpers de format i colors
   const formatDate = (isoStr: string) => {
@@ -328,10 +393,22 @@ export const IssueList: React.FC = () => {
       </div>
 
       {/* Contingut principal (Filtres + Taula) */}
-      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+      <div className="main-layout-container">
         {showFilters && (
-          <aside style={{ width: '240px', flexShrink: 0 }}>
-            <FilterSidebar />
+          <aside className="filters-aside">
+            <FilterSidebar 
+              types={types}
+              severities={severities}
+              priorities={priorities}
+              statuses={statuses}
+              users={users}
+              allTags={allTags}
+              issues={issues}
+              draftFilters={draftFilters}
+              onToggleFilter={handleToggleFilter}
+              onApply={handleApplyFilters}
+              onClear={handleClearFilters}
+            />
           </aside>
         )}
 

@@ -407,6 +407,28 @@ button {
   width: 100%;
 }
 
+.main-layout-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.filters-aside {
+  width: 240px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .main-layout-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filters-aside {
+    width: 100%;
+  }
+}
+
 @media (max-width: 1024px) {
   .issue-list-grid {
     grid-template-columns: 1fr 120px 100px;

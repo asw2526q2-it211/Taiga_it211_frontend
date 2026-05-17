@@ -14,6 +14,7 @@ import type {
 import { TaigaSelect } from '../components/TaigaSelect'
 import { getDueDateButtonStyle } from '../utils/dueDateStyle'
 import { useAuth } from '../context/AuthContext'
+import { UserSelectionModal } from '../components/UserSelectionModal'
 
 function pickDefault<T extends { name: string; is_default?: boolean }>(
   items: T[],
@@ -67,8 +68,7 @@ export const NewIssue: React.FC = () => {
   const [newTagName, setNewTagName] = useState('')
   const [newTagColor, setNewTagColor] = useState('#4dc1ae')
 
-  const [assigneeMenuOpen, setAssigneeMenuOpen] = useState(false)
-  const [assigneeSearch, setAssigneeSearch] = useState('')
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
 
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
   const [attachedFiles, setAttachedFiles] = useState<File[]>([])
@@ -117,14 +117,9 @@ export const NewIssue: React.FC = () => {
     load()
   }, [currentUser])
 
-  const filteredUsers = users.filter((u) => {
-    const q = assigneeSearch.trim().toLowerCase()
-    if (!q) return true
-    return (
-      u.username.toLowerCase().includes(q) ||
-      displayName(u).toLowerCase().includes(q)
-    )
-  })
+  const handleAssignUser = (selectedUsernames: string[]) => {
+    setAssigneeUsername(selectedUsernames[0] || null)
+  }
 
   const selectedUser = users.find((u) => u.username === assigneeUsername) ?? null
   const dueDateStyle = getDueDateButtonStyle(dueDate, dueDateRules)
@@ -303,10 +298,21 @@ export const NewIssue: React.FC = () => {
                     <span
                       key={tag.name}
                       className="new-issue-tag-badge"
-                      style={{ backgroundColor: tag.color }}
+                      style={{ 
+                        borderColor: tag.color,
+                        backgroundColor: `${tag.color}15`,
+                        color: tag.color,
+                        borderStyle: 'solid',
+                        borderWidth: '1px'
+                      }}
                     >
                       {tag.name}
-                      <button type="button" onClick={() => removeTag(tag.name)} title={`Remove ${tag.name}`}>
+                      <button 
+                        type="button" 
+                        onClick={() => removeTag(tag.name)} 
+                        title={`Remove ${tag.name}`}
+                        style={{ color: tag.color }}
+                      >
                         &times;
                       </button>
                     </span>
@@ -314,7 +320,7 @@ export const NewIssue: React.FC = () => {
                 </div>
 
                 {allTags.length > 0 && (
-                  <div className="new-issue-tags-row" style={{ opacity: 0.85 }}>
+                  <div className="new-issue-tags-row" style={{ opacity: 0.95 }}>
                     {allTags
                       .filter((t) => !selectedTags.some((s) => s.name === t.name))
                       .slice(0, 12)
@@ -324,6 +330,14 @@ export const NewIssue: React.FC = () => {
                           type="button"
                           className="new-issue-add-tag-btn"
                           onClick={() => addExistingTag(tag)}
+                          style={{
+                            borderColor: tag.color,
+                            backgroundColor: `${tag.color}15`,
+                            color: tag.color,
+                            borderStyle: 'solid',
+                            borderWidth: '1px',
+                            fontWeight: 700
+                          }}
                         >
                           {tag.name}
                         </button>
@@ -382,149 +396,400 @@ export const NewIssue: React.FC = () => {
               </div>
             </div>
 
-            <div className="new-issue-right">
-              <div className="new-issue-status-select">
-                <select value={statusName} onChange={(e) => setStatusName(e.target.value)}>
-                  {statuses.map((s) => (
-                    <option key={s.id} value={s.name}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-                <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z" /></svg>
-              </div>
-
-              <div className="assignee-select-container">
-                <div className="assignee-display">
-                  {!selectedUser ? (
-                    <>
-                      <div className="assignee-avatar-lg">
-                        <svg style={{ width: 24, height: 24, fill: '#fff' }} viewBox="0 0 24 24">
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                        </svg>
-                      </div>
-                      <div className="assignee-name muted">Not assigned</div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="assignee-avatar-lg">
-                        {selectedUser.avatar ? (
-                          <img src={selectedUser.avatar} alt="" />
-                        ) : (
-                          <div style={{ width: '100%', height: '100%', background: '#c5a3cd', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 600 }}>
-                            {userInitial(selectedUser)}
-                          </div>
-                        )}
-                      </div>
-                      <div className="assignee-name">
-                        <span>{displayName(selectedUser)}</span>
-                        <button type="button" className="assignee-clear" onClick={() => setAssigneeUsername(null)} title="Cancel assignment">
-                          &times;
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                <div className="assignee-actions">
-                  <div className={`menu-trigger-wrapper${assigneeMenuOpen ? ' open' : ''}`}>
-                    <button
-                      type="button"
-                      className="btn-action"
-                      onClick={() => setAssigneeMenuOpen((v) => !v)}
-                    >
-                      <span style={{ color: '#70728f', fontWeight: 600 }}>+</span> Add assigned
-                    </button>
-                    <div className="assignee-select-menu">
-                      <div className="assignee-search">
-                        <input
-                          type="text"
-                          placeholder="Search..."
-                          value={assigneeSearch}
-                          onChange={(e) => setAssigneeSearch(e.target.value)}
-                        />
-                      </div>
-                      <button type="button" className="user-item-label" onClick={() => { setAssigneeUsername(null); setAssigneeMenuOpen(false) }}>
-                        <div className="user-avatar-small">
-                          <svg style={{ width: 18, height: 18, fill: '#ccc' }} viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                          </svg>
-                        </div>
-                        <span className="user-item-name">None</span>
-                      </button>
-                      {filteredUsers.map((u) => (
-                        <button
-                          key={u.id}
-                          type="button"
-                          className="user-item-label"
-                          onClick={() => {
-                            setAssigneeUsername(u.username)
-                            setAssigneeMenuOpen(false)
+            <div className="new-issue-right" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {/* 1. Status Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</h4>
+                {(() => {
+                  const currentStatusItem = statuses.find(s => s.name === statusName);
+                  const statusColor = currentStatusItem?.color || '#cccccc';
+                  const isClosed = currentStatusItem?.closed || false;
+                  
+                  return (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <div style={{ position: 'relative', flex: 1 }}>
+                        <select 
+                          value={statusName} 
+                          onChange={(e) => setStatusName(e.target.value)}
+                          style={{ 
+                            fontSize: '0.9rem', 
+                            fontWeight: 700, 
+                            padding: '0.45rem 2rem 0.45rem 0.75rem', 
+                            borderRadius: '8px', 
+                            border: `2px solid ${statusColor}`, 
+                            backgroundColor: `${statusColor}18`,
+                            color: 'var(--text-primary)',
+                            cursor: 'pointer',
+                            transition: 'all 0.25s ease',
+                            outline: 'none',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'right 0.6rem center',
+                            backgroundSize: '0.7em',
+                            width: '100%',
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
                           }}
                         >
-                          <div className="user-avatar-small">
-                            {u.avatar ? (
-                              <img src={u.avatar} alt="" />
-                            ) : (
-                              <span style={{ color: '#434456', fontWeight: 600 }}>{userInitial(u)}</span>
-                            )}
-                          </div>
-                          <span className="user-item-name">{displayName(u)}</span>
-                        </button>
-                      ))}
+                          {statuses.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                        </select>
+                      </div>
+
+                      <span style={{
+                        backgroundColor: isClosed ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+                        color: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                        padding: '0.35rem 0.6rem',
+                        borderRadius: '16px',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        border: `1px solid ${isClosed ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`,
+                        transition: 'all 0.25s ease'
+                      }}>
+                        <span style={{
+                          width: '5px',
+                          height: '5px',
+                          borderRadius: '50%',
+                          backgroundColor: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                          transition: 'all 0.25s ease'
+                        }} />
+                        {isClosed ? 'Closed' : 'Open'}
+                      </span>
                     </div>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <button
-                      type="button"
-                      className="btn-action"
-                      onClick={() => profile && setAssigneeUsername(profile.username)}
+                  );
+                })()}
+              </div>
+
+              {/* 2. Assigned Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Assigned</h4>
+                
+                {/* Two side-by-side elegant action buttons */}
+                <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                  <button
+                    type="button"
+                    onClick={() => profile && setAssigneeUsername(profile.username)}
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.3rem',
+                      backgroundColor: assigneeUsername === profile?.username ? 'rgba(20, 163, 142, 0.08)' : 'var(--bg-surface)',
+                      color: assigneeUsername === profile?.username ? 'var(--color-teal)' : 'var(--text-primary)',
+                      border: `1px solid ${assigneeUsername === profile?.username ? 'var(--color-teal)' : 'var(--border-color)'}`,
+                      borderRadius: '8px',
+                      padding: '0.45rem 0.5rem',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+                    }}
+                  >
+                    <span>👤 Me</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsAssignModalOpen(true)}
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.3rem',
+                      backgroundColor: 'var(--bg-surface)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      padding: '0.45rem 0.5rem',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+                    }}
+                  >
+                    <span>➕ Assign</span>
+                  </button>
+                </div>
+
+                {/* Assigned User Info Card */}
+                {selectedUser ? (
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.75rem', 
+                    backgroundColor: 'var(--bg-surface)', 
+                    padding: '0.75rem', 
+                    borderRadius: '8px', 
+                    border: '1px solid var(--border-color)', 
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+                    position: 'relative',
+                    transition: 'all 0.2s ease',
+                    marginTop: '0.25rem'
+                  }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#c5a3cd' }}>
+                      {selectedUser.avatar ? (
+                        <img 
+                          src={selectedUser.avatar.startsWith('/') ? `https://taiga-it211.onrender.com${selectedUser.avatar}` : selectedUser.avatar} 
+                          alt="" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <span style={{ color: 'white', fontSize: '1rem', fontWeight: 700 }}>
+                          {userInitial(selectedUser)}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {displayName(selectedUser)}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 500, color: 'var(--text-secondary)' }}>
+                        @{selectedUser.username}
+                      </span>
+                    </div>
+
+                    <button 
+                      type="button" 
+                      onClick={() => setAssigneeUsername(null)} 
+                      style={{ 
+                        background: 'none', 
+                        border: 'none', 
+                        color: 'var(--text-secondary)', 
+                        cursor: 'pointer', 
+                        fontSize: '0.95rem',
+                        padding: '0.25rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s ease'
+                      }}
+                      title="Remove assignee"
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-critical)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
                     >
-                      Assign to me
+                      ✕
                     </button>
                   </div>
+                ) : (
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic', paddingLeft: '0.25rem', marginTop: '0.25rem' }}>
+                    No one assigned
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Attributes Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Attributes</h4>
+                
+                {/* Type */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>Type</span>
+                  {(() => {
+                    const activeType = types.find(t => t.name === typeName);
+                    const color = activeType?.color || '#cccccc';
+                    return (
+                      <select 
+                        value={typeName} 
+                        onChange={(e) => setTypeName(e.target.value)}
+                        className="property-select"
+                        style={{
+                          borderColor: color,
+                          backgroundColor: `${color}15`,
+                          color: color,
+                          width: '140px',
+                          fontSize: '0.8rem',
+                          padding: '0.35rem 1.5rem 0.35rem 0.6rem',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        {types.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
+                      </select>
+                    );
+                  })()}
+                </div>
+
+                {/* Severity */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>Severity</span>
+                  {(() => {
+                    const activeSev = severities.find(s => s.name === severityName);
+                    const color = activeSev?.color || '#cccccc';
+                    return (
+                      <select 
+                        value={severityName} 
+                        onChange={(e) => setSeverityName(e.target.value)}
+                        className="property-select"
+                        style={{
+                          borderColor: color,
+                          backgroundColor: `${color}15`,
+                          color: color,
+                          width: '140px',
+                          fontSize: '0.8rem',
+                          padding: '0.35rem 1.5rem 0.35rem 0.6rem',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        {severities.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                      </select>
+                    );
+                  })()}
+                </div>
+
+                {/* Priority */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>Priority</span>
+                  {(() => {
+                    const activePrio = priorities.find(p => p.name === priorityName);
+                    const color = activePrio?.color || '#cccccc';
+                    return (
+                      <select 
+                        value={priorityName} 
+                        onChange={(e) => setPriorityName(e.target.value)}
+                        className="property-select"
+                        style={{
+                          borderColor: color,
+                          backgroundColor: `${color}15`,
+                          color: color,
+                          width: '140px',
+                          fontSize: '0.8rem',
+                          padding: '0.35rem 1.5rem 0.35rem 0.6rem',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        {priorities.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+                      </select>
+                    );
+                  })()}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <TaigaSelect label="type" options={types} value={typeName} onChange={setTypeName} />
-                <TaigaSelect label="severity" options={severities} value={severityName} onChange={setSeverityName} />
-                <TaigaSelect label="priority" options={priorities} value={priorityName} onChange={setPriorityName} />
+              {/* 4. Due Date Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Due Date</h4>
+                {(() => {
+                  const defaultRule = dueDateRules.find(r => r.by_default === 'Past' || r.days_to_due === null) 
+                                    || dueDateRules.find(r => r.name.toLowerCase() === 'default') 
+                                    || { name: 'Default', color: '#009aa6' };
+
+                  let color = '#718096'; // Neutral slate gray
+                  let text = 'No due date';
+                  let name = 'No limit';
+                  let bg = '#f3f4f6';
+
+                  if (dueDate) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const due = new Date(dueDate);
+                    due.setHours(0, 0, 0, 0);
+                    
+                    const diffTime = due.getTime() - today.getTime();
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    const sortedRules = [...dueDateRules]
+                      .filter(r => r.days_to_due !== null && r.days_to_due !== undefined)
+                      .sort((a, b) => (a.days_to_due || 0) - (b.days_to_due || 0));
+
+                    let matchedRule = null;
+                    for (const rule of sortedRules) {
+                      if (rule.days_to_due !== null && diffDays <= rule.days_to_due) {
+                        matchedRule = rule;
+                        break;
+                      }
+                    }
+
+                    if (!matchedRule) {
+                      matchedRule = defaultRule;
+                    }
+
+                    color = matchedRule.color;
+                    name = matchedRule.name;
+                    bg = `${color}15`;
+
+                    if (diffDays === 0) {
+                      text = 'Due today';
+                    } else if (diffDays < 0) {
+                      text = `Overdue by ${Math.abs(diffDays)}d`;
+                    } else {
+                      text = `${diffDays}d left`;
+                    }
+                  }
+
+                  return (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <input 
+                        type="date" 
+                        value={dueDate} 
+                        onChange={(e) => setDueDate(e.target.value)}
+                        style={{
+                          border: `1px solid ${dueDate ? color : 'var(--border-color)'}`,
+                          backgroundColor: bg,
+                          color: dueDate ? color : 'var(--text-primary)',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          padding: '0.35rem 0.5rem',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          outline: 'none',
+                          transition: 'all 0.2s ease',
+                          width: '140px'
+                        }}
+                        title="Due Date"
+                      />
+                      {dueDate && (
+                        <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                          <span>({text})</span>
+                          <button 
+                            type="button"
+                            onClick={() => setDueDate('')}
+                            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center' }}
+                            title="Remove due date"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
-              <div className="new-issue-extras">
-                <label
-                  className="due-date-button"
-                  title="Select due date"
-                  style={{ background: dueDateStyle.background }}
-                >
-                  <svg
-                    style={{ width: 18, height: 18, fill: 'none', stroke: dueDateStyle.iconColor, strokeWidth: 2, pointerEvents: 'none' }}
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
-                  <input
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    title="Select due date"
-                  />
-                </label>
-
-                <button
+              {/* 5. Blocking Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingBottom: '0.5rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blocking</h4>
+                <button 
                   type="button"
-                  className={`block-toggle${isBlocked ? ' active' : ''}`}
-                  title="Block issue"
-                  onClick={() => setIsBlocked((v) => !v)}
+                  onClick={() => setIsBlocked((v) => !v)} 
+                  title={isBlocked ? "Unblock Issue" : "Block Issue"} 
+                  style={{ 
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    backgroundColor: isBlocked ? 'var(--color-normal)' : 'rgba(239, 68, 68, 0.12)', 
+                    color: isBlocked ? '#fff' : 'rgb(220, 38, 38)', 
+                    border: isBlocked ? 'none' : '1px solid rgba(239, 68, 68, 0.3)', 
+                    borderRadius: '8px', 
+                    padding: '0.45rem 1rem', 
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    width: '100%',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                  }}
                 >
-                  <svg style={{ width: 18, height: 18, stroke: '#009aa6', fill: 'none', strokeWidth: 2, pointerEvents: 'none' }} viewBox="0 0 24 24">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0110 0v4" />
-                  </svg>
+                  <span>{isBlocked ? '🔓 Unblock' : '🔒 Block'}</span>
                 </button>
-
                 {isBlocked && (
                   <input
                     type="text"
@@ -532,6 +797,19 @@ export const NewIssue: React.FC = () => {
                     placeholder="Why is this blocked?"
                     value={blockedReason}
                     onChange={(e) => setBlockedReason(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-color)',
+                      fontSize: '0.85rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      marginTop: '0.25rem',
+                      backgroundColor: 'var(--bg-surface)',
+                      color: 'var(--text-primary)'
+                    }}
+                    required
                   />
                 )}
               </div>
@@ -540,13 +818,46 @@ export const NewIssue: React.FC = () => {
 
           {error && <p className="new-issue-error">{error}</p>}
 
-          <div className="new-issue-submit-wrap">
-            <button type="submit" className="new-issue-submit" disabled={submitting}>
-              {submitting ? 'CREATING...' : 'CREATE'}
+          <div className="new-issue-submit-wrap" style={{ width: '100%', maxWidth: '740px', marginTop: '1rem' }}>
+            <button 
+              type="submit" 
+              className="new-issue-submit" 
+              disabled={submitting}
+              style={{
+                width: '100%',
+                backgroundColor: 'var(--color-teal)',
+                color: 'white',
+                fontWeight: 700,
+                fontSize: '0.9rem',
+                letterSpacing: '0.05em',
+                borderRadius: '8px',
+                height: '44px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 4px rgba(20, 163, 142, 0.2)'
+              }}
+            >
+              {submitting ? 'CREATING...' : 'CREATE ISSUE'}
             </button>
           </div>
         </form>
       </div>
+
+      <UserSelectionModal 
+        isOpen={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        title="Add assigned"
+        users={users.map(u => ({
+          username: u.username,
+          avatar: u.avatar ? (u.avatar.startsWith('/') ? `https://taiga-it211.onrender.com${u.avatar}` : u.avatar) : null,
+          first_name: u.first_name,
+          last_name: u.last_name
+        }))}
+        initialSelected={assigneeUsername ? [assigneeUsername] : []}
+        isMultiple={false}
+        onAdd={handleAssignUser}
+      />
     </div>
   )
 }
@@ -558,7 +869,7 @@ const newIssueStyles = `
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -576,24 +887,28 @@ const newIssueStyles = `
   position: absolute;
   right: 0;
   top: 40px;
-  color: #434456;
+  color: var(--text-secondary);
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+  transition: color 0.2s;
+}
+.new-issue-close:hover {
+  color: var(--text-primary);
 }
 .new-issue-title {
   text-align: center;
-  font-size: 26px;
-  font-weight: 500;
-  color: #434456;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
   margin-bottom: 40px;
   margin-top: 0;
 }
 .new-issue-form {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 30px;
   align-items: center;
 }
 .new-issue-columns {
@@ -616,55 +931,70 @@ const newIssueStyles = `
 }
 .new-issue-subject {
   width: 100%;
-  border: 1px solid #b5bbcd;
-  border-radius: 3px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   padding: 12px 15px;
   font-size: 18px;
-  font-weight: 400;
-  color: #434456;
+  font-weight: 600;
+  color: var(--text-primary);
   background: #fff;
   outline: none;
   box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+.new-issue-subject:focus {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 2px rgba(20, 163, 142, 0.15);
 }
 .new-issue-description {
   width: 100%;
-  border: 1px solid #b5bbcd;
-  border-radius: 3px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   padding: 15px;
   font-size: 14px;
-  color: #70728f;
+  color: var(--text-primary);
   background: #fff;
   min-height: 200px;
   resize: vertical;
   outline: none;
   box-sizing: border-box;
   font-family: inherit;
+  transition: all 0.2s ease;
+}
+.new-issue-description:focus {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 2px rgba(20, 163, 142, 0.15);
 }
 .new-issue-tags-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
   flex-wrap: wrap;
 }
 .new-issue-add-tag-btn {
-  border: 1px solid #e2e3e9;
-  background: #f9f9fb;
-  padding: 4px 10px;
-  border-radius: 4px;
-  color: #009aa6;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  padding: 5px 12px;
+  border-radius: 8px;
+  color: var(--color-teal);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
+  transition: all 0.2s ease;
+}
+.new-issue-add-tag-btn:hover {
+  background: rgba(20, 163, 142, 0.08);
+  border-color: rgba(20, 163, 142, 0.3);
 }
 .new-issue-tag-badge {
   border: 1px solid rgba(0, 0, 0, 0.1);
   color: #fff;
-  padding: 4px 8px;
-  border-radius: 3px;
+  padding: 4px 10px;
+  border-radius: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -677,7 +1007,7 @@ const newIssueStyles = `
   font-size: 14px;
   line-height: 1;
   padding: 0;
-  opacity: 0.6;
+  opacity: 0.7;
   font-weight: bold;
 }
 .new-issue-tag-badge:hover button {
@@ -689,34 +1019,35 @@ const newIssueStyles = `
   gap: 6px;
 }
 .new-issue-inline-tag input[type='text'] {
-  border: 1px solid #b5bbcd;
-  border-radius: 3px 0 0 3px;
-  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px 0 0 8px;
+  padding: 6px 10px;
   font-size: 13px;
   width: 120px;
   outline: none;
 }
 .new-issue-inline-tag button {
-  background: #e2e3e9;
+  background: var(--color-teal);
+  color: white;
   border: none;
-  border-radius: 0 3px 3px 0;
-  color: #444;
+  border-radius: 0 8px 8px 0;
   font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
+  font-weight: 700;
+  padding: 6px 12px;
   cursor: pointer;
 }
 .new-issue-attachments-bar {
   display: flex;
-  background: #e2e3e9;
-  border-radius: 3px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   padding-left: 15px;
   align-items: center;
   justify-content: space-between;
-  height: 38px;
+  height: 40px;
 }
 .new-issue-attachments-bar span {
-  color: #434456;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 600;
 }
@@ -727,364 +1058,52 @@ const newIssueStyles = `
 }
 .new-issue-attachments-actions label,
 .new-issue-attachments-actions button {
-  background: #f0f1f5;
+  background: var(--bg-surface);
   height: 100%;
   padding: 0 15px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #434456;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   border: none;
-  border-right: 1px solid #d1d2d9;
+  border-left: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+.new-issue-attachments-actions label:hover,
+.new-issue-attachments-actions button:hover {
+  background: rgba(0,0,0,0.02);
+  color: var(--text-primary);
 }
 .new-issue-attachments-actions button.upload {
-  background: #7de8cc;
+  background: var(--color-mint);
   border: none;
-  border-radius: 0 3px 3px 0;
-  color: #0d4a34;
+  border-radius: 0 8px 8px 0;
+  color: #000;
+}
+.new-issue-attachments-actions button.upload:hover {
+  filter: brightness(0.95);
 }
 .new-issue-attachment-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: #f9f9fb;
-  border-radius: 3px;
-}
-.new-issue-status-select {
-  background: #6a708a;
-  border-radius: 3px;
-  position: relative;
-}
-.new-issue-status-select select {
-  width: 100%;
-  appearance: none;
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 10px 15px;
-  cursor: pointer;
-  outline: none;
-  font-family: inherit;
-}
-.new-issue-status-select svg {
-  position: absolute;
-  right: 10px;
-  top: 14px;
-  width: 14px;
-  height: 14px;
-  fill: #fff;
-  pointer-events: none;
-}
-.new-issue-attribute-row {
-  background: #f8f9fb;
-  border-radius: 3px;
-  padding: 12px 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.new-issue-attribute-row > span {
-  color: #70728f;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: lowercase;
-}
-.taiga-select {
-  position: relative;
-  cursor: pointer;
-}
-.taiga-select-trigger {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-  font-family: inherit;
-}
-.taiga-select-trigger span {
-  font-size: 15px;
-  color: #434456;
-}
-.taiga-select .color-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.taiga-select-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: -10px;
-  background: #fff;
-  min-width: 140px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e3e9;
-  border-radius: 3px;
-  z-index: 100;
-  padding: 5px 0;
-  flex-direction: column;
-}
-.taiga-select.open .taiga-select-menu,
-.taiga-select:hover .taiga-select-menu {
-  display: flex;
-}
-.taiga-option {
-  display: flex;
-  align-items: center;
-  padding: 8px 15px;
-  cursor: pointer;
-  font-size: 15px;
-  color: #009aa6;
-  gap: 12px;
-  text-align: left;
-  border: none;
-  background: none;
-  width: 100%;
-  font-family: inherit;
-}
-.taiga-option:hover {
-  background: #f4f6f8;
-}
-.assignee-select-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-.assignee-display {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.assignee-avatar-lg {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  background: #e2e3e9;
-  flex-shrink: 0;
-}
-.assignee-avatar-lg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.assignee-name {
-  color: #434456;
-  font-size: 15px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.assignee-name.muted {
-  color: #70728f;
-}
-.assignee-clear {
-  cursor: pointer;
-  font-size: 18px;
-  color: #a1a1b5;
-  line-height: 1;
-  background: none;
-  border: none;
-  padding: 0;
-}
-.assignee-actions {
-  display: flex;
-  gap: 10px;
-}
-.btn-action {
-  width: 100%;
-  border: 1px solid #d8dee9;
-  background: #fff;
-  padding: 10px;
-  font-size: 14px;
-  color: #4c566a;
-  border-radius: 3px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-family: inherit;
-  transition: background 0.2s;
-  box-sizing: border-box;
-}
-.btn-action:hover {
-  background: #f8f9fb;
-}
-.menu-trigger-wrapper {
-  position: relative;
-  flex: 1;
-}
-.assignee-select-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 280px;
-  background: #fff;
-  border: 1px solid #e2e3e9;
-  border-radius: 4px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  padding: 5px 0;
-  flex-direction: column;
-  max-height: 250px;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-.menu-trigger-wrapper.open .assignee-select-menu {
-  display: flex;
-}
-.assignee-search {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  background: #f9f9fb;
-  display: flex;
-  gap: 5px;
-}
-.assignee-search input {
-  flex: 1;
-  font-size: 13px;
-  padding: 4px 8px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-}
-.user-item-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background 0.1s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  font-family: inherit;
-}
-.user-item-label:hover {
-  background: #f4f6f8;
-}
-.user-avatar-small {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #e2e3e9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.user-avatar-small img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.user-item-name {
-  font-size: 14px;
-  color: #434456;
-}
-.new-issue-extras {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-.due-date-button {
-  width: 44px;
-  height: 38px;
-  border-radius: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  border: none;
-}
-.due-date-button input[type='date'] {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  z-index: 10;
-}
-.block-toggle {
-  width: 44px;
-  height: 38px;
-  background: #f8f9fb;
-  border-radius: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.2s;
-}
-.block-toggle.active {
-  background-color: #e3405c !important;
-}
-.block-toggle.active svg {
-  stroke: #ffffff !important;
-}
-.blocked-reason-input {
-  width: 100%;
-  margin-top: 10px;
-  padding: 8px 12px;
-  border: 1px solid #d8dee9;
-  border-radius: 3px;
-  font-size: 14px;
-  outline: none;
-  background: #fff;
-  box-sizing: border-box;
-}
-.new-issue-submit-wrap {
-  width: 740px;
-}
-.new-issue-submit {
-  width: 100%;
-  background: #7de8cc;
-  border: none;
-  border-radius: 3px;
-  height: 40px;
-  color: #0d4a34;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  font-family: inherit;
-}
-.new-issue-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
 }
 .new-issue-error {
-  color: #e3405c;
+  color: var(--color-critical);
   text-align: center;
   font-size: 14px;
+  font-weight: 600;
 }
 .new-issue-hint {
   font-size: 11px;
-  color: #70728f;
+  color: var(--text-secondary);
   font-style: italic;
   margin-top: -5px;
 }

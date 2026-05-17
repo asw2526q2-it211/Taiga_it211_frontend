@@ -38,6 +38,8 @@ export const IssueDetail: React.FC = () => {
 
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isWatchersModalOpen, setIsWatchersModalOpen] = useState(false);
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
+  const [blockReason, setBlockReason] = useState('Dependencies not met');
 
   // Helper to get avatar URL for a username
   const getUserAvatar = (username: string | null) => {
@@ -234,18 +236,28 @@ export const IssueDetail: React.FC = () => {
     try {
       if (issue.blocked) {
         await apiRequest(`issues/${issue.id}/unblock`, { method: 'POST' });
+        fetchAllData(); // Refresh to get activities and exact state
       } else {
-        const reason = prompt('Please provide a reason for blocking this issue:', 'Dependencies not met');
-        if (reason === null) return; // User cancelled
-        await apiRequest(`issues/${issue.id}/block`, { 
-          method: 'POST',
-          body: { reason }
-        });
+        setIsBlockModalOpen(true);
       }
-      fetchAllData(); // Refresh to get activities and exact state
     } catch (error) {
       console.error(error);
       alert('Error changing block status');
+    }
+  };
+
+  const handleBlockConfirm = async () => {
+    if (!issue) return;
+    try {
+      await apiRequest(`issues/${issue.id}/block`, { 
+        method: 'POST',
+        body: { reason: blockReason }
+      });
+      setIsBlockModalOpen(false);
+      fetchAllData(); // Refresh to get activities and exact state
+    } catch (error) {
+      console.error(error);
+      alert('Error blocking issue');
     }
   };
 
@@ -1178,11 +1190,48 @@ export const IssueDetail: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button onClick={handleToggleBlock} title={issue.blocked ? "Unblock Issue" : "Block Issue"} style={{ backgroundColor: issue.blocked ? 'var(--color-normal)' : 'var(--color-bug)', color: 'white', border: 'none', borderRadius: '4px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-            {issue.blocked ? '🔓' : '🔒'}
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+          <button 
+            onClick={handleToggleBlock} 
+            title={issue.blocked ? "Unblock Issue" : "Block Issue"} 
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              backgroundColor: issue.blocked ? 'var(--color-normal)' : 'rgba(239, 68, 68, 0.12)', 
+              color: issue.blocked ? '#fff' : 'rgb(220, 38, 38)', 
+              border: issue.blocked ? 'none' : '1px solid rgba(239, 68, 68, 0.3)', 
+              borderRadius: '8px', 
+              padding: '0.5rem 1rem', 
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              flex: 1,
+              transition: 'all 0.2s ease',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }}
+          >
+            <span>{issue.blocked ? '🔓 Unblock' : '🔒 Block'}</span>
           </button>
-          <button onClick={handleDelete} title="Delete Issue" style={{ backgroundColor: '#f4f6f8', color: 'var(--color-critical)', border: '1px solid var(--border-color)', borderRadius: '4px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button 
+            onClick={handleDelete} 
+            title="Delete Issue" 
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(74, 85, 104, 0.08)', 
+              color: 'var(--color-critical)', 
+              border: '1px solid var(--border-color)', 
+              borderRadius: '8px', 
+              width: '38px', 
+              height: '38px', 
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }}
+          >
             🗑
           </button>
         </div>
@@ -1208,6 +1257,78 @@ export const IssueDetail: React.FC = () => {
         isMultiple={true}
         onAdd={handleWatchersChange}
       />
+
+      {/* Block Reason Modal */}
+      {isBlockModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-container" style={{ maxWidth: '420px' }}>
+            <div className="modal-header">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                <span>🔒</span> Block Issue
+              </h3>
+              <button onClick={() => setIsBlockModalOpen(false)} className="modal-close-btn">✕</button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                Please enter a reason for blocking this issue. This reason will be logged and visible in the activity timeline.
+              </p>
+              <input 
+                type="text" 
+                placeholder="Dependencies not met / Missing credentials..." 
+                value={blockReason}
+                onChange={e => setBlockReason(e.target.value)}
+                style={{ 
+                  width: '100%', 
+                  padding: '0.65rem 0.75rem', 
+                  borderRadius: '8px', 
+                  border: '1px solid var(--border-color)', 
+                  fontSize: '0.875rem',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                  backgroundColor: 'var(--bg-surface)',
+                  color: 'var(--text-primary)',
+                  boxSizing: 'border-box'
+                }}
+                autoFocus
+                required
+              />
+            </div>
+            <div className="modal-footer" style={{ gap: '0.5rem', justifyContent: 'flex-end', padding: '1rem 1.5rem', borderTop: '1px solid var(--border-color)' }}>
+              <button 
+                onClick={() => setIsBlockModalOpen(false)} 
+                style={{
+                  background: 'none',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 1.25rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  color: 'var(--text-secondary)'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleBlockConfirm}
+                style={{ 
+                  backgroundColor: 'rgb(220, 38, 38)', 
+                  color: 'white',
+                  fontWeight: 700,
+                  borderRadius: '8px',
+                  padding: '0.5rem 1.5rem',
+                  fontSize: '0.85rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                }}
+              >
+                BLOCK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

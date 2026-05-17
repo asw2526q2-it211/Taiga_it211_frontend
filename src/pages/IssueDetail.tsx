@@ -51,6 +51,60 @@ export const IssueDetail: React.FC = () => {
     return user.avatar;
   };
 
+  const getUserDisplayName = (username: string) => {
+    const u = users.find(user => user.username === username);
+    if (u && (u.first_name || u.last_name)) {
+      return `${u.first_name || ''} ${u.last_name || ''}`.trim();
+    }
+    return username;
+  };
+
+  const formatActivityDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = d.getDate();
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${day} ${month} ${year} ${hours}:${minutes}`;
+  };
+
+  const formatActivity = (act: { field: string; old: string | null; new: string | null }) => {
+    let badge = act.field;
+    let text = '';
+
+    if (act.field === 'comment_added') {
+      badge = 'comment added';
+      text = act.new || '';
+    } else if (act.field === 'comment_edited') {
+      badge = 'comment edited';
+      text = act.new || '';
+    } else if (act.field === 'comment_deleted') {
+      badge = 'comment deleted';
+      text = act.old || '';
+    } else if (act.field === 'tags_added') {
+      badge = 'tag added';
+      text = act.new || '';
+    } else if (act.field === 'tags_removed') {
+      badge = 'tag removed';
+      text = act.old || '';
+    } else if (act.field === 'attachment_added') {
+      badge = 'attachment added';
+      text = act.new || '';
+    } else if (act.field === 'attachment_deleted') {
+      badge = 'attachment deleted';
+      text = act.old || '';
+    } else {
+      badge = `${act.field} changed`;
+      const oldVal = act.old || 'none';
+      const newVal = act.new || 'none';
+      text = `from ${oldVal} to ${newVal}`;
+    }
+
+    return { badge, text };
+  };
+
   const fetchAllData = React.useCallback(async () => {
     if (!id) return;
     setLoading(true);
@@ -747,13 +801,55 @@ export const IssueDetail: React.FC = () => {
               </div>
             )}
             {activeTab === 'activities' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {issue.activities.map(act => (
-                  <div key={act.id} style={{ fontSize: '0.9rem', padding: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-                    <strong style={{ color: 'var(--color-teal)' }}>{act.user}</strong> changed <strong>{act.field}</strong> from <em style={{ color: 'var(--color-bug)' }}>{act.old || 'null'}</em> to <em style={{ color: 'var(--color-enhancement)' }}>{act.new || 'null'}</em>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>{new Date(act.created_at).toLocaleString()}</div>
-                  </div>
-                ))}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {issue.activities.map(act => {
+                  const { badge, text } = formatActivity(act);
+                  const displayName = getUserDisplayName(act.user);
+                  const avatarUrl = getUserAvatar(act.user);
+
+                  return (
+                    <div key={act.id} style={{ display: 'flex', gap: '1rem', padding: '1rem 0', borderBottom: '1px solid var(--border-color)' }}>
+                      {/* Avatar */}
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#eee', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={act.user} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontWeight: 'bold', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                            {act.user.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Content details */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: 1 }}>
+                        {/* Header: User Display Name & Time */}
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', fontSize: '0.85rem' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--color-teal)' }}>{displayName}</span>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{formatActivityDate(act.created_at)}</span>
+                        </div>
+
+                        {/* Action badge & text */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <span style={{ 
+                            backgroundColor: '#e9ecef', 
+                            color: '#495057', 
+                            padding: '0.15rem 0.5rem', 
+                            borderRadius: '4px', 
+                            fontSize: '0.7rem', 
+                            fontWeight: 700,
+                            textTransform: 'lowercase',
+                            letterSpacing: '0.025em'
+                          }}>
+                            {badge}
+                          </span>
+                          <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', wordBreak: 'break-all' }}>
+                            {text}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

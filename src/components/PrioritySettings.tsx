@@ -34,7 +34,7 @@ export const PrioritySettings: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
 
   /* ── Carregar llistat ── */
-  const fetchPriorities = useCallback(async () => {
+  const fetchPriorities = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -46,11 +46,27 @@ export const PrioritySettings: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchPriorities();
-  }, [fetchPriorities]);
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await apiRequest<PriorityResource[]>('priorities/');
+        if (!cancelled) {
+          data.sort((a, b) => a.order - b.order);
+          setPriorities(data);
+        }
+      } catch (err: unknown) {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to fetch priorities');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   /* ── Reordenar (drag & drop) ── */
   const handleReorder = useCallback(
@@ -89,7 +105,7 @@ export const PrioritySettings: React.FC = () => {
         await fetchPriorities();
       }
     },
-    [fetchPriorities],
+    [],
   );
 
   const {

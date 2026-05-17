@@ -36,7 +36,7 @@ export const StatusSettings: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
 
   /* ── Carregar llistat ── */
-  const fetchStatuses = useCallback(async () => {
+  const fetchStatuses = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -48,11 +48,27 @@ export const StatusSettings: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchStatuses();
-  }, [fetchStatuses]);
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await apiRequest<StatusResource[]>('statuses/');
+        if (!cancelled) {
+          data.sort((a, b) => a.order - b.order);
+          setStatuses(data);
+        }
+      } catch (err: unknown) {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to fetch statuses');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   /* ── Reordenar (drag & drop) ── */
   const handleReorder = useCallback(
@@ -100,7 +116,7 @@ export const StatusSettings: React.FC = () => {
         await fetchStatuses();
       }
     },
-    [fetchStatuses],
+    [],
   );
 
   const {

@@ -34,7 +34,7 @@ export const TypeSettings: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
 
   /* ── Carregar llistat ── */
-  const fetchTypes = useCallback(async () => {
+  const fetchTypes = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -46,11 +46,27 @@ export const TypeSettings: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchTypes();
-  }, [fetchTypes]);
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await apiRequest<TypeResource[]>('types/');
+        if (!cancelled) {
+          data.sort((a, b) => a.order - b.order);
+          setTypes(data);
+        }
+      } catch (err: unknown) {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to fetch types');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   /* ── Reordenar (drag & drop) ── */
   const handleReorder = useCallback(
@@ -89,7 +105,7 @@ export const TypeSettings: React.FC = () => {
         await fetchTypes();
       }
     },
-    [fetchTypes],
+    [],
   );
 
   const {

@@ -11,8 +11,6 @@ import type {
   StatusResource,
   TagResource,
 } from '../types/api'
-import { TaigaSelect } from '../components/TaigaSelect'
-import { getDueDateButtonStyle } from '../utils/dueDateStyle'
 import { useAuth } from '../context/AuthContext'
 import { UserSelectionModal } from '../components/UserSelectionModal'
 
@@ -122,7 +120,6 @@ export const NewIssue: React.FC = () => {
   }
 
   const selectedUser = users.find((u) => u.username === assigneeUsername) ?? null
-  const dueDateStyle = getDueDateButtonStyle(dueDate, dueDateRules)
   const attachmentCount = attachedFiles.length
 
   const handleSelectFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -682,7 +679,6 @@ export const NewIssue: React.FC = () => {
 
                   let color = '#718096'; // Neutral slate gray
                   let text = 'No due date';
-                  let name = 'No limit';
                   let bg = '#f3f4f6';
 
                   if (dueDate) {
@@ -711,7 +707,8 @@ export const NewIssue: React.FC = () => {
                     }
 
                     color = matchedRule.color;
-                    name = matchedRule.name;
+                    const ruleName = matchedRule.name; // used if needed in tooltip
+                    void ruleName;
                     bg = `${color}15`;
 
                     if (diffDays === 0) {
@@ -849,6 +846,7 @@ export const NewIssue: React.FC = () => {
         onClose={() => setIsAssignModalOpen(false)}
         title="Add assigned"
         users={users.map(u => ({
+          id: u.id,
           username: u.username,
           avatar: u.avatar ? (u.avatar.startsWith('/') ? `https://taiga-it211.onrender.com${u.avatar}` : u.avatar) : null,
           first_name: u.first_name,

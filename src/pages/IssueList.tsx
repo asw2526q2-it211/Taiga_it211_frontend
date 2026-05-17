@@ -383,6 +383,9 @@ export const IssueList: React.FC = () => {
 
           <button
             type="button"
+            onClick={() => navigate('/issues/bulk')}
+            title="Bulk Insert"
+            aria-label="Bulk Insert"
             style={{
               backgroundColor: '#edf2f7',
               border: 'none',
@@ -393,7 +396,8 @@ export const IssueList: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               color: 'var(--text-secondary)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'background-color 0.2s ease, color 0.2s ease',
             }}
           >
             <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, stroke: 'currentColor', fill: 'none', strokeWidth: 2.5 }}>

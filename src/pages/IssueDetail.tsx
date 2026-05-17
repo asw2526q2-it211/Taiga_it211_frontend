@@ -71,8 +71,8 @@ export const IssueDetail: React.FC = () => {
   };
 
   const formatActivity = (act: { field: string; old: string | null; new: string | null }) => {
-    let badge = act.field;
-    let text = '';
+    let badge: string;
+    let text: string;
 
     if (act.field === 'comment_added') {
       badge = 'comment added';

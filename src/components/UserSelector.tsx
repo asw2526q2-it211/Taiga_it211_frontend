@@ -20,7 +20,7 @@ export const UserSelector: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <label htmlFor="user-selector" style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)' }}>
+      <label htmlFor="user-selector" className="hide-mobile" style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)' }}>
         Viewing as:
       </label>
       <select

@@ -16,17 +16,32 @@ export interface User {
 export const MOCK_USERS: User[] = [
   { 
     id: 1, 
-    name: 'El meu Usuari (Joan)', 
+    name: 'Joan', 
     apiKey: env.apiKey || '30e4a9c5cb1aca0ad94ca39c5f138148eff0419b' 
   },
-  { 
-    id: 2, 
-    name: 'Admin User', 
+  {
+    id: 2,
+    name: 'Hadeer',
+    apiKey: 'api-key-placeholder'
+  },
+  {
+    id: 3,
+    name: 'Yimin',
+    apiKey: 'api-key-placeholder'
+  },
+  {
+    id: 4,
+    name: 'Lucas',
+    apiKey: 'api-key-placeholder'
+  },
+  {
+    id: 5,
+    name: 'Izan',
+    apiKey: 'api-key-placeholder'
+  },
+  {
+    id: 6, 
+    name: 'TEST-USER', 
     apiKey: 'admin-token-placeholder' 
-  },
-  { 
-    id: 3, 
-    name: 'Test User', 
-    apiKey: 'test-token-placeholder' 
-  },
+  }
 ];

@@ -207,6 +207,17 @@ export interface PriorityResource {
 }
 
 /**
+ * Representació d'un Type (tipus d'incidència) segons l'API.
+ */
+export interface TypeResource {
+  id: number;
+  name: string;
+  color: string;
+  order: number;
+  is_default: boolean;
+}
+
+/**
  * Representació d'un Status (estat d'incidència) segons l'API.
  */
 export interface StatusResource {

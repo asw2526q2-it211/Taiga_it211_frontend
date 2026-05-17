@@ -208,6 +208,17 @@ export interface PriorityResource {
 }
 
 /**
+ * Representació d'una Severity segons l'API.
+ */
+export interface SeverityResource {
+  id: number;
+  name: string;
+  color: string;
+  order: number;
+  is_default: boolean;
+}
+
+/**
  * Representació d'un Type (tipus d'incidència) segons l'API.
  */
 export interface TypeResource {

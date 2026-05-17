@@ -134,6 +134,13 @@ export interface TagResource {
   color: string;
 }
 
+/** Tag amb id per a la pantalla de configuració (GET /tags/). */
+export interface TagSettingResource {
+  id: number;
+  name: string;
+  color: string;
+}
+
 /**
  * Interfície que coincideix exactament amb el JSON que retorna el teu backend.
  */

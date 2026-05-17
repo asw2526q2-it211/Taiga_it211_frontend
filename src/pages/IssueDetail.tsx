@@ -40,6 +40,7 @@ export const IssueDetail: React.FC = () => {
   const [isWatchersModalOpen, setIsWatchersModalOpen] = useState(false);
   const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
   const [blockReason, setBlockReason] = useState('Dependencies not met');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Helper to get avatar URL for a username
   const getUserAvatar = (username: string | null) => {
@@ -218,16 +219,19 @@ export const IssueDetail: React.FC = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     if (!issue) return;
-    if (confirm('Are you sure you want to delete this issue?')) {
-      try {
-        await apiRequest(`issues/${issue.id}`, { method: 'DELETE' });
-        navigate('/');
-      } catch (error) {
-        console.error(error);
-        alert('Forbidden: Only the creator can delete this issue.');
-      }
+    try {
+      await apiRequest(`issues/${issue.id}`, { method: 'DELETE' });
+      setIsDeleteModalOpen(false);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      alert('Forbidden: Only the creator can delete this issue.');
     }
   };
 
@@ -1221,18 +1225,21 @@ export const IssueDetail: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: 'rgba(74, 85, 104, 0.08)', 
+              gap: '0.5rem',
+              backgroundColor: 'rgba(239, 68, 68, 0.08)', 
               color: 'var(--color-critical)', 
-              border: '1px solid var(--border-color)', 
+              border: '1px solid rgba(239, 68, 68, 0.2)', 
               borderRadius: '8px', 
-              width: '38px', 
-              height: '38px', 
+              padding: '0.5rem 1rem', 
+              fontSize: '0.85rem',
+              fontWeight: 600,
               cursor: 'pointer',
+              flex: 1,
               transition: 'all 0.2s ease',
               boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
             }}
           >
-            🗑
+            <span>🗑 Delete</span>
           </button>
         </div>
       </div>
@@ -1324,6 +1331,61 @@ export const IssueDetail: React.FC = () => {
                 }}
               >
                 BLOCK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-container" style={{ maxWidth: '420px' }}>
+            <div className="modal-header">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: 'rgb(220, 38, 38)' }}>
+                <span>🗑</span> Delete Issue
+              </h3>
+              <button onClick={() => setIsDeleteModalOpen(false)} className="modal-close-btn">✕</button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: 600, lineHeight: '1.4' }}>
+                Are you absolutely sure you want to delete this issue?
+              </p>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                This action is permanent and cannot be undone. All comments, attachments, and activity timelines for this issue will be permanently deleted.
+              </p>
+            </div>
+            <div className="modal-footer" style={{ gap: '0.5rem', justifyContent: 'flex-end', padding: '1rem 1.5rem', borderTop: '1px solid var(--border-color)' }}>
+              <button 
+                onClick={() => setIsDeleteModalOpen(false)} 
+                style={{
+                  background: 'none',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 1.25rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  color: 'var(--text-secondary)'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDeleteConfirm}
+                style={{ 
+                  backgroundColor: 'rgb(220, 38, 38)', 
+                  color: 'white',
+                  fontWeight: 700,
+                  borderRadius: '8px',
+                  padding: '0.5rem 1.5rem',
+                  fontSize: '0.85rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                }}
+              >
+                DELETE PERMANENTLY
               </button>
             </div>
           </div>

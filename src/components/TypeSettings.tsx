@@ -55,14 +55,38 @@ export const TypeSettings: React.FC = () => {
   /* ── Reordenar (drag & drop) ── */
   const handleReorder = useCallback(
     async (itemId: number, newOrder: number) => {
+      // Optimistic local reorder
+      setTypes((prev) => {
+        const items = [...prev];
+        const draggedIndex = items.findIndex((it) => it.id === itemId);
+        if (draggedIndex === -1) return prev;
+
+        const originalTargetIndex = items.findIndex((it) => it.order === newOrder);
+        if (originalTargetIndex === -1) return prev;
+
+        const [draggedItem] = items.splice(draggedIndex, 1);
+
+        const targetIndex = draggedIndex < originalTargetIndex
+          ? originalTargetIndex - 1
+          : originalTargetIndex;
+
+        const insertAt = draggedIndex < originalTargetIndex
+          ? targetIndex + 1
+          : targetIndex;
+
+        items.splice(insertAt, 0, draggedItem);
+
+        return items.map((it, idx) => ({ ...it, order: idx + 1 }));
+      });
+
       try {
         await apiRequest<TypeResource>(`types/${itemId}/`, {
           method: 'PUT',
           body: { order: newOrder },
         });
-        await fetchTypes();
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Failed to reorder type');
+        await fetchTypes();
       }
     },
     [fetchTypes],

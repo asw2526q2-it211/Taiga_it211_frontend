@@ -57,14 +57,47 @@ export const StatusSettings: React.FC = () => {
   /* ── Reordenar (drag & drop) ── */
   const handleReorder = useCallback(
     async (itemId: number, newOrder: number) => {
+      // Optimistic local reorder: actualitza la llista visualment a l'instant
+      setStatuses((prev) => {
+        const items = [...prev];
+        const draggedIndex = items.findIndex((it) => it.id === itemId);
+        if (draggedIndex === -1) return prev;
+
+        // Original target index (before removal)
+        const originalTargetIndex = items.findIndex((it) => it.order === newOrder);
+        if (originalTargetIndex === -1) return prev;
+
+        // Treiem l'element arrossegat
+        const [draggedItem] = items.splice(draggedIndex, 1);
+
+        // After removal, if the dragged item was before the target,
+        // the target shifted left by 1.
+        const targetIndex = draggedIndex < originalTargetIndex
+          ? originalTargetIndex - 1
+          : originalTargetIndex;
+
+        // If dragging DOWN (dragged was above target), insert AFTER target.
+        // If dragging UP   (dragged was below target), insert BEFORE target.
+        const insertAt = draggedIndex < originalTargetIndex
+          ? targetIndex + 1
+          : targetIndex;
+
+        items.splice(insertAt, 0, draggedItem);
+
+        // Reassignem els order perquè siguin 1-based consecutius
+        return items.map((it, idx) => ({ ...it, order: idx + 1 }));
+      });
+
+      // Petició al backend en background
       try {
         await apiRequest<StatusResource>(`statuses/${itemId}/`, {
           method: 'PUT',
           body: { order: newOrder },
         });
-        await fetchStatuses();
       } catch (err: unknown) {
+        // Si falla, refem la llista per tornar a un estat consistent
         setError(err instanceof Error ? err.message : 'Failed to reorder status');
+        await fetchStatuses();
       }
     },
     [fetchStatuses],

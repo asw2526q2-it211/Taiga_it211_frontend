@@ -116,7 +116,20 @@ export const IssueList: React.FC = () => {
           }
         }
         const issuesRes = await apiRequest<Issue[]>(url);
-        setIssues(issuesRes);
+
+        // Enrich loaded issues with their creator from the detail endpoint to support "Created by" filter without touching the backend
+        const enrichedIssues = await Promise.all(
+          issuesRes.map(async (issue) => {
+            try {
+              const detail = await apiRequest<{ created_by: string }>(`issues/${issue.id}/`);
+              return { ...issue, creator: detail.created_by };
+            } catch {
+              return { ...issue, creator: '' };
+            }
+          })
+        );
+
+        setIssues(enrichedIssues);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);

@@ -150,6 +150,7 @@ export interface Issue {
   due_date: string | null;  // ISO Date
   is_blocked?: boolean;     // Opcional segons la versió
   tags: TagResource[];
+  creator?: string;         // Enriquit a la part de client des del detall de la incidència
 }
 
 export interface Attachment {

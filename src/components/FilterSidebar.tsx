@@ -95,27 +95,69 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   return (
     <div className="glass-panel" style={{ padding: '1.25rem', width: '100%', boxSizing: 'border-box' }}>
       {/* Títol i botons d'acció */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
         <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>Custom filters</h3>
-        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-          {hasActiveFilters && (
-            <button 
-              type="button"
-              onClick={onClear} 
-              style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', padding: 0 }}
-            >
-              clear
-            </button>
-          )}
-          <button 
-            type="button"
-            onClick={onApply} 
-            style={{ background: 'none', border: 'none', color: 'var(--color-teal)', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer', padding: 0, textTransform: 'lowercase' }}
-          >
-            apply
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onApply}
+          style={{
+            background: 'var(--color-teal)',
+            border: 'none',
+            color: 'white',
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            padding: '0.3rem 0.75rem',
+            borderRadius: '6px',
+          }}
+        >
+          Apply
+        </button>
       </div>
+
+      {/* Reset button — always visible */}
+      <button
+        type="button"
+        onClick={onClear}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.4rem',
+          width: '100%',
+          padding: '0.45rem 0.75rem',
+          marginBottom: '1rem',
+          borderRadius: '8px',
+          border: hasActiveFilters ? '1px solid rgba(239,68,68,0.4)' : '1px solid var(--border-color)',
+          background: hasActiveFilters ? 'rgba(239,68,68,0.08)' : 'rgba(0,0,0,0.03)',
+          color: hasActiveFilters ? '#ef4444' : 'var(--text-secondary)',
+          fontSize: '0.78rem',
+          fontWeight: 600,
+          cursor: 'pointer',
+          transition: 'all 0.15s ease',
+          boxSizing: 'border-box',
+        }}
+      >
+        <svg viewBox="0 0 24 24" style={{ width: 13, height: 13, stroke: 'currentColor', fill: 'none', strokeWidth: 2.5 }}>
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+        Reset filters
+        {hasActiveFilters && (
+          <span style={{
+            marginLeft: '0.2rem',
+            background: '#ef4444',
+            color: 'white',
+            borderRadius: '10px',
+            padding: '0 0.35rem',
+            fontSize: '0.65rem',
+            fontWeight: 700,
+            lineHeight: '1.4',
+          }}>
+            {Object.values(draftFilters).filter(arr => arr.length > 0).length}
+          </span>
+        )}
+      </button>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         

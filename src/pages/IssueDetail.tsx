@@ -25,6 +25,8 @@ export const IssueDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'comments' | 'activities'>('comments');
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [descInput, setDescInput] = useState('');
+  const [isEditingSubject, setIsEditingSubject] = useState(false);
+  const [subjectInput, setSubjectInput] = useState('');
   const [newComment, setNewComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [commentDraft, setCommentDraft] = useState('');
@@ -65,6 +67,7 @@ export const IssueDetail: React.FC = () => {
       setPriorities(prioData);
       setUsers(userData);
       setDescInput(issueData.description || '');
+      setSubjectInput(issueData.subject || '');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to fetch issue details');
     } finally {
@@ -289,11 +292,59 @@ export const IssueDetail: React.FC = () => {
           ← Back to issues
         </Link>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }} onDoubleClick={() => setIsEditingSubject(true)}>
           <span style={{ color: 'var(--color-teal)', fontSize: '2rem', fontWeight: 300 }}>#{issue.id}</span>
-          <h1 style={{ margin: 0, fontSize: '2rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-            {issue.subject}
-          </h1>
+          {isEditingSubject ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+              <input
+                type="text"
+                value={subjectInput}
+                onChange={e => setSubjectInput(e.target.value)}
+                style={{
+                  fontSize: '2rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--color-teal)',
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  width: '100%',
+                  fontFamily: 'inherit',
+                  backgroundColor: 'var(--bg-surface)'
+                }}
+                autoFocus
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    handleUpdateField('subject', subjectInput);
+                    setIsEditingSubject(false);
+                  } else if (e.key === 'Escape') {
+                    setIsEditingSubject(false);
+                    setSubjectInput(issue.subject);
+                  }
+                }}
+              />
+              <button 
+                onClick={() => { handleUpdateField('subject', subjectInput); setIsEditingSubject(false); }} 
+                className="sidebar-btn" 
+                style={{ backgroundColor: 'var(--color-teal)', color: 'white', padding: '0.25rem 0.75rem', height: '36px' }}
+              >
+                Save
+              </button>
+              <button 
+                onClick={() => { setIsEditingSubject(false); setSubjectInput(issue.subject); }} 
+                className="sidebar-btn"
+                style={{ padding: '0.25rem 0.75rem', height: '36px' }}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <h1 
+              title="Doble clic per editar el títol" 
+              style={{ margin: 0, fontSize: '2rem', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer' }}
+            >
+              {issue.subject}
+            </h1>
+          )}
         </div>
 
         {issue.blocked && (

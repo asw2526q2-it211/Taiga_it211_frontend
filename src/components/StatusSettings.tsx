@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiRequest } from '../services/client';
 import type { StatusResource } from '../types/api';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import '../styles/settings.css';
 
 /* ─── Estat intern per al formulari d'edició ─── */
@@ -52,6 +53,31 @@ export const StatusSettings: React.FC = () => {
   useEffect(() => {
     fetchStatuses();
   }, [fetchStatuses]);
+
+  /* ── Reordenar (drag & drop) ── */
+  const handleReorder = useCallback(
+    async (itemId: number, newOrder: number) => {
+      try {
+        await apiRequest<StatusResource>(`statuses/${itemId}/`, {
+          method: 'PUT',
+          body: { order: newOrder },
+        });
+        await fetchStatuses();
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to reorder status');
+      }
+    },
+    [fetchStatuses],
+  );
+
+  const {
+    draggedId,
+    dropTargetId,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+    handleDrop,
+  } = useDragAndDrop({ items: statuses, onReorder: handleReorder });
 
   /* ── Tancar formulari ── */
   const resetForm = () => {
@@ -190,10 +216,17 @@ export const StatusSettings: React.FC = () => {
         ) : (
           statuses.map((st) => {
             const isEditingThis = editing.id === st.id && !showAddForm;
+            const isDragging = draggedId === st.id;
+            const isDropTarget = dropTargetId === st.id;
             return (
               <div
                 key={st.id}
-                className={`statuses-row${isEditingThis ? ' is-editing' : ''}`}
+                className={`statuses-row${isEditingThis ? ' is-editing' : ''}${isDragging ? ' is-dragging' : ''}${isDropTarget ? ' drag-over' : ''}`}
+                draggable={!isEditingThis}
+                onDragStart={!isEditingThis ? handleDragStart(st.id) : undefined}
+                onDragOver={!isEditingThis ? handleDragOver(st.id) : undefined}
+                onDrop={!isEditingThis ? handleDrop(st.id) : undefined}
+                onDragEnd={!isEditingThis ? handleDragEnd : undefined}
               >
                 {isEditingThis ? (
                   /* ── Formulari inline d'edició ── */

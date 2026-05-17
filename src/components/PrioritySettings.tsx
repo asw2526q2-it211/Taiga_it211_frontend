@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiRequest } from '../services/client';
 import type { PriorityResource } from '../types/api';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import '../styles/settings.css';
 
 /* ─── Estat intern per al formulari d'edició ─── */
@@ -50,6 +51,31 @@ export const PrioritySettings: React.FC = () => {
   useEffect(() => {
     fetchPriorities();
   }, [fetchPriorities]);
+
+  /* ── Reordenar (drag & drop) ── */
+  const handleReorder = useCallback(
+    async (itemId: number, newOrder: number) => {
+      try {
+        await apiRequest<PriorityResource>(`priorities/${itemId}/`, {
+          method: 'PUT',
+          body: { order: newOrder },
+        });
+        await fetchPriorities();
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to reorder priority');
+      }
+    },
+    [fetchPriorities],
+  );
+
+  const {
+    draggedId,
+    dropTargetId,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+    handleDrop,
+  } = useDragAndDrop({ items: priorities, onReorder: handleReorder });
 
   /* ── Tancar formulari ── */
   const resetForm = () => {
@@ -178,10 +204,17 @@ export const PrioritySettings: React.FC = () => {
         ) : (
           priorities.map((p) => {
             const isEditingThis = editing.id === p.id && !showAddForm;
+            const isDragging = draggedId === p.id;
+            const isDropTarget = dropTargetId === p.id;
             return (
               <div
                 key={p.id}
-                className={`priorities-row${isEditingThis ? ' is-editing' : ''}`}
+                className={`priorities-row${isEditingThis ? ' is-editing' : ''}${isDragging ? ' is-dragging' : ''}${isDropTarget ? ' drag-over' : ''}`}
+                draggable={!isEditingThis}
+                onDragStart={!isEditingThis ? handleDragStart(p.id) : undefined}
+                onDragOver={!isEditingThis ? handleDragOver(p.id) : undefined}
+                onDrop={!isEditingThis ? handleDrop(p.id) : undefined}
+                onDragEnd={!isEditingThis ? handleDragEnd : undefined}
               >
                 {isEditingThis ? (
                   /* ── Formulari inline d'edició ── */

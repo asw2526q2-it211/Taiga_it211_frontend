@@ -210,6 +210,11 @@
   font-size: 15px;
   text-align: center;
   user-select: none;
+  cursor: grab;
+}
+
+.set-drag-handle:active {
+  cursor: grabbing;
 }
 
 .set-color-swatch {
@@ -293,6 +298,18 @@
   gap: 10px;
   justify-content: flex-end;
   align-items: center;
+}
+
+/* ─── Drag & Drop ─── */
+.is-dragging {
+  opacity: 0.4;
+  background: var(--set-bg-row-hover, #eef0f8) !important;
+}
+
+.drag-over {
+  border-top: 2px solid var(--set-accent, #009aa6) !important;
+  border-bottom: 2px solid var(--set-accent, #009aa6) !important;
+  background: var(--set-bg-row-hover, #f0fafa) !important;
 }
 
 .set-action-btn {

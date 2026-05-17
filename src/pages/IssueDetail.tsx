@@ -860,15 +860,70 @@ export const IssueDetail: React.FC = () => {
       <div className="issue-sidebar">
         
         {/* Status */}
-        <div style={{ marginBottom: '2rem' }}>
-          <select 
-            value={issue.status || ''} 
-            onChange={(e) => handleUpdateField('status', e.target.value)}
-            style={{ fontSize: '1.25rem', fontWeight: 600, padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', width: '100%', backgroundColor: 'var(--bg-surface)' }}
-          >
-            {statuses.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-          </select>
-        </div>
+        {(() => {
+          const currentStatusItem = statuses.find(s => s.name === issue.status);
+          const statusColor = currentStatusItem?.color || '#cccccc';
+          const isClosed = currentStatusItem?.closed || false;
+          
+          return (
+            <div style={{ marginBottom: '2rem' }}>
+              <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</h4>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <select 
+                  value={issue.status || ''} 
+                  onChange={(e) => handleUpdateField('status', e.target.value)}
+                  style={{ 
+                    fontSize: '1.1rem', 
+                    fontWeight: 700, 
+                    padding: '0.45rem 2.25rem 0.45rem 1rem', 
+                    borderRadius: '24px', 
+                    border: `2px solid ${statusColor}`, 
+                    backgroundColor: `${statusColor}18`,
+                    color: 'var(--text-primary)',
+                    cursor: 'pointer',
+                    transition: 'all 0.25s ease',
+                    outline: 'none',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 0.75rem center',
+                    backgroundSize: '0.7em',
+                    minWidth: '150px',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                  }}
+                >
+                  {statuses.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                </select>
+
+                <span style={{
+                  backgroundColor: isClosed ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+                  color: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '16px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  border: `1px solid ${isClosed ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`,
+                  transition: 'all 0.25s ease'
+                }}>
+                  <span style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                    transition: 'all 0.25s ease'
+                  }} />
+                  {isClosed ? 'Closed' : 'Open'}
+                </span>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Properties list */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>

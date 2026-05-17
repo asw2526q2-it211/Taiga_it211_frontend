@@ -20,6 +20,7 @@ export const IssueDetail: React.FC = () => {
   const [severities, setSeverities] = useState<SeverityItem[]>([]);
   const [priorities, setPriorities] = useState<PriorityItem[]>([]);
   const [users, setUsers] = useState<UserResource[]>([]);
+  const [globalTags, setGlobalTags] = useState<{ id: number; name: string; color: string }[]>([]);
 
   // Local UI State
   const [activeTab, setActiveTab] = useState<'comments' | 'activities'>('comments');
@@ -27,6 +28,9 @@ export const IssueDetail: React.FC = () => {
   const [descInput, setDescInput] = useState('');
   const [isEditingSubject, setIsEditingSubject] = useState(false);
   const [subjectInput, setSubjectInput] = useState('');
+  const [isAddingTag, setIsAddingTag] = useState(false);
+  const [tagInput, setTagInput] = useState('');
+  const [tagColor, setTagColor] = useState('#14a38e');
   const [newComment, setNewComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [commentDraft, setCommentDraft] = useState('');
@@ -52,13 +56,14 @@ export const IssueDetail: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const [issueData, statusData, typeData, sevData, prioData, userData] = await Promise.all([
+      const [issueData, statusData, typeData, sevData, prioData, userData, tagsData] = await Promise.all([
         apiRequest<DetailedIssue>(`issues/${id}`),
         apiRequest<StatusItem[]>('statuses'),
         apiRequest<TypeItem[]>('types'),
         apiRequest<SeverityItem[]>('severities'),
         apiRequest<PriorityItem[]>('priorities'),
-        apiRequest<UserResource[]>('users')
+        apiRequest<UserResource[]>('users'),
+        apiRequest<{ id: number; name: string; color: string }[]>('tags')
       ]);
       setIssue(issueData);
       setStatuses(statusData);
@@ -66,6 +71,7 @@ export const IssueDetail: React.FC = () => {
       setSeverities(sevData);
       setPriorities(prioData);
       setUsers(userData);
+      setGlobalTags(tagsData);
       setDescInput(issueData.description || '');
       setSubjectInput(issueData.subject || '');
     } catch (err: unknown) {
@@ -92,6 +98,64 @@ export const IssueDetail: React.FC = () => {
     } catch (error) {
       console.error(error);
       alert('Error updating issue');
+    }
+  };
+
+  const handleAddTag = async (tagName: string, selectedColor: string) => {
+    if (!issue) return;
+    const trimmed = tagName.trim();
+    if (!trimmed) return;
+    
+    try {
+      // Check if tag already exists globally
+      const existingTag = globalTags.find(t => t.name.toLowerCase() === trimmed.toLowerCase());
+      
+      if (existingTag) {
+        // If it exists but has a different color, update its color globally
+        if (existingTag.color !== selectedColor) {
+          await apiRequest(`tags/${existingTag.id}`, {
+            method: 'PUT',
+            body: { color: selectedColor }
+          });
+        }
+      } else {
+        // Create the tag globally first
+        await apiRequest('tags', {
+          method: 'POST',
+          body: { name: trimmed, color: selectedColor }
+        });
+      }
+      
+      // Associate the tag with the issue (only if it wasn't already in the issue's tags)
+      if (!issue.tags.some(t => t.name.toLowerCase() === trimmed.toLowerCase())) {
+        const newTagsList = [...issue.tags.map(t => t.name), trimmed];
+        const updated = await apiRequest<DetailedIssue>(`issues/${issue.id}`, {
+          method: 'PUT',
+          body: { tags: newTagsList }
+        });
+        setIssue(updated);
+      }
+      
+      // Refresh global tags and issue details
+      fetchAllData();
+    } catch (error) {
+      console.error(error);
+      alert('Error adding tag');
+    }
+  };
+
+  const handleRemoveTag = async (tagNameToRemove: string) => {
+    if (!issue) return;
+    const newTagsList = issue.tags.map(t => t.name).filter(t => t !== tagNameToRemove);
+    try {
+      const updated = await apiRequest<DetailedIssue>(`issues/${issue.id}`, {
+        method: 'PUT',
+        body: { tags: newTagsList }
+      });
+      setIssue(updated);
+    } catch (error) {
+      console.error(error);
+      alert('Error removing tag');
     }
   };
 
@@ -353,14 +417,181 @@ export const IssueDetail: React.FC = () => {
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase' }}>Issue</h4>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button style={{ background: '#e0f2f1', border: 'none', color: 'var(--color-teal)', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}>Add tag +</button>
-              {issue.tags.map((tag, idx) => (
-                <span key={idx} style={{ backgroundColor: tag.color || 'var(--color-teal)', color: '#fff', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem' }}>{tag.name}</span>
-              ))}
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              {isAddingTag ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <input
+                    type="color"
+                    value={tagColor}
+                    onChange={e => setTagColor(e.target.value)}
+                    style={{
+                      border: 'none',
+                      width: '24px',
+                      height: '24px',
+                      cursor: 'pointer',
+                      padding: 0,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      backgroundColor: 'transparent'
+                    }}
+                    title="Choose tag color"
+                  />
+                  <input
+                    type="text"
+                    placeholder="new tag..."
+                    value={tagInput}
+                    onChange={e => setTagInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        handleAddTag(tagInput, tagColor);
+                        setTagInput('');
+                        setIsAddingTag(false);
+                      } else if (e.key === 'Escape') {
+                        setIsAddingTag(false);
+                        setTagInput('');
+                      }
+                    }}
+                    autoFocus
+                    style={{
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '4px',
+                      border: '1px solid var(--color-teal)',
+                      fontSize: '0.75rem',
+                      outline: 'none',
+                      fontFamily: 'inherit',
+                      width: '80px'
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      handleAddTag(tagInput, tagColor);
+                      setTagInput('');
+                      setIsAddingTag(false);
+                    }}
+                    style={{
+                      background: 'var(--color-teal)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '0.25rem 0.5rem',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✓
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsAddingTag(false);
+                      setTagInput('');
+                    }}
+                    style={{
+                      background: '#e0e0e0',
+                      color: 'var(--text-primary)',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '0.25rem 0.5rem',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✗
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAddingTag(true)}
+                  style={{
+                    background: '#e0f2f1',
+                    border: 'none',
+                    color: 'var(--color-teal)',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.75rem',
+                    fontWeight: 600
+                  }}
+                >
+                  Add tag +
+                </button>
+              )}
+              {issue.tags.map((tag, idx) => {
+                const tagInfo = globalTags.find(t => t.name.toLowerCase() === tag.name.toLowerCase());
+                return (
+                  <span
+                    key={idx}
+                    style={{
+                      backgroundColor: tag.color || 'var(--color-teal)',
+                      color: '#fff',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      position: 'relative'
+                    }}
+                  >
+                    {tagInfo ? (
+                      <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} title="Click to change tag color">
+                        {tag.name}
+                        <input
+                          type="color"
+                          value={tag.color || '#14a38e'}
+                          onChange={async (e) => {
+                            const newColor = e.target.value;
+                            try {
+                              await apiRequest(`tags/${tagInfo.id}`, {
+                                method: 'PUT',
+                                body: { color: newColor }
+                              });
+                              fetchAllData();
+                            } catch (err) {
+                              console.error(err);
+                              alert('Error updating tag color');
+                            }
+                          }}
+                          style={{
+                            width: 0,
+                            height: 0,
+                            opacity: 0,
+                            position: 'absolute',
+                            pointerEvents: 'none'
+                          }}
+                        />
+                      </label>
+                    ) : (
+                      tag.name
+                    )}
+                    <button
+                      onClick={() => handleRemoveTag(tag.name)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#fff',
+                        cursor: 'pointer',
+                        padding: 0,
+                        fontSize: '0.65rem',
+                        fontWeight: 'bold',
+                        marginLeft: '0.25rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(0,0,0,0.15)'
+                      }}
+                      title="Remove tag"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                );
+              })}
             </div>
           </div>
           <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>

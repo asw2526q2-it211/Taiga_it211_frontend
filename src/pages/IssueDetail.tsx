@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../services/client';
-import type { DetailedIssue, StatusItem, TypeItem, SeverityItem, PriorityItem, UserResource } from '../types/api';
+import { env } from '../config/env';
+import type { Attachment, DetailedIssue, StatusItem, TypeItem, SeverityItem, PriorityItem, UserResource } from '../types/api';
 import { useAuth } from '../context/AuthContext';
 import { UserSelectionModal } from '../components/UserSelectionModal';
 
@@ -107,6 +108,26 @@ export const IssueDetail: React.FC = () => {
     }
 
     return { badge, text };
+  };
+
+  const getAttachmentName = (attachment: Attachment) => {
+    if (!attachment.file) return `attachment-${attachment.id}`;
+
+    try {
+      const url = new URL(attachment.file, window.location.origin);
+      const filename = url.pathname.split('/').filter(Boolean).pop();
+      return filename ? decodeURIComponent(filename) : `attachment-${attachment.id}`;
+    } catch {
+      const filename = attachment.file.split('?')[0].split('/').filter(Boolean).pop();
+      return filename ? decodeURIComponent(filename) : `attachment-${attachment.id}`;
+    }
+  };
+
+  const getAttachmentDownloadUrl = (attachment: Attachment) =>
+    `${env.backendOrigin}/attachments/${attachment.id}/download/`;
+
+  const handleDownloadAttachment = (attachment: Attachment) => {
+    window.location.href = getAttachmentDownloadUrl(attachment);
   };
 
   const fetchAllData = React.useCallback(async () => {
@@ -826,12 +847,38 @@ export const IssueDetail: React.FC = () => {
           </div>
           {issue.attachments.length > 0 && (
             <div style={{ border: '1px solid var(--border-color)', borderTop: 'none', padding: '1rem', borderRadius: '0 0 4px 4px' }}>
-              {issue.attachments.map(att => (
-                <div key={att.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0' }}>
-                  <a href={att.file || '#'} target="_blank" rel="noreferrer" style={{ color: 'var(--color-teal)', textDecoration: 'none' }}>📄 Attachment {att.id}</a>
-                  <button onClick={() => handleDeleteAttachment(att.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>🗑</button>
-                </div>
-              ))}
+              {issue.attachments.map(att => {
+                const attachmentUrl = att.file ? getAttachmentDownloadUrl(att) : null;
+                const attachmentName = getAttachmentName(att);
+
+                return (
+                  <div key={att.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadAttachment(att)}
+                      disabled={!attachmentUrl}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--color-teal)',
+                        textDecoration: 'none',
+                        cursor: attachmentUrl ? 'pointer' : 'not-allowed',
+                        font: 'inherit',
+                        padding: 0,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        textAlign: 'left'
+                      }}
+                      title={`Download ${attachmentName}`}
+                    >
+                      <span>📄</span>
+                      <span>{attachmentName}</span>
+                    </button>
+                    <button onClick={() => handleDeleteAttachment(att.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>🗑</button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

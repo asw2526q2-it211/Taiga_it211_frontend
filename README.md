@@ -4,6 +4,8 @@ Frontend en **React + TypeScript + Vite** para el Issue Tracker del proyecto ASW
 
 El backend (Django) vive en el repositorio [Taiga_it211](https://github.com/asw2526q2-it211/Taiga_it211) y está desplegado en [Render](https://taiga-it211.onrender.com). Este proyecto consume su API REST en `/api`.
 
+El frontend está desplegado en [GitHub Pages](https://asw2526q2-it211.github.io/Taiga_it211_frontend/).
+
 ## Requisitos
 
 - [Node.js](https://nodejs.org/) 20+

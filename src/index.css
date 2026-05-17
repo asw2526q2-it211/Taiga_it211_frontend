@@ -43,6 +43,7 @@ body {
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 a {
@@ -397,4 +398,54 @@ button {
   cursor: pointer;
   letter-spacing: 0.5px;
 }
+
+/* Premium responsive grid system for Issues List */
+.issue-list-grid {
+  display: grid;
+  grid-template-columns: 70px 80px 80px 1fr 120px 120px 100px;
+  align-items: center;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .issue-list-grid {
+    grid-template-columns: 1fr 120px 100px;
+  }
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    padding: 0.75rem 1rem !important;
+    gap: 0.5rem !important;
+  }
+  .app-logo {
+    font-size: 0px !important; /* Hide "TAIGA IT211" text, keep logo icon */
+  }
+  .app-logo svg {
+    width: 26px !important;
+    height: 26px !important;
+  }
+  .issue-list-grid {
+    grid-template-columns: 1fr 90px 70px;
+  }
+  .hide-mobile {
+    display: none !important;
+  }
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0.5rem 0.75rem !important;
+  }
+  .issue-list-grid {
+    grid-template-columns: 1fr 80px 45px;
+  }
+}
+
 

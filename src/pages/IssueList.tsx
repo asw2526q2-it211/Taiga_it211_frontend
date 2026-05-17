@@ -347,11 +347,9 @@ export const IssueList: React.FC = () => {
               No issues found.
             </div>
           ) : (
-            <div style={{ minWidth: '850px' }}>
+            <div>
               {/* Capçaleres de Taula */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '70px 80px 80px 1fr 120px 120px 100px',
+              <div className="issue-list-grid hide-tablet" style={{
                 padding: '0.5rem 1rem',
                 marginBottom: '0.35rem',
                 opacity: 0.85
@@ -378,10 +376,8 @@ export const IssueList: React.FC = () => {
                   <div 
                     key={issue.id}
                     onClick={() => navigate(`/issues/${issue.id}`)}
+                    className="issue-list-grid"
                     style={{
-                      display: 'grid',
-                      gridTemplateColumns: '70px 80px 80px 1fr 120px 120px 100px',
-                      alignItems: 'center',
                       backgroundColor: 'var(--bg-surface)',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
@@ -403,7 +399,7 @@ export const IssueList: React.FC = () => {
                     }}
                   >
                     {/* 1. Type Dot */}
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="hide-tablet" style={{ display: 'flex', justifyContent: 'center' }}>
                       <span style={{
                         width: '10px',
                         height: '10px',
@@ -414,7 +410,7 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 2. Severity Dot */}
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="hide-tablet" style={{ display: 'flex', justifyContent: 'center' }}>
                       <span style={{
                         width: '10px',
                         height: '10px',
@@ -425,7 +421,7 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 3. Priority Dot */}
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="hide-tablet" style={{ display: 'flex', justifyContent: 'center' }}>
                       <span style={{
                         width: '10px',
                         height: '10px',
@@ -436,7 +432,7 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 4. Issue Info (Ref, Subject, Overdue Clock, Tags) */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', paddingRight: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem 0.5rem', overflow: 'hidden', paddingRight: '0.5rem', flexWrap: 'wrap' }}>
                       <span style={{ color: 'var(--color-teal)', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0 }}>
                         #{issue.id}
                       </span>
@@ -529,7 +525,7 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 6. Date Modified */}
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                    <div className="hide-tablet" style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
                       {formatDate(issue.modified)}
                     </div>
 

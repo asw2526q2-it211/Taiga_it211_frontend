@@ -916,18 +916,39 @@ const newIssueStyles = `
   gap: 40px;
   width: 100%;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .new-issue-left {
-  width: 440px;
+  flex: 1;
+  min-width: 300px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 .new-issue-right {
-  width: 260px;
+  width: 300px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+@media (max-width: 768px) {
+  .new-issue-columns {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .new-issue-right {
+    width: 100%;
+  }
+  .new-issue-close {
+    right: 20px !important;
+    top: 20px !important;
+  }
+  .new-issue-title {
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+  }
 }
 .new-issue-subject {
   width: 100%;

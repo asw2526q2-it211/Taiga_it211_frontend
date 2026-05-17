@@ -495,84 +495,119 @@ export const IssueDetail: React.FC = () => {
             <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase' }}>Issue</h4>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
               {isAddingTag ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <input
-                    type="color"
-                    value={tagColor}
-                    onChange={e => setTagColor(e.target.value)}
-                    style={{
-                      border: 'none',
-                      width: '24px',
-                      height: '24px',
-                      cursor: 'pointer',
-                      padding: 0,
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      backgroundColor: 'transparent'
-                    }}
-                    title="Choose tag color"
-                  />
-                  <input
-                    type="text"
-                    placeholder="new tag..."
-                    value={tagInput}
-                    onChange={e => setTagInput(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') {
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <input
+                      type="color"
+                      value={tagColor}
+                      onChange={e => setTagColor(e.target.value)}
+                      style={{
+                        border: 'none',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        padding: 0,
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        backgroundColor: 'transparent'
+                      }}
+                      title="Choose tag color"
+                    />
+                    <input
+                      type="text"
+                      placeholder="new tag..."
+                      value={tagInput}
+                      onChange={e => setTagInput(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          handleAddTag(tagInput, tagColor);
+                          setTagInput('');
+                          setIsAddingTag(false);
+                        } else if (e.key === 'Escape') {
+                          setIsAddingTag(false);
+                          setTagInput('');
+                        }
+                      }}
+                      autoFocus
+                      style={{
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '8px',
+                        border: '1px solid var(--color-teal)',
+                        fontSize: '0.75rem',
+                        outline: 'none',
+                        fontFamily: 'inherit',
+                        width: '90px'
+                      }}
+                    />
+                    <button
+                      onClick={() => {
                         handleAddTag(tagInput, tagColor);
                         setTagInput('');
                         setIsAddingTag(false);
-                      } else if (e.key === 'Escape') {
+                      }}
+                      style={{
+                        background: 'var(--color-teal)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '0.25rem 0.5rem',
+                        fontSize: '0.75rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ✓
+                    </button>
+                    <button
+                      onClick={() => {
                         setIsAddingTag(false);
                         setTagInput('');
-                      }
-                    }}
-                    autoFocus
-                    style={{
-                      padding: '0.25rem 0.5rem',
-                      borderRadius: '4px',
-                      border: '1px solid var(--color-teal)',
-                      fontSize: '0.75rem',
-                      outline: 'none',
-                      fontFamily: 'inherit',
-                      width: '80px'
-                    }}
-                  />
-                  <button
-                    onClick={() => {
-                      handleAddTag(tagInput, tagColor);
-                      setTagInput('');
-                      setIsAddingTag(false);
-                    }}
-                    style={{
-                      background: 'var(--color-teal)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      padding: '0.25rem 0.5rem',
-                      fontSize: '0.75rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    ✓
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsAddingTag(false);
-                      setTagInput('');
-                    }}
-                    style={{
-                      background: '#e0e0e0',
-                      color: 'var(--text-primary)',
-                      border: 'none',
-                      borderRadius: '4px',
-                      padding: '0.25rem 0.5rem',
-                      fontSize: '0.75rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    ✗
-                  </button>
+                      }}
+                      style={{
+                        background: '#e0e0e0',
+                        color: 'var(--text-primary)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '0.25rem 0.5rem',
+                        fontSize: '0.75rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ✗
+                    </button>
+                  </div>
+
+                  {/* Render available global tags that are not on the issue yet */}
+                  {globalTags.length > 0 && (
+                    <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: '0.25rem', opacity: 0.95 }}>
+                      {globalTags
+                        .filter(t => !issue.tags.some(it => it.name.toLowerCase() === t.name.toLowerCase()))
+                        .map(t => (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={async () => {
+                              await handleAddTag(t.name, t.color);
+                              setIsAddingTag(false);
+                            }}
+                            style={{
+                              borderColor: t.color,
+                              backgroundColor: `${t.color}15`,
+                              color: t.color,
+                              borderStyle: 'solid',
+                              borderWidth: '1px',
+                              borderRadius: '8px',
+                              padding: '0.2rem 0.45rem',
+                              fontSize: '0.7rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            {t.name}
+                          </button>
+                        ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <button
@@ -582,7 +617,7 @@ export const IssueDetail: React.FC = () => {
                     border: 'none',
                     color: 'var(--color-teal)',
                     padding: '0.25rem 0.5rem',
-                    borderRadius: '4px',
+                    borderRadius: '8px',
                     cursor: 'pointer',
                     fontSize: '0.75rem',
                     fontWeight: 600
@@ -593,15 +628,20 @@ export const IssueDetail: React.FC = () => {
               )}
               {issue.tags.map((tag, idx) => {
                 const tagInfo = globalTags.find(t => t.name.toLowerCase() === tag.name.toLowerCase());
+                const tagColorVal = tag.color || 'var(--color-teal)';
                 return (
                   <span
                     key={idx}
                     style={{
-                      backgroundColor: tag.color || 'var(--color-teal)',
-                      color: '#fff',
+                      borderColor: tagColorVal,
+                      backgroundColor: `${tagColorVal}15`,
+                      color: tagColorVal,
+                      borderStyle: 'solid',
+                      borderWidth: '1px',
                       padding: '0.25rem 0.5rem',
-                      borderRadius: '4px',
+                      borderRadius: '8px',
                       fontSize: '0.75rem',
+                      fontWeight: 700,
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.25rem',
@@ -613,7 +653,7 @@ export const IssueDetail: React.FC = () => {
                         {tag.name}
                         <input
                           type="color"
-                          value={tag.color || '#14a38e'}
+                          value={tagColorVal}
                           onChange={async (e) => {
                             const newColor = e.target.value;
                             try {
@@ -644,7 +684,7 @@ export const IssueDetail: React.FC = () => {
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: '#fff',
+                        color: tagColorVal,
                         cursor: 'pointer',
                         padding: 0,
                         fontSize: '0.65rem',
@@ -652,11 +692,7 @@ export const IssueDetail: React.FC = () => {
                         marginLeft: '0.25rem',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(0,0,0,0.15)'
+                        justifyContent: 'center'
                       }}
                       title="Remove tag"
                     >

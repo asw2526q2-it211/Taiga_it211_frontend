@@ -4,6 +4,7 @@ import { PrioritySettings } from '../components/PrioritySettings';
 import { TypeSettings } from '../components/TypeSettings';
 import { SeveritySettings } from '../components/SeveritySettings';
 import { TagSettings } from '../components/TagSettings';
+import { DueDateSettings } from '../components/DueDateSettings';
 import '../styles/settings.css';
 
 /* ─── Configuració de les pestanyes de configuració ─── */
@@ -42,7 +43,7 @@ export const SettingsPage: React.FC = () => {
       case 'tags':
         return <TagSettings />;
       case 'due-dates':
-        return <PlaceholderTab title="Due Dates" description="Manage due date presets." />;
+        return <DueDateSettings />;
       default:
         return <PlaceholderTab title="Settings" description="Select a tab from the sidebar." />;
     }

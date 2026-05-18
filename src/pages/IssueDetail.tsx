@@ -646,10 +646,10 @@ export const IssueDetail: React.FC = () => {
                                 || dueDates.find(r => r.name.toLowerCase() === 'default') 
                                 || { name: 'Default', color: '#009aa6' };
 
-              let color = 'var(--text-secondary)'; // Neutral slate gray
+              let color = 'var(--text-secondary)';
               let text = 'No due date';
               let name = 'No limit';
-              let bg = 'var(--bg-hover)';
+              let bg = 'var(--bg-surface)';
 
               if (issue.due_date) {
                 const today = new Date();

@@ -677,9 +677,9 @@ export const NewIssue: React.FC = () => {
                                     || dueDateRules.find(r => r.name.toLowerCase() === 'default') 
                                     || { name: 'Default', color: 'var(--accent)' };
 
-                  let color = 'var(--text-secondary)'; // Neutral slate gray
+                  let color = 'var(--text-secondary)';
                   let text = 'No due date';
-                  let bg = 'var(--bg-hover)';
+                  let bg = 'var(--bg-surface)';
 
                   if (dueDate) {
                     const today = new Date();

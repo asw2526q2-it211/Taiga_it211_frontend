@@ -1,23 +1,22 @@
 /* ═══════════════════════════════════════════════════════════════
-   settings.css — Estils compartits de les pàgines de configuració
+   settings.css — Estils de les pàgines de configuració
    
-   Tots els valors de color/ombra provenen de CSS custom properties
-   definides a :root. Per canviar de tema, només cal reassignar
-   aquestes variables (via applyTheme() o un full CSS).
+   Tots els colors utilitzen CSS custom properties globals
+   definides als fitxers de tema (themes/light.css, dark.css).
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Layout principal ─── */
 .settings-layout {
   display: flex;
   min-height: calc(100vh - 60px);
-  background: var(--set-bg-layout, #e8eaef);
+  background: var(--bg-layout);
   margin: -2rem;
 }
 
 .settings-sidebar {
-  width: var(--set-sidebar-width, 210px);
+  width: var(--sidebar-width);
   flex-shrink: 0;
-  background: var(--set-bg-tab-active, #dde0e8);
+  background: var(--bg-sidebar);
   padding: 32px 0;
   overflow-y: auto;
 }
@@ -25,7 +24,7 @@
 .settings-sidebar-title {
   font-size: 11px;
   font-weight: 700;
-  color: var(--set-sidebar-title-color, #9b9db0);
+  color: var(--text-tertiary);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0 24px 12px 24px;
@@ -51,9 +50,9 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--set-sidebar-text-color, #70728f);
+  color: var(--text-secondary);
   border: none;
-  border-bottom: 1px solid var(--set-tab-border-color, #d8dae3);
+  border-bottom: 1px solid var(--border-dark);
   background: none;
   cursor: pointer;
   transition: color 0.15s, background 0.15s;
@@ -61,26 +60,26 @@
 }
 
 .settings-tab-btn:first-child {
-  border-top: 1px solid var(--set-tab-border-color, #d8dae3);
+  border-top: 1px solid var(--border-dark);
 }
 
 .settings-tab-btn:hover {
-  color: var(--set-accent, #009aa6);
-  background: var(--set-bg-tab-active, #dde0e8);
+  color: var(--accent);
+  background: var(--bg-sidebar);
 }
 
 .settings-tab-btn.active {
-  color: var(--set-tab-active-text, #009aa6);
-  background: var(--set-bg-tab-active, #dde0e8);
+  color: var(--accent);
+  background: var(--bg-sidebar);
 }
 
 .settings-content {
   flex: 1;
-  background: var(--set-bg-content, #ffffff);
+  background: var(--bg-surface);
   margin: 20px 24px 20px 0;
   border-radius: 4px;
-  box-shadow: var(--set-content-shadow, 0 1px 4px rgba(0,0,0,0.07));
-  padding: var(--set-content-padding, 40px 48px);
+  box-shadow: var(--shadow-content);
+  padding: var(--content-padding);
   min-height: 600px;
   overflow: hidden;
 }
@@ -89,13 +88,13 @@
 .settings-section-title {
   font-size: 22px;
   font-weight: 600;
-  color: var(--set-title-color, #009aa6);
+  color: var(--text-heading);
   margin: 0 0 6px 0;
 }
 
 .settings-section-desc {
   font-size: 13.5px;
-  color: var(--set-desc-color, #8c8fa5);
+  color: var(--text-secondary);
   margin: 0 0 28px 0;
   line-height: 1.5;
 }
@@ -105,7 +104,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--set-bg-header-bar, #d3d7e0);
+  background: var(--bg-header-bar);
   border-radius: 3px 3px 0 0;
   padding: 10px 18px;
 }
@@ -115,12 +114,12 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--set-header-text-color, #555770);
+  color: var(--text-secondary);
 }
 
 .settings-add-btn {
-  background: var(--set-add-btn-bg, #4dc1ae);
-  color: #fff;
+  background: var(--add-btn-bg);
+  color: var(--text-on-accent);
   border: none;
   border-radius: 3px;
   font-size: 11px;
@@ -146,7 +145,7 @@
   grid-template-columns: 32px 70px 150px 70px 150px 120px 1fr 100px;
   align-items: center;
   padding: 10px 18px 10px 8px;
-  border-bottom: 1px solid var(--set-grid-border-color, #e5e7ef);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .statuses-row {
@@ -154,17 +153,17 @@
   grid-template-columns: 32px 70px 150px 70px 150px 120px 1fr 100px;
   align-items: center;
   padding: 10px 18px 10px 8px;
-  border-bottom: 1px solid var(--set-grid-border-color, #edf0f5);
+  border-bottom: 1px solid var(--border-light);
   transition: background 0.12s;
 }
 
 .statuses-row:hover {
-  background: var(--set-bg-row-hover, #f0fafa);
+  background: var(--bg-row-hover);
 }
 
 .statuses-row.is-editing {
-  background: var(--set-bg-row-editing, #f0fafa);
-  border-left: 3px solid var(--set-editing-border, #009aa6);
+  background: var(--bg-row-editing);
+  border-left: 3px solid var(--border-focus);
 }
 
 /* ─── Graella de priorities (5 columnes) ─── */
@@ -177,7 +176,7 @@
   grid-template-columns: 32px 80px 1fr 120px 120px;
   align-items: center;
   padding: 10px 18px 10px 8px;
-  border-bottom: 1px solid var(--set-grid-border-color, #e5e7ef);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .priorities-row {
@@ -185,17 +184,17 @@
   grid-template-columns: 32px 80px 1fr 120px 120px;
   align-items: center;
   padding: 10px 18px 10px 8px;
-  border-bottom: 1px solid var(--set-grid-border-color, #edf0f5);
+  border-bottom: 1px solid var(--border-light);
   transition: background 0.12s;
 }
 
 .priorities-row:hover {
-  background: var(--set-bg-row-hover, #f0fafa);
+  background: var(--bg-row-hover);
 }
 
 .priorities-row.is-editing {
-  background: var(--set-bg-row-editing, #f0fafa);
-  border-left: 3px solid var(--set-editing-border, #009aa6);
+  background: var(--bg-row-editing);
+  border-left: 3px solid var(--border-focus);
 }
 
 /* ─── Graella de tags (3 columnes: color, name, actions) ─── */
@@ -208,7 +207,7 @@
   grid-template-columns: 80px 1fr 250px;
   align-items: center;
   padding: 10px 18px;
-  border-bottom: 1px solid var(--set-grid-border-color, #e5e7ef);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .tags-row {
@@ -216,22 +215,22 @@
   grid-template-columns: 80px 1fr 250px;
   align-items: center;
   padding: 10px 18px;
-  border-bottom: 1px solid var(--set-grid-border-color, #edf0f5);
+  border-bottom: 1px solid var(--border-light);
   transition: background 0.12s;
 }
 
 .tags-row:hover {
-  background: var(--set-bg-row-hover, #f0fafa);
+  background: var(--bg-row-hover);
 }
 
 .tags-row.is-editing {
-  background: var(--set-bg-row-editing, #f0fafa);
-  border-left: 3px solid var(--set-editing-border, #009aa6);
+  background: var(--bg-row-editing);
+  border-left: 3px solid var(--border-focus);
 }
 
 .tags-row.is-merge-target {
-  background: var(--set-bg-row-hover, #f0fafa);
-  border-left: 3px solid var(--color-mint, #4dc1ae);
+  background: var(--bg-row-hover);
+  border-left: 3px solid var(--color-mint);
 }
 
 .tags-color-swatch {
@@ -245,25 +244,25 @@
 
 .tags-merge-hint {
   font-size: 11px;
-  color: var(--set-text-secondary, #555);
+  color: var(--text-secondary);
   margin-right: 10px;
 }
 
 .set-action-btn.merge {
-  color: var(--set-edit-btn-color, #7a7d96);
+  color: var(--edit-btn-color);
   font-size: 18px;
 }
 
 .set-action-btn.merge:hover {
-  background: #eef0f8;
-  color: #444;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .set-merge-btn {
-  background: var(--color-mint, #4dc1ae);
-  color: #fff;
+  background: var(--color-mint);
+  color: var(--text-on-accent);
   border: none;
-  border-radius: var(--radius-sm, 3px);
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 700;
   padding: 7px 14px;
@@ -274,17 +273,17 @@
 }
 
 .set-merge-btn:hover {
-  background: #3aab99;
+  background: var(--accent-hover);
 }
 
 .tags-merge-checkbox {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--color-teal, #009aa6);
+  accent-color: var(--accent);
 }
 
-/* ─── Graella de due dates (6 columnes: handle, color, name, dies, before/past, accions) ─── */
+/* ─── Graella de due dates (6 columnes) ─── */
 .duedates-grid-scroll {
   min-width: 0;
 }
@@ -294,7 +293,7 @@
   grid-template-columns: 32px 80px 1fr 140px 120px 80px;
   align-items: center;
   padding: 10px 18px 10px 8px;
-  border-bottom: 1px solid var(--set-grid-border-color, #e5e7ef);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .duedates-row {
@@ -302,49 +301,49 @@
   grid-template-columns: 32px 80px 1fr 140px 120px 80px;
   align-items: center;
   padding: 10px 18px 10px 8px;
-  border-bottom: 1px solid var(--set-grid-border-color, #edf0f5);
+  border-bottom: 1px solid var(--border-light);
   transition: background 0.12s;
 }
 
 .duedates-row:hover {
-  background: var(--set-bg-row-hover, #f0fafa);
+  background: var(--bg-row-hover);
 }
 
 .duedates-row.is-editing {
-  background: var(--set-bg-row-editing, #f0fafa);
-  border-left: 3px solid var(--set-editing-border, #009aa6);
+  background: var(--bg-row-editing);
+  border-left: 3px solid var(--border-focus);
 }
 
 .set-days-cell {
   font-size: 14px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
 }
 
 .set-direction-cell {
   font-size: 14px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
 }
 
 .set-form-select.compact {
   min-width: 100px;
-  padding: 6px 10px;
+  padding: 6px 24px 6px 10px;
   font-size: 13px;
-  border: 1px solid var(--set-form-border-color, #ccc);
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   font-family: var(--font-family);
-  color: var(--set-text-color, #333);
-  background: var(--bg-surface, #fff);
+  color: var(--text-primary);
+  background: var(--bg-surface);
 }
 
 /* ─── Subcomponents de la graella ─── */
 .set-col-header {
   font-size: 12px;
   font-weight: 700;
-  color: var(--set-header-text-color, #555770);
+  color: var(--text-secondary);
 }
 
 .set-drag-handle {
-  color: #bbbdd0;
+  color: var(--text-tertiary);
   font-size: 15px;
   text-align: center;
   user-select: none;
@@ -366,18 +365,18 @@
 
 .set-name {
   font-size: 14px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
 }
 
 .set-slug {
   font-size: 14px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
 }
 
 .set-order-cell {
   text-align: center;
   font-size: 14px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
 }
 
 .set-default-cell {
@@ -385,14 +384,14 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: var(--set-text-secondary, #555);
+  color: var(--text-secondary);
 }
 
 .set-default-badge {
   display: inline-block;
-  background: var(--set-default-badge-bg, #e6f9f7);
-  color: var(--set-default-badge-text, #009aa6);
-  border: 1px solid var(--set-default-badge-border, #b0e8e2);
+  background: var(--badge-default-bg);
+  color: var(--badge-default-text);
+  border: 1px solid var(--badge-default-border);
   border-radius: 10px;
   font-size: 11px;
   font-weight: 700;
@@ -401,17 +400,17 @@
 
 .set-default-btn {
   background: none;
-  border: 1px solid var(--set-default-btn-border, #c5c8d8);
+  border: 1px solid var(--badge-set-default-btn-border);
   border-radius: 10px;
   font-size: 11px;
-  color: var(--set-default-btn-color, #7a7d96);
+  color: var(--badge-set-default-btn-color);
   padding: 2px 10px;
   cursor: pointer;
 }
 
 .set-default-btn:hover {
-  border-color: var(--set-accent, #009aa6);
-  color: var(--set-accent, #009aa6);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .set-closed-cell {
@@ -423,8 +422,8 @@
 .set-closed-icon {
   width: 18px;
   height: 18px;
-  color: var(--set-closed-icon-color, #009aa6);
-  border: 1px solid var(--set-closed-icon-color, #009aa6);
+  color: var(--closed-icon-color);
+  border: 1px solid var(--closed-icon-color);
   border-radius: 2px;
   display: flex;
   align-items: center;
@@ -441,13 +440,13 @@
 /* ─── Drag & Drop ─── */
 .is-dragging {
   opacity: 0.4;
-  background: var(--set-bg-row-hover, #eef0f8) !important;
+  background: var(--bg-row-hover) !important;
 }
 
 .drag-over {
-  border-top: 2px solid var(--set-accent, #009aa6) !important;
-  border-bottom: 2px solid var(--set-accent, #009aa6) !important;
-  background: var(--set-bg-row-hover, #f0fafa) !important;
+  border-top: 2px solid var(--accent) !important;
+  border-bottom: 2px solid var(--accent) !important;
+  background: var(--bg-row-hover) !important;
 }
 
 .set-action-btn {
@@ -465,27 +464,27 @@
 }
 
 .set-action-btn.edit {
-  color: var(--set-edit-btn-color, #7a7d96);
+  color: var(--edit-btn-color);
 }
 
 .set-action-btn.edit:hover {
-  background: #eef0f8;
-  color: #444;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .set-action-btn.delete {
-  color: var(--set-delete-btn-color, #e05c5c);
+  color: var(--delete-btn-color);
 }
 
 .set-action-btn.delete:hover {
-  background: #fdf0f0;
-  color: #c23a3a;
+  background: var(--danger-bg);
+  color: var(--delete-btn-color);
 }
 
 /* ─── Formularis inline ─── */
 .set-inline-form {
-  background: var(--set-bg-inline-form, #f5f7fb);
-  border: 1px solid var(--set-form-border-color, #d5d8e8);
+  background: var(--bg-inline-form);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 18px 24px;
   margin: 8px 0;
@@ -494,7 +493,7 @@
 .set-inline-form-title {
   font-size: 13px;
   font-weight: 700;
-  color: var(--set-header-text-color, #555770);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin: 0 0 14px 0;
@@ -516,17 +515,18 @@
 .set-form-group label {
   font-size: 11px;
   font-weight: 600;
-  color: var(--set-text-secondary, #777);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 .set-form-input {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   padding: 6px 10px;
   font-size: 13px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
+  background: var(--bg-surface);
   width: 180px;
 }
 
@@ -536,11 +536,12 @@
 
 .set-form-number {
   width: 80px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   padding: 6px 10px;
   font-size: 13px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
+  background: var(--bg-surface);
 }
 
 .set-form-number.small {
@@ -548,21 +549,23 @@
 }
 
 .set-form-select {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
-  padding: 6px 10px;
+  padding: 6px 24px 6px 10px;
   font-size: 13px;
-  color: var(--set-text-color, #333);
+  color: var(--text-primary);
+  background: var(--bg-surface);
   width: 80px;
 }
 
 .set-form-color {
   width: 44px;
   height: 34px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   padding: 2px;
   cursor: pointer;
+  background: var(--bg-surface);
 }
 
 .set-form-color.larger {
@@ -575,14 +578,14 @@
   gap: 8px;
   padding-bottom: 6px;
   font-size: 13px;
-  color: var(--set-text-secondary, #555);
+  color: var(--text-secondary);
 }
 
 .set-form-check label {
   text-transform: none;
   letter-spacing: 0;
   font-size: 13px;
-  color: var(--set-text-secondary, #555);
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
@@ -594,8 +597,8 @@
 }
 
 .set-save-btn {
-  background: var(--set-save-btn-bg, #009aa6);
-  color: #fff;
+  background: var(--save-btn-bg);
+  color: var(--text-on-accent);
   border: none;
   border-radius: 3px;
   font-size: 12px;
@@ -612,7 +615,7 @@
 
 .set-cancel-link {
   font-size: 12px;
-  color: #888;
+  color: var(--text-secondary);
   text-decoration: none;
   padding: 7px 6px;
   cursor: pointer;
@@ -621,14 +624,14 @@
 }
 
 .set-cancel-link:hover {
-  color: #444;
+  color: var(--text-primary);
 }
 
 /* ─── Errors ─── */
 .set-error-banner {
-  color: #e3405c;
+  color: var(--color-bug);
   padding: 10px 14px;
-  background: #fce8eb;
+  background: var(--danger-bg);
   border-radius: 4px;
   margin-bottom: 16px;
   font-size: 13px;
@@ -641,7 +644,7 @@
   margin-left: auto;
   background: none;
   border: none;
-  color: #e3405c;
+  color: var(--color-bug);
   cursor: pointer;
   font-weight: 600;
   flex-shrink: 0;
@@ -650,13 +653,13 @@
 /* ─── Loading / Empty ─── */
 .set-loading {
   padding: 24px 18px;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
 .set-empty {
   padding: 20px 18px;
-  color: #aaa;
+  color: var(--text-tertiary);
   font-size: 13px;
 }
 
@@ -667,9 +670,9 @@
   align-items: center;
   justify-content: center;
   min-height: 300px;
-  border: 2px dashed #d5d8e2;
+  border: 2px dashed var(--border-dark);
   border-radius: 6px;
-  color: #b0b3c6;
+  color: var(--text-tertiary);
   text-align: center;
   gap: 12px;
 }
@@ -701,7 +704,7 @@
     flex-direction: row;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    border-bottom: 2px solid var(--set-tab-border-color, #d8dae3);
+    border-bottom: 2px solid var(--border-dark);
     padding: 0 12px;
   }
 
@@ -719,8 +722,8 @@
   }
 
   .settings-tab-btn.active {
-    background: var(--set-bg-content, #fff);
-    color: var(--set-tab-active-text, #009aa6);
+    background: var(--bg-surface);
+    color: var(--accent);
   }
 
   .settings-content {

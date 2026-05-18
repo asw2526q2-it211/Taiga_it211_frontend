@@ -104,7 +104,7 @@ const bulkInsertStyles = `
   align-items: center;
   justify-content: flex-start;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--bulk-overlay-bg);
 }
 
 .bulk-content {
@@ -195,14 +195,14 @@ const bulkInsertStyles = `
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #0d4a34;
+  color: var(--text-on-mint);
   background: var(--color-mint);
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
 .bulk-save-btn:hover:not(:disabled) {
-  background: #61d4b6;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 

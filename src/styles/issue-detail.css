@@ -1,0 +1,1556 @@
+/* ═══════════════════════════════════════════════════════════════
+   issue-detail.css — Issue Detail Page Styles
+   
+   Complete set of CSS classes for the IssueDetail component.
+   All colors use CSS custom properties from the theme system.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ================================================================
+   1. HEADER SECTION
+   ================================================================ */
+
+/* Breadcrumb link */
+.issue-detail-breadcrumb {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  transition: opacity 0.2s ease;
+}
+
+.issue-detail-breadcrumb:hover {
+  opacity: 0.8;
+}
+
+/* Header row containing issue ID + subject */
+.issue-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Issue ID (#NNN) */
+.issue-detail-id {
+  color: var(--accent);
+  font-size: 2rem;
+  font-weight: 300;
+  flex-shrink: 0;
+}
+
+/* Subject heading */
+.issue-detail-subject {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+}
+
+.issue-detail-subject:hover {
+  color: var(--accent);
+}
+
+/* Subject edit container */
+.issue-detail-subject-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+/* Subject edit input */
+.issue-detail-subject-input {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: 1px solid var(--color-teal);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  width: 100%;
+  font-family: inherit;
+  background-color: var(--bg-surface);
+  outline: none;
+}
+
+.issue-detail-subject-input:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+/* ================================================================
+   2. PROPERTY SELECT DROPDOWNS (sidebar dropdowns)
+   ================================================================ */
+
+/* "Status" big select — adaptat del base amb estil propi */
+.issue-prop-select {
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.45rem 2.5rem 0.45rem 1rem;
+  border-radius: var(--radius-md);
+  min-width: 150px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  background-position: right 0.75rem center;
+  background-size: 0.7em;
+}
+
+.issue-prop-select option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.issue-prop-select:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.issue-prop-select:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+/* Smaller property select (for type, severity, priority) */
+.issue-prop-select-sm {
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  min-width: 120px;
+  background-position: right 0.5rem center;
+  background-size: 0.75em;
+}
+
+.issue-prop-select-sm option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.issue-prop-select-sm:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.issue-prop-select-sm:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+/* Label above prop selectors */
+.issue-prop-label {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ================================================================
+   3. PROPERTY DISPLAY ROWS (sidebar)
+   ================================================================ */
+
+.issue-prop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.issue-prop-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.issue-prop-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.issue-prop-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ================================================================
+   4. STATUS BADGE (Open / Closed capsule)
+   ================================================================ */
+
+.issue-status-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.25s ease;
+}
+
+.issue-status-badge.open {
+  background-color: var(--badge-default-bg);
+  color: var(--success);
+  border: 1px solid var(--badge-default-border);
+}
+
+.issue-status-badge.closed {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+}
+
+.issue-status-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.25s ease;
+}
+
+.issue-status-badge.open .issue-status-badge-dot {
+  background-color: var(--success);
+}
+
+.issue-status-badge.closed .issue-status-badge-dot {
+  background-color: var(--danger);
+}
+
+/* ================================================================
+   5. TAGS ROW
+   ================================================================ */
+
+.issue-tags-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.issue-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-style: solid;
+  border-width: 1px;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+  position: relative;
+}
+
+.issue-tag-color-input {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.issue-tag-add-btn {
+  background: var(--badge-default-bg);
+  border: none;
+  color: var(--accent);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.issue-tag-add-btn:hover {
+  background: var(--badge-default-border);
+}
+
+.issue-tag-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.issue-tag-add-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.issue-tag-color-picker {
+  border: none;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.issue-tag-add-input {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-teal);
+  font-size: 0.75rem;
+  outline: none;
+  font-family: inherit;
+  width: 90px;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.issue-tag-add-input:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-tag-confirm-btn {
+  background: var(--color-teal);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.issue-tag-confirm-btn:hover {
+  background: var(--accent-hover);
+}
+
+.issue-tag-cancel-btn {
+  background: var(--border-color);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.issue-tag-cancel-btn:hover {
+  background: var(--border-dark);
+}
+
+.issue-tag-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.65rem;
+  font-weight: bold;
+  margin-left: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.issue-tag-remove:hover {
+  opacity: 0.7;
+}
+
+/* Available global tags list (shown below tag add input) */
+.issue-tag-global-list {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+  opacity: 0.95;
+}
+
+.issue-tag-global-btn {
+  border-style: solid;
+  border-width: 1px;
+  border-radius: var(--radius-md);
+  padding: 0.2rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.issue-tag-global-btn:hover {
+  filter: brightness(0.9);
+}
+
+/* ================================================================
+   6. DUE DATE
+   ================================================================ */
+
+.issue-due-date-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.issue-due-date-select {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+}
+
+.issue-due-date-select:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-due-date-input {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  min-width: 140px;
+}
+
+.issue-due-date-input:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-due-date-display {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.issue-due-date-remove {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.issue-due-date-remove:hover {
+  color: var(--danger);
+}
+
+/* ================================================================
+   7. ASSIGNEE / WATCHERS
+   ================================================================ */
+
+.issue-assignee-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.issue-assignee-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.issue-avatar-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.issue-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.issue-avatar-initials {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.issue-username {
+  font-weight: 600;
+}
+
+.issue-username.accent {
+  color: var(--accent);
+}
+
+.issue-username.secondary {
+  color: var(--text-primary);
+}
+
+.issue-unassigned-text {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.issue-remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: color 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.issue-remove-btn:hover {
+  color: var(--danger);
+}
+
+.issue-sidebar-btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.issue-sidebar-btn {
+  width: 100%;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease;
+}
+
+.issue-sidebar-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* Watchers list */
+.issue-watchers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.issue-watcher-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.issue-watcher-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ================================================================
+   8. BLOCKED BANNER
+   ================================================================ */
+
+.issue-blocked-banner {
+  background-color: var(--danger-bg);
+  color: var(--color-critical);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-weight: 600;
+  border: 1px solid var(--danger-border);
+}
+
+/* ================================================================
+   9. DESCRIPTION SECTION
+   ================================================================ */
+
+.issue-desc-section {
+  margin-bottom: 2rem;
+  min-height: 100px;
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.issue-desc-text {
+  cursor: pointer;
+}
+
+.issue-desc-placeholder {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.issue-desc-edit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.issue-desc-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 0.5rem;
+  font-family: inherit;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-teal);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  resize: vertical;
+  outline: none;
+}
+
+.issue-desc-textarea:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-desc-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ================================================================
+   10. ATTACHMENTS SECTION
+   ================================================================ */
+
+.issue-attachments-section {
+  margin-bottom: 2rem;
+}
+
+.issue-attachments-header {
+  background-color: var(--bg-hover);
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--radius-sm);
+}
+
+.issue-attachments-count {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.issue-attachments-add-btn {
+  background-color: var(--color-mint);
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-on-mint);
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.issue-attachments-add-btn:hover {
+  background-color: var(--badge-default-border);
+}
+
+.issue-attachments-list {
+  border: 1px solid var(--border-color);
+  border-top: none;
+  padding: 1rem;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.issue-attachment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.issue-attachment-item + .issue-attachment-item {
+  border-top: 1px solid var(--border-light);
+}
+
+.issue-attachment-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  text-decoration: none;
+  font: inherit;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.issue-attachment-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.issue-attachment-link:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.issue-attachment-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 0.25rem;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.issue-attachment-delete:hover {
+  color: var(--danger);
+}
+
+/* ================================================================
+   11. COMMENTS SECTION
+   ================================================================ */
+
+.issue-comments-section {
+  margin-bottom: 2rem;
+}
+
+.issue-comments-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.issue-comments-tab {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.issue-comments-tab:hover {
+  color: var(--text-primary);
+}
+
+.issue-comments-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+}
+
+.issue-comments-tab-content {
+  padding: 1rem 0;
+}
+
+/* Comment card */
+.issue-comment-item {
+  padding: 1rem;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  gap: 1rem;
+}
+
+.issue-comment-item + .issue-comment-item {
+  margin-top: 1rem;
+}
+
+.issue-comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-active);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.issue-comment-body {
+  flex: 1;
+}
+
+.issue-comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.issue-comment-author {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.issue-comment-date {
+  color: var(--text-secondary);
+  font-weight: normal;
+  font-size: 0.85rem;
+}
+
+.issue-comment-text {
+  white-space: pre-wrap;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.issue-comment-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.issue-comment-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.issue-comment-action-btn:hover {
+  color: var(--accent);
+}
+
+.issue-comment-action-btn.danger:hover {
+  color: var(--danger);
+}
+
+/* Comment SVG icon wrappers */
+.issue-comment-action-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.issue-comment-action-icon.fill {
+  fill: currentColor;
+}
+
+.issue-comment-action-icon.stroke {
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Comment edit form */
+.issue-comment-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.issue-comment-edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  resize: vertical;
+  font-family: inherit;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.issue-comment-edit-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-comment-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ================================================================
+   12. NEW COMMENT FORM
+   ================================================================ */
+
+.issue-new-comment-section {
+  margin-bottom: 1.5rem;
+}
+
+.issue-new-comment-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  resize: vertical;
+  font-family: inherit;
+  margin-bottom: 0.5rem;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.issue-new-comment-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-new-comment-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.issue-new-comment-actions {
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+.issue-new-comment-btn {
+  background-color: var(--color-teal);
+  color: var(--text-on-accent);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+  font-family: inherit;
+}
+
+.issue-new-comment-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.issue-new-comment-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Comments list container */
+.issue-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ================================================================
+   13. ACTIVITY ITEMS
+   ================================================================ */
+
+.issue-activities-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.issue-activity-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.issue-activity-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-active);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.issue-activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.issue-activity-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.issue-activity-author {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.issue-activity-date {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.issue-activity-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.issue-activity-badge {
+  background-color: var(--bg-active);
+  color: var(--text-primary);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+}
+
+.issue-activity-text {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+/* ================================================================
+   14. REUSABLE BUTTONS
+   ================================================================ */
+
+.issue-btn-accent {
+  background-color: var(--color-teal);
+  color: var(--text-on-accent);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.issue-btn-accent:hover {
+  background-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.issue-btn-accent:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.issue-btn-danger {
+  background-color: var(--danger);
+  color: var(--text-on-accent);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.issue-btn-danger:hover {
+  background-color: rgb(185, 28, 28);
+  box-shadow: var(--shadow-sm);
+}
+
+.issue-btn-ghost {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-family: inherit;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.issue-btn-ghost:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-dark);
+}
+
+/* Save / Cancel subject edit buttons (compact) */
+.issue-btn-compact {
+  padding: 0.25rem 0.75rem;
+  height: 36px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.issue-btn-compact.primary {
+  background-color: var(--color-teal);
+  color: var(--text-on-accent);
+  border-color: var(--color-teal);
+}
+
+.issue-btn-compact.primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.issue-btn-compact.secondary {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.issue-btn-compact.secondary:hover {
+  background: var(--bg-hover);
+}
+
+/* Block action button */
+.issue-btn-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.issue-btn-block.blocked {
+  background-color: var(--color-normal);
+  color: var(--text-on-accent);
+  border: none;
+}
+
+.issue-btn-block.blocked:hover {
+  filter: brightness(0.9);
+}
+
+.issue-btn-block.unblocked {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.issue-btn-block.unblocked:hover {
+  background-color: rgba(239, 68, 68, 0.18);
+}
+
+/* Delete action button */
+.issue-btn-delete-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: rgba(239, 68, 68, 0.08);
+  color: var(--color-critical);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.issue-btn-delete-action:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ================================================================
+   15. ISSUE INFO BAR (below header — tags, created by, due date)
+   ================================================================ */
+
+.issue-info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.issue-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.issue-info-label {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.issue-info-right {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.issue-info-created {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.issue-info-created-author {
+  color: var(--accent);
+}
+
+/* ================================================================
+   16. SIDEBAR PROPERTIES LIST
+   ================================================================ */
+
+.issue-sidebar-props {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Sidebar section (Assigned, Watchers) */
+.issue-sidebar-section {
+  margin-bottom: 1.5rem;
+}
+
+.issue-sidebar-section:last-child {
+  margin-bottom: 2rem;
+}
+
+.issue-sidebar-heading {
+  margin: 0 0 1rem 0;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ================================================================
+   17. BLOCK / DELETE MODALS
+   ================================================================ */
+
+.issue-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.issue-modal-label {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.issue-modal-textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.issue-modal-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-modal-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.issue-modal-warning {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.issue-modal-desc {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.issue-modal-footer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.issue-modal-cancel-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-family: inherit;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.issue-modal-cancel-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-dark);
+}
+
+.issue-modal-confirm-btn {
+  background-color: var(--danger);
+  color: var(--text-on-accent);
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1.5rem;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.issue-modal-confirm-btn:hover {
+  background-color: rgb(185, 28, 28);
+}
+
+/* ================================================================
+   18. INLINE EDIT INPUT
+   ================================================================ */
+
+.issue-inline-edit {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-teal);
+  font-size: 0.75rem;
+  outline: none;
+  font-family: inherit;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  transition: box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.issue-inline-edit:focus {
+  box-shadow: 0 0 0 2px var(--accent-bg-subtle);
+}
+
+.issue-inline-edit::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ================================================================
+   19. LOADING / ERROR STATES
+   ================================================================ */
+
+.issue-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.issue-error {
+  padding: 2rem;
+  color: var(--color-critical);
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* ================================================================
+   20. SIDEBAR ACTION BUTTONS GROUP
+   ================================================================ */
+
+.issue-sidebar-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* ================================================================
+   21. RESPONSIVE RULES
+   ================================================================ */
+
+@media (max-width: 1024px) {
+  .issue-detail-header {
+    flex-wrap: wrap;
+  }
+
+  .issue-detail-subject {
+    font-size: 1.5rem;
+  }
+
+  .issue-detail-id {
+    font-size: 1.5rem;
+  }
+
+  .issue-detail-subject-input {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .issue-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .issue-detail-subject {
+    font-size: 1.25rem;
+  }
+
+  .issue-detail-id {
+    font-size: 1.25rem;
+    order: -1;
+  }
+
+  .issue-detail-subject-input {
+    font-size: 1.25rem;
+  }
+
+  .issue-detail-subject-edit {
+    flex-wrap: wrap;
+  }
+
+  .issue-info-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .issue-info-right {
+    text-align: left;
+    width: 100%;
+  }
+
+  .issue-comment-item {
+    flex-direction: column;
+  }
+
+  .issue-comment-header {
+    flex-wrap: wrap;
+  }
+
+  .issue-activity-item {
+    flex-direction: column;
+  }
+
+  .issue-sidebar-actions {
+    flex-direction: column;
+  }
+
+  .issue-tags-row {
+    flex-wrap: wrap;
+  }
+
+  .issue-prop-select {
+    min-width: 120px;
+    font-size: 1rem;
+  }
+
+  .issue-comments-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .issue-modal-footer {
+    flex-direction: column;
+  }
+
+  .issue-modal-footer .issue-btn-ghost,
+  .issue-modal-footer .issue-btn-danger,
+  .issue-modal-footer .issue-btn-accent {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .issue-detail-subject {
+    font-size: 1.1rem;
+  }
+
+  .issue-detail-id {
+    font-size: 1.1rem;
+  }
+
+  .issue-detail-subject-input {
+    font-size: 1.1rem;
+  }
+
+  .issue-sidebar-actions button {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+  }
+}

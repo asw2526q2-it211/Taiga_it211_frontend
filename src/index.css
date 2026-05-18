@@ -1,35 +1,9 @@
-:root {
-  /* Paleta de colors de la marca Taiga */
-  --color-mint: #7de8cc;
-  --color-teal: #009aa6;
-  --color-purple: #6f61ba;
-  
-  /* Colors per a tipus i gravetats (poden venir de l'API) */
-  --color-bug: #e3405c;
-  --color-question: #4ca1bc;
-  --color-enhancement: #25b9ad;
-  --color-critical: #db3a3a;
-  --color-important: #f2a933;
-  --color-normal: #12f47c;
-  
-  /* Colors de fons i text neutres */
-  --bg-primary: #f4f6f8;
-  --bg-surface: #ffffff;
-  --text-primary: #434456;
-  --text-secondary: #70728f;
-  --border-color: #e6e9ec;
-  
-  /* Arrondoniment i ombres */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
-  
-  /* Tipografia */
-  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-}
+/* ═══════════════════════════════════════════════════════════════
+   index.css — Estils globals de l'aplicació
+   
+   Tots els colors utilitzen CSS custom properties definides als
+   fitxers de tema (styles/themes/light.css, dark.css, etc.).
+   ═══════════════════════════════════════════════════════════════ */
 
 * {
   box-sizing: border-box;
@@ -47,13 +21,13 @@ body {
 }
 
 a {
-  color: var(--color-teal);
+  color: var(--text-link);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #007a84;
+  color: var(--accent-hover);
 }
 
 button {
@@ -89,7 +63,7 @@ button {
 
 /* Modern Header */
 .app-header {
-  background: var(--bg-surface);
+  background: var(--bg-header);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 2rem;
   display: flex;
@@ -125,11 +99,11 @@ button {
 
 .btn-primary {
   background-color: var(--color-mint);
-  color: #0d4a34;
+  color: var(--text-on-mint);
 }
 
 .btn-primary:hover {
-  background-color: #61d4b6;
+  background-color: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -140,7 +114,7 @@ button {
 }
 
 .btn-outline:hover {
-  background-color: var(--bg-primary);
+  background-color: var(--bg-hover);
   border-color: var(--text-secondary);
 }
 
@@ -152,12 +126,13 @@ button {
   font-family: var(--font-family);
   font-size: 0.875rem;
   color: var(--text-primary);
+  background: var(--bg-surface);
   transition: border-color 0.2s;
   outline: none;
 }
 
 .input-control:focus {
-  border-color: var(--color-teal);
+  border-color: var(--border-focus);
   box-shadow: 0 0 0 2px rgba(0, 154, 166, 0.1);
 }
 
@@ -217,7 +192,7 @@ button {
 }
 
 .sidebar-btn:hover {
-  background: var(--bg-primary);
+  background: var(--bg-hover);
 }
 
 .property-select {
@@ -263,11 +238,11 @@ button {
 }
 
 .modal-container {
-  background: var(--bg-primary);
+  background: var(--bg-surface);
   border-radius: var(--radius-md);
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-hover);
   display: flex;
   flex-direction: column;
 }
@@ -309,17 +284,19 @@ button {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color);
   border-right: none;
-  border-radius: 4px 0 0 4px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
   font-family: inherit;
   outline: none;
+  background: var(--bg-surface);
+  color: var(--text-primary);
 }
 
 .modal-search-bar .search-btn {
-  background-color: var(--color-teal);
-  color: white;
+  background-color: var(--accent);
+  color: var(--text-on-accent);
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   cursor: pointer;
   font-weight: 600;
 }
@@ -328,7 +305,7 @@ button {
   max-height: 250px;
   overflow-y: auto;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .modal-user-row {
@@ -346,11 +323,11 @@ button {
 }
 
 .modal-user-row:hover {
-  background-color: var(--bg-surface);
+  background-color: var(--bg-hover);
 }
 
 .modal-user-row.selected {
-  background-color: #e6f7f5;
+  background-color: var(--badge-default-bg);
 }
 
 .modal-user-avatar {
@@ -373,7 +350,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-on-accent);
   font-weight: bold;
 }
 
@@ -390,11 +367,11 @@ button {
 
 .modal-add-btn {
   background-color: var(--color-mint);
-  color: #000;
+  color: var(--text-on-mint);
   font-weight: bold;
   border: none;
   padding: 0.5rem 2rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   letter-spacing: 0.5px;
 }
@@ -469,5 +446,3 @@ button {
     grid-template-columns: 1fr 80px 45px;
   }
 }
-
-

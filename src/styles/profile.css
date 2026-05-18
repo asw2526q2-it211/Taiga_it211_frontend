@@ -1,10 +1,16 @@
-/* ─── Layout general ─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   profile.css — Estils de la pàgina de perfil
+   
+   Tots els colors utilitzen CSS custom properties globals.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Layout general ─── */
 
 .profile-page-container {
   display: flex;
   gap: 40px;
   padding: 40px;
-  background-color: #f7f8fa;
+  background-color: var(--bg-primary);
   min-height: calc(100vh - 80px);
   font-family: 'Ubuntu', var(--font-family);
 }
@@ -26,7 +32,7 @@
 .profile-avatar-square {
   width: 100%;
   height: 100%;
-  background-color: #333;
+  background-color: var(--text-tertiary);
   object-fit: cover;
   display: block;
 }
@@ -41,8 +47,8 @@
 .profile-save-photo-btn {
   position: absolute;
   bottom: 10px;
-  background: #009aa6;
-  color: white;
+  background: var(--accent);
+  color: var(--text-on-accent);
   width: 32px;
   height: 32px;
   border-radius: 4px;
@@ -60,17 +66,17 @@
 }
 
 .profile-edit-photo-btn:hover {
-  background: #007a83;
+  background: var(--accent-hover);
 }
 
 .profile-save-photo-btn {
   left: 50px;
-  background: #25b9ad;
+  background: var(--color-enhancement);
   animation: profileFadeIn 0.2s ease-in-out;
 }
 
 .profile-save-photo-btn:hover {
-  background: #1ea597;
+  background: var(--accent-hover);
 }
 
 @keyframes profileFadeIn {
@@ -88,14 +94,14 @@
 
 .profile-name {
   font-size: 26px;
-  color: #009aa6;
+  color: var(--text-heading);
   font-weight: 500;
   margin: 0;
 }
 
 .profile-handle {
   font-size: 16px;
-  color: #70728f;
+  color: var(--text-secondary);
   margin-top: 5px;
   margin-bottom: 25px;
 }
@@ -105,8 +111,8 @@
 .profile-stats {
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid #e2e3e9;
-  border-bottom: 1px solid #e2e3e9;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   padding: 15px 0;
   margin-bottom: 25px;
   text-align: center;
@@ -120,12 +126,12 @@
   display: block;
   font-size: 20px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .profile-stat-label {
   font-size: 11px;
-  color: #70728f;
+  color: var(--text-secondary);
   text-transform: capitalize;
   line-height: 1.2;
 }
@@ -139,7 +145,7 @@
 .profile-bio {
   font-size: 14px;
   line-height: 1.6;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 15px;
 }
 
@@ -148,16 +154,18 @@
   min-height: 100px;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   font-family: inherit;
   font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-surface);
   resize: vertical;
   box-sizing: border-box;
 }
 
 .profile-btn-edit-bio {
-  background-color: #81f4e1;
-  color: #0d4a34;
+  background-color: var(--color-mint);
+  color: var(--text-on-mint);
   border: none;
   padding: 10px 20px;
   border-radius: 3px;
@@ -182,14 +190,14 @@
 
 .profile-btn-save {
   width: 50%;
-  background-color: #009aa6;
-  color: white;
+  background-color: var(--accent);
+  color: var(--text-on-accent);
 }
 
 .profile-btn-cancel {
   width: 50%;
-  background: #ddd;
-  color: #333;
+  background: var(--border-color);
+  color: var(--text-primary);
 }
 
 /* ─── API Key ────────────────────────────────────────────────────────── */
@@ -197,14 +205,14 @@
 .profile-api-key-box {
   margin-top: 20px;
   padding: 15px;
-  background: #fff;
+  background: var(--bg-surface);
   border-radius: 4px;
-  border: 1px solid #e2e3e9;
+  border: 1px solid var(--border-color);
 }
 
 .profile-api-key-label {
   font-size: 11px;
-  color: #a1aab0;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   font-weight: 700;
   margin-bottom: 10px;
@@ -213,17 +221,18 @@
 .profile-api-key-input {
   flex-grow: 1;
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   font-family: monospace;
   font-size: 12px;
-  background: #f9f9f9;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   width: 100%;
 }
 
 .profile-api-key-copy {
-  background: #009aa6;
-  color: white;
+  background: var(--accent);
+  color: var(--text-on-accent);
   border: none;
   padding: 8px;
   border-radius: 3px;
@@ -235,7 +244,7 @@
 
 .profile-api-key-copied {
   font-size: 10px;
-  color: #25b9ad;
+  color: var(--color-enhancement);
   margin-top: 5px;
 }
 
@@ -248,7 +257,7 @@
 
 .profile-tabs {
   display: flex;
-  border-bottom: 1px solid #e2e3e9;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 20px;
   gap: 30px;
 }
@@ -258,7 +267,7 @@
   border: none;
   border-bottom: 3px solid transparent;
   padding: 15px 0;
-  color: #70728f;
+  color: var(--text-secondary);
   font-size: 14px;
   cursor: pointer;
   font-family: inherit;
@@ -266,17 +275,17 @@
 }
 
 .profile-tab-item.active {
-  color: #333;
-  border-bottom-color: #009aa6;
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
   font-weight: 500;
 }
 
 /* ─── Taula d'incidències ────────────────────────────────────────────── */
 
 .profile-issues-list-table {
-  background: white;
+  background: var(--bg-surface);
   border-radius: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -285,18 +294,18 @@
   align-items: center;
   padding: 10px 20px;
   font-size: 11px;
-  color: #a1aab0;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   font-weight: 700;
-  border-bottom: 1px solid #f0f1f5;
-  background: #fafbfc;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-hover);
 }
 
 .profile-issue-row {
   display: flex;
   align-items: center;
   padding: 15px 20px;
-  border-bottom: 1px solid #f0f1f5;
+  border-bottom: 1px solid var(--border-light);
   font-size: 14px;
 }
 
@@ -324,12 +333,12 @@
 }
 
 .profile-issue-id {
-  color: #a1aab0;
+  color: var(--text-tertiary);
   margin-right: 5px;
 }
 
 .profile-issue-title {
-  color: #009aa6;
+  color: var(--text-link);
   text-decoration: none;
 }
 
@@ -340,20 +349,20 @@
 .profile-status-col {
   width: 120px;
   text-align: right;
-  color: #70728f;
+  color: var(--text-secondary);
 }
 
 .profile-date-col {
   width: 100px;
   text-align: right;
-  color: #a1aab0;
+  color: var(--text-tertiary);
   font-size: 12px;
 }
 
 .profile-empty {
   padding: 40px;
   text-align: center;
-  color: #a1aab0;
+  color: var(--text-tertiary);
 }
 
 /* ─── Capçaleres ordenables ──────────────────────────────────────────── */
@@ -377,7 +386,7 @@
 
 .profile-sort-header:hover {
   background-color: rgba(0, 154, 166, 0.1);
-  color: #009aa6;
+  color: var(--accent);
 }
 
 .profile-letter-box {
@@ -394,14 +403,14 @@
 
 .profile-arrow {
   font-size: 8px;
-  color: #ccd1d5;
+  color: var(--text-tertiary);
   height: 5px;
   display: flex;
   align-items: center;
 }
 
 .profile-arrow.active {
-  color: #009aa6;
+  color: var(--accent);
 }
 
 /* ─── Comentaris ─────────────────────────────────────────────────────── */
@@ -416,7 +425,7 @@
 }
 
 .profile-comment-item + .profile-comment-item {
-  border-top: 1px solid #f0f1f5;
+  border-top: 1px solid var(--border-light);
 }
 
 .profile-comment-header {
@@ -428,7 +437,7 @@
 }
 
 .profile-comment-link {
-  color: #009aa6;
+  color: var(--text-link);
   text-decoration: none;
   font-weight: 500;
 }
@@ -438,13 +447,13 @@
 }
 
 .profile-comment-date {
-  color: #70728f;
+  color: var(--text-secondary);
   font-size: 13px;
   margin-left: 10px;
 }
 
 .profile-comment-text {
-  color: #434456;
+  color: var(--text-primary);
   font-size: 15px;
   line-height: 1.5;
   white-space: pre-wrap;
@@ -458,7 +467,7 @@
 .profile-comment-action-btn {
   background: none;
   border: none;
-  color: #70728f;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -466,7 +475,7 @@
 }
 
 .profile-comment-action-btn:hover {
-  color: #009aa6;
+  color: var(--text-link);
 }
 
 .profile-comment-action-btn svg {
@@ -489,19 +498,20 @@
 
 .profile-comment-edit-form textarea {
   width: 100%;
-  border: 1px solid #d8dee9;
+  border: 1px solid var(--border-color);
   padding: 15px;
-  color: #434456;
+  color: var(--text-primary);
   font-size: 14px;
   font-family: inherit;
   min-height: 80px;
+  background: var(--bg-surface);
   box-sizing: border-box;
   outline: none;
   resize: vertical;
 }
 
 .profile-comment-edit-form textarea:focus {
-  border-color: #009aa6;
+  border-color: var(--border-focus);
 }
 
 .profile-comment-edit-actions {
@@ -520,13 +530,13 @@
 }
 
 .profile-comment-save-btn {
-  background: #7de8cc;
-  color: #2e3440;
+  background: var(--color-mint);
+  color: var(--text-on-mint);
 }
 
 .profile-comment-cancel-btn {
-  background: #d8dee9;
-  color: #4c566a;
+  background: var(--border-color);
+  color: var(--text-primary);
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────── */

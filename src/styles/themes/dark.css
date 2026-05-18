@@ -1,0 +1,65 @@
+/* ═══════════════════════════════════════════════════════════════
+   dark.css — Tema fosc
+   
+   Sobreescriu només les properties que canvien respecte al tema clar.
+   ═══════════════════════════════════════════════════════════════ */
+
+html[data-theme="dark"] {
+  /* ── Brand ── */
+  --color-mint: #4dc1ae;
+  --color-teal: #4dc1ae;
+
+  /* ── Backgrounds ── */
+  --bg-primary: #1a1d2e;
+  --bg-surface: #252840;
+  --bg-header: #2a2d42;
+  --bg-sidebar: #2a2d42;
+  --bg-row-hover: #2e3150;
+  --bg-row-editing: #2e3150;
+  --bg-inline-form: #2e3150;
+  --bg-hover: #2e3150;
+  --bg-active: #2a2d42;
+  --bg-layout: #1a1d2e;
+  --bg-header-bar: #2a2d42;
+  --bg-tab-active: #2a2d42;
+
+  /* ── Text ── */
+  --text-primary: #e0e2f0;
+  --text-secondary: #a0a3c0;
+  --text-tertiary: #707090;
+  --text-heading: #7de8cc;
+  --text-link: #7de8cc;
+  --text-on-accent: #ffffff;
+  --text-on-mint: #2e3440;
+
+  /* ── Borders ── */
+  --border-color: #3a3d58;
+  --border-light: #2e3150;
+  --border-dark: #3a3d58;
+  --border-focus: #4dc1ae;
+
+  /* ── Interactive ── */
+  --accent: #4dc1ae;
+  --accent-hover: #3da89a;
+  --add-btn-bg: #4dc1ae;
+  --save-btn-bg: #4dc1ae;
+  --edit-btn-color: #a0a3c0;
+  --delete-btn-color: #e05c5c;
+  --closed-icon-color: #7de8cc;
+
+  /* ── Badges ── */
+  --badge-default-bg: #1a3d3a;
+  --badge-default-text: #7de8cc;
+  --badge-default-border: #2a5d5a;
+  --badge-set-default-btn-color: #a0a3c0;
+  --badge-set-default-btn-border: #4a4d68;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-hover: 0 8px 24px rgba(0,0,0,0.4);
+  --shadow-content: 0 1px 8px rgba(0,0,0,0.3);
+
+  /* ── Bulk-insert overlay (fosc) ── */
+  --bulk-overlay-bg: rgba(26, 29, 46, 0.96);
+}

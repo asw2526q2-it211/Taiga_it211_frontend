@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════════════════════════════
+   light.css — Tema clar (per defecte)
+   
+   Defineix totes les CSS custom properties que utilitza l'aplicació.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root,
+html[data-theme="light"] {
+  /* ── Brand ── */
+  --color-mint: #7de8cc;
+  --color-teal: #009aa6;
+  --color-purple: #6f61ba;
+
+  /* ── Semantic (tipus / severities) ── */
+  --color-bug: #e3405c;
+  --color-question: #4ca1bc;
+  --color-enhancement: #25b9ad;
+  --color-critical: #db3a3a;
+  --color-important: #f2a933;
+  --color-normal: #12f47c;
+
+  /* ── Backgrounds ── */
+  --bg-primary: #f4f6f8;
+  --bg-surface: #ffffff;
+  --bg-header: #ffffff;
+  --bg-sidebar: #dde0e8;
+  --bg-row-hover: #f0fafa;
+  --bg-row-editing: #f0fafa;
+  --bg-inline-form: #f5f7fb;
+  --bg-hover: #f4f6f8;
+  --bg-active: #edf2f7;
+  --bg-layout: #e8eaef;
+  --bg-header-bar: #d3d7e0;
+  --bg-tab-active: #dde0e8;
+
+  /* ── Text ── */
+  --text-primary: #434456;
+  --text-secondary: #70728f;
+  --text-tertiary: #a1aab0;
+  --text-heading: #009aa6;
+  --text-link: #009aa6;
+  --text-on-accent: #ffffff;
+  --text-on-mint: #0d4a34;
+
+  /* ── Borders ── */
+  --border-color: #e6e9ec;
+  --border-light: #f0f1f5;
+  --border-dark: #d8dae3;
+  --border-focus: #009aa6;
+
+  /* ── Interactive ── */
+  --accent: #009aa6;
+  --accent-hover: #007a84;
+  --add-btn-bg: #4dc1ae;
+  --save-btn-bg: #009aa6;
+  --edit-btn-color: #7a7d96;
+  --delete-btn-color: #e05c5c;
+  --closed-icon-color: #009aa6;
+  --danger: rgb(220, 38, 38);
+  --danger-bg: rgba(239, 68, 68, 0.12);
+  --danger-border: rgba(239, 68, 68, 0.25);
+  --success: rgb(5, 150, 105);
+
+  /* ── Badges ── */
+  --badge-default-bg: #e6f9f7;
+  --badge-default-text: #009aa6;
+  --badge-default-border: #b0e8e2;
+  --badge-set-default-btn-color: #7a7d96;
+  --badge-set-default-btn-border: #c5c8d8;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-content: 0 1px 4px rgba(0,0,0,0.07);
+
+  /* ── Bulk-insert overlay ── */
+  --bulk-overlay-bg: rgba(255, 255, 255, 0.96);
+
+  /* ── Layout ── */
+  --sidebar-width: 210px;
+  --content-padding: 40px 48px;
+
+  /* ── Radii ── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* ── Typography ── */
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}

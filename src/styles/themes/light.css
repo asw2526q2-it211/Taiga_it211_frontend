@@ -6,6 +6,8 @@
 
 :root,
 html[data-theme="light"] {
+  color-scheme: light;
+
   /* ── Brand ── */
   --color-mint: #7de8cc;
   --color-teal: #009aa6;

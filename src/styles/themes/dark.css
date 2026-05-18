@@ -5,6 +5,8 @@
    ═══════════════════════════════════════════════════════════════ */
 
 html[data-theme="dark"] {
+  color-scheme: dark;
+
   /* ── Brand ── */
   --color-mint: #4dc1ae;
   --color-teal: #4dc1ae;

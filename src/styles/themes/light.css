@@ -51,6 +51,8 @@ html[data-theme="light"] {
   /* ── Interactive ── */
   --accent: #009aa6;
   --accent-hover: #007a84;
+  --accent-bg-subtle: rgba(20, 163, 142, 0.08);
+  --accent-border-hover: rgba(20, 163, 142, 0.3);
   --add-btn-bg: #4dc1ae;
   --save-btn-bg: #009aa6;
   --edit-btn-color: #7a7d96;
@@ -77,9 +79,16 @@ html[data-theme="light"] {
   /* ── Bulk-insert overlay ── */
   --bulk-overlay-bg: rgba(255, 255, 255, 0.96);
 
+  /* ── New-issue overlay ── */
+  --new-issue-overlay-bg: rgba(255, 255, 255, 0.98);
+
   /* ── Layout ── */
   --sidebar-width: 210px;
   --content-padding: 40px 48px;
+
+  /* ── Glass panel ── */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.3);
 
   /* ── Radii ── */
   --radius-sm: 4px;

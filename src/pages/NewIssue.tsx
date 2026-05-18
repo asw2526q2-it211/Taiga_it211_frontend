@@ -477,9 +477,9 @@ export const NewIssue: React.FC = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '0.3rem',
-                      backgroundColor: assigneeUsername === profile?.username ? 'rgba(20, 163, 142, 0.08)' : 'var(--bg-surface)',
-                      color: assigneeUsername === profile?.username ? 'var(--color-teal)' : 'var(--text-primary)',
-                      border: `1px solid ${assigneeUsername === profile?.username ? 'var(--color-teal)' : 'var(--border-color)'}`,
+                      backgroundColor: assigneeUsername === profile?.username ? 'var(--accent-bg-subtle)' : 'var(--bg-surface)',
+                      color: assigneeUsername === profile?.username ? 'var(--accent)' : 'var(--text-primary)',
+                      border: `1px solid ${assigneeUsername === profile?.username ? 'var(--accent)' : 'var(--border-color)'}`,
                       borderRadius: '8px',
                       padding: '0.45rem 0.5rem',
                       fontSize: '0.78rem',
@@ -539,7 +539,7 @@ export const NewIssue: React.FC = () => {
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : (
-                        <span style={{ color: 'white', fontSize: '1rem', fontWeight: 700 }}>
+                        <span style={{ color: 'var(--text-on-accent)', fontSize: '1rem', fontWeight: 700 }}>
                           {userInitial(selectedUser)}
                         </span>
                       )}
@@ -823,7 +823,7 @@ export const NewIssue: React.FC = () => {
               style={{
                 width: '100%',
                 backgroundColor: 'var(--color-teal)',
-                color: 'white',
+                color: 'var(--text-on-accent)',
                 fontWeight: 700,
                 fontSize: '0.9rem',
                 letterSpacing: '0.05em',
@@ -867,7 +867,7 @@ const newIssueStyles = `
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--new-issue-overlay-bg);
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -962,8 +962,8 @@ const newIssueStyles = `
   transition: all 0.2s ease;
 }
 .new-issue-subject:focus {
-  border-color: var(--color-teal);
-  box-shadow: 0 0 0 2px rgba(20, 163, 142, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-border-hover);
 }
 .new-issue-description {
   width: 100%;
@@ -981,8 +981,8 @@ const newIssueStyles = `
   transition: all 0.2s ease;
 }
 .new-issue-description:focus {
-  border-color: var(--color-teal);
-  box-shadow: 0 0 0 2px rgba(20, 163, 142, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-border-hover);
 }
 .new-issue-tags-row {
   display: flex;
@@ -1004,11 +1004,11 @@ const newIssueStyles = `
   transition: all 0.2s ease;
 }
 .new-issue-add-tag-btn:hover {
-  background: rgba(20, 163, 142, 0.08);
-  border-color: rgba(20, 163, 142, 0.3);
+  background: var(--accent-bg-subtle);
+  border-color: var(--accent-border-hover);
 }
 .new-issue-tag-badge {
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
   color: var(--text-on-accent);
   padding: 4px 10px;
   border-radius: 8px;
@@ -1093,7 +1093,7 @@ const newIssueStyles = `
 }
 .new-issue-attachments-actions label:hover,
 .new-issue-attachments-actions button:hover {
-  background: rgba(0,0,0,0.02);
+  background: var(--bg-hover);
   color: var(--text-primary);
 }
 .new-issue-attachments-actions button.upload {

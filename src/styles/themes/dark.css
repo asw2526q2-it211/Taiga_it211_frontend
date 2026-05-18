@@ -41,6 +41,8 @@ html[data-theme="dark"] {
   /* ── Interactive ── */
   --accent: #4dc1ae;
   --accent-hover: #3da89a;
+  --accent-bg-subtle: rgba(77, 193, 174, 0.12);
+  --accent-border-hover: rgba(77, 193, 174, 0.35);
   --add-btn-bg: #4dc1ae;
   --save-btn-bg: #4dc1ae;
   --edit-btn-color: #a0a3c0;
@@ -62,4 +64,11 @@ html[data-theme="dark"] {
 
   /* ── Bulk-insert overlay (fosc) ── */
   --bulk-overlay-bg: rgba(26, 29, 46, 0.96);
+
+  /* ── Glass panel (fosc) ── */
+  --glass-bg: rgba(37, 40, 64, 0.9);
+  --glass-border: rgba(58, 61, 88, 0.5);
+
+  /* ── New-issue overlay (fosc) ── */
+  --new-issue-overlay-bg: rgba(26, 29, 46, 0.98);
 }

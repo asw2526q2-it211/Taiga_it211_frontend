@@ -129,7 +129,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           marginBottom: '1rem',
           borderRadius: '8px',
           border: hasActiveFilters ? '1px solid var(--danger-border)' : '1px solid var(--border-color)',
-          background: hasActiveFilters ? 'var(--danger-bg)' : 'rgba(0,0,0,0.03)',
+          background: hasActiveFilters ? 'var(--danger-bg)' : 'var(--bg-hover)',
           color: hasActiveFilters ? 'var(--danger)' : 'var(--text-secondary)',
           fontSize: '0.78rem',
           fontWeight: 600,

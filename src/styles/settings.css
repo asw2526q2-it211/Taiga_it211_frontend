@@ -284,6 +284,58 @@
   accent-color: var(--color-teal, #009aa6);
 }
 
+/* ─── Graella de due dates (6 columnes: handle, color, name, dies, before/past, accions) ─── */
+.duedates-grid-scroll {
+  min-width: 0;
+}
+
+.duedates-col-headers {
+  display: grid;
+  grid-template-columns: 32px 80px 1fr 140px 120px 80px;
+  align-items: center;
+  padding: 10px 18px 10px 8px;
+  border-bottom: 1px solid var(--set-grid-border-color, #e5e7ef);
+}
+
+.duedates-row {
+  display: grid;
+  grid-template-columns: 32px 80px 1fr 140px 120px 80px;
+  align-items: center;
+  padding: 10px 18px 10px 8px;
+  border-bottom: 1px solid var(--set-grid-border-color, #edf0f5);
+  transition: background 0.12s;
+}
+
+.duedates-row:hover {
+  background: var(--set-bg-row-hover, #f0fafa);
+}
+
+.duedates-row.is-editing {
+  background: var(--set-bg-row-editing, #f0fafa);
+  border-left: 3px solid var(--set-editing-border, #009aa6);
+}
+
+.set-days-cell {
+  font-size: 14px;
+  color: var(--set-text-color, #333);
+}
+
+.set-direction-cell {
+  font-size: 14px;
+  color: var(--set-text-color, #333);
+}
+
+.set-form-select.compact {
+  min-width: 100px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid var(--set-form-border-color, #ccc);
+  border-radius: 3px;
+  font-family: var(--font-family);
+  color: var(--set-text-color, #333);
+  background: var(--bg-surface, #fff);
+}
+
 /* ─── Subcomponents de la graella ─── */
 .set-col-header {
   font-size: 12px;
@@ -747,6 +799,28 @@
 
 @media (max-width: 480px) {
   .tags-grid-scroll {
+    margin: 0 -12px;
+    padding: 0 12px;
+  }
+}
+
+/* ─── Due dates grid scroll ─── */
+@media (max-width: 900px) {
+  .duedates-grid-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .duedates-col-headers,
+  .duedates-row {
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 480px) {
+  .duedates-grid-scroll {
     margin: 0 -12px;
     padding: 0 12px;
   }

@@ -274,7 +274,7 @@ export const IssueList: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.4rem',
-              backgroundColor: showFilters ? 'rgba(20, 163, 142, 0.1)' : 'var(--bg-surface)',
+              backgroundColor: showFilters ? 'var(--badge-default-bg)' : 'var(--bg-surface)',
               color: showFilters ? 'var(--color-teal)' : 'var(--text-secondary)',
               border: `1px solid ${showFilters ? 'var(--color-teal)' : 'var(--border-color)'}`,
               padding: '0.45rem 0.75rem',
@@ -336,7 +336,7 @@ export const IssueList: React.FC = () => {
                 width: '38px',
                 height: '20px',
                 borderRadius: '10px',
-                backgroundColor: showTags ? 'var(--color-teal)' : '#cbd5e0',
+                backgroundColor: showTags ? 'var(--color-teal)' : 'var(--text-tertiary)',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s ease',
@@ -350,7 +350,7 @@ export const IssueList: React.FC = () => {
                 width: '16px',
                 height: '16px',
                 borderRadius: '50%',
-                backgroundColor: '#ffffff',
+                backgroundColor: 'var(--bg-surface)',
                 transition: 'left 0.2s ease',
                 boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
               }} />
@@ -366,7 +366,7 @@ export const IssueList: React.FC = () => {
             onClick={() => navigate('/issues/new')}
             style={{
               backgroundColor: 'var(--color-teal)',
-              color: '#ffffff',
+              color: 'var(--text-on-accent)',
               border: 'none',
               borderRadius: '8px',
               padding: '0.5rem 1rem',
@@ -387,7 +387,7 @@ export const IssueList: React.FC = () => {
             title="Bulk Insert"
             aria-label="Bulk Insert"
             style={{
-              backgroundColor: '#edf2f7',
+              backgroundColor: 'var(--bg-active)',
               border: 'none',
               borderRadius: '8px',
               width: '32px',
@@ -433,7 +433,7 @@ export const IssueList: React.FC = () => {
           {loading ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>Loading issues...</div>
           ) : error ? (
-            <div style={{ color: 'var(--color-bug)', padding: '1rem', background: '#fce8eb', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)' }}>
+            <div style={{ color: 'var(--color-bug)', padding: '1rem', background: 'var(--danger-bg)', borderRadius: '8px', border: '1px solid var(--danger-border)' }}>
               {error}
             </div>
           ) : filteredIssues.length === 0 ? (
@@ -459,9 +459,9 @@ export const IssueList: React.FC = () => {
 
               {/* Llista d'incidències */}
               {filteredIssues.map(issue => {
-                const typeColor = types.find(t => t.name === issue.type)?.color || '#cccccc';
-                const severityColor = severities.find(s => s.name === issue.severity)?.color || '#cccccc';
-                const priorityColor = priorities.find(p => p.name === issue.priority)?.color || '#cccccc';
+                const typeColor = types.find(t => t.name === issue.type)?.color || 'var(--border-color)';
+                const severityColor = severities.find(s => s.name === issue.severity)?.color || 'var(--border-color)';
+                const priorityColor = priorities.find(p => p.name === issue.priority)?.color || 'var(--border-color)';
                 const statusColor = statuses.find(s => s.name === issue.status)?.color || '#9f7aea';
                 const assigneeUser = users.find(u => u.username === issue.assigned);
                 const isOverdue = checkIsOverdue(issue.due_date);
@@ -637,7 +637,7 @@ export const IssueList: React.FC = () => {
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
                           ) : (
-                            <span style={{ color: 'white', fontSize: '0.7rem', fontWeight: 700 }}>
+                            <span style={{ color: 'var(--text-on-accent)', fontSize: '0.7rem', fontWeight: 700 }}>
                               {assigneeUser.first_name ? assigneeUser.first_name.charAt(0).toUpperCase() : assigneeUser.username.charAt(0).toUpperCase()}
                             </span>
                           )}

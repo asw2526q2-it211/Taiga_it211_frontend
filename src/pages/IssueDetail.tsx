@@ -446,12 +446,12 @@ export const IssueDetail: React.FC = () => {
     <div className="issue-detail-layout">
       {/* Columna Esquerra: Contingut Principal */}
       <div className="issue-main-content">
-        <Link to="/" style={{ color: 'var(--color-teal)', textDecoration: 'none', fontWeight: 600, fontSize: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', marginBottom: '1rem' }}>
+        <Link to="/" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600, fontSize: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', marginBottom: '1rem' }}>
           ← Back to issues
         </Link>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }} onDoubleClick={() => setIsEditingSubject(true)}>
-          <span style={{ color: 'var(--color-teal)', fontSize: '2rem', fontWeight: 300 }}>#{issue.id}</span>
+          <span style={{ color: 'var(--accent)', fontSize: '2rem', fontWeight: 300 }}>#{issue.id}</span>
           {isEditingSubject ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
               <input
@@ -483,7 +483,7 @@ export const IssueDetail: React.FC = () => {
               <button 
                 onClick={() => { handleUpdateField('subject', subjectInput); setIsEditingSubject(false); }} 
                 className="sidebar-btn" 
-                style={{ backgroundColor: 'var(--color-teal)', color: 'white', padding: '0.25rem 0.75rem', height: '36px' }}
+                style={{ backgroundColor: 'var(--color-teal)', color: 'var(--text-on-accent)', padding: '0.25rem 0.75rem', height: '36px' }}
               >
                 Save
               </button>
@@ -506,7 +506,7 @@ export const IssueDetail: React.FC = () => {
         </div>
 
         {issue.blocked && (
-          <div style={{ backgroundColor: '#ffe6e6', color: 'var(--color-critical)', padding: '0.75rem 1rem', borderRadius: '4px', marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center', fontWeight: 600 }}>
+          <div style={{ backgroundColor: 'var(--danger-bg)', color: 'var(--color-critical)', padding: '0.75rem 1rem', borderRadius: '4px', marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center', fontWeight: 600 }}>
             <span>🔒</span> BLOCKED {issue.due_date_reason ? `- ${issue.due_date_reason}` : ''}
           </div>
         )}
@@ -568,7 +568,7 @@ export const IssueDetail: React.FC = () => {
                       }}
                       style={{
                         background: 'var(--color-teal)',
-                        color: 'white',
+                        color: 'var(--text-on-accent)',
                         border: 'none',
                         borderRadius: '8px',
                         padding: '0.25rem 0.5rem',
@@ -584,7 +584,7 @@ export const IssueDetail: React.FC = () => {
                         setTagInput('');
                       }}
                       style={{
-                        background: '#e0e0e0',
+                        background: 'var(--border-color)',
                         color: 'var(--text-primary)',
                         border: 'none',
                         borderRadius: '8px',
@@ -634,9 +634,9 @@ export const IssueDetail: React.FC = () => {
                 <button
                   onClick={() => setIsAddingTag(true)}
                   style={{
-                    background: '#e0f2f1',
+                    background: 'var(--badge-default-bg)',
                     border: 'none',
-                    color: 'var(--color-teal)',
+                    color: 'var(--accent)',
                     padding: '0.25rem 0.5rem',
                     borderRadius: '8px',
                     cursor: 'pointer',
@@ -725,17 +725,17 @@ export const IssueDetail: React.FC = () => {
             </div>
           </div>
           <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-            <div>Created by <span style={{ color: 'var(--color-teal)' }}>{issue.created_by}</span></div>
+            <div>Created by <span style={{ color: 'var(--accent)' }}>{issue.created_by}</span></div>
             {(() => {
               // Resolve due date color, name, and days text
               const defaultRule = dueDates.find(r => r.by_default === 'Past' || r.days_to_due === null) 
                                 || dueDates.find(r => r.name.toLowerCase() === 'default') 
                                 || { name: 'Default', color: '#009aa6' };
 
-              let color = '#718096'; // Neutral slate gray
+              let color = 'var(--text-secondary)'; // Neutral slate gray
               let text = 'No due date';
               let name = 'No limit';
-              let bg = '#f3f4f6';
+              let bg = 'var(--bg-hover)';
 
               if (issue.due_date) {
                 const today = new Date();
@@ -825,7 +825,7 @@ export const IssueDetail: React.FC = () => {
                 style={{ width: '100%', minHeight: '150px', padding: '0.5rem', fontFamily: 'inherit', borderRadius: '4px', border: '1px solid var(--color-teal)' }}
               />
               <div>
-                <button onClick={() => { handleUpdateField('description', descInput); setIsEditingDesc(false); }} className="sidebar-btn" style={{ marginRight: '0.5rem', backgroundColor: 'var(--color-teal)', color: 'white' }}>Save</button>
+                <button onClick={() => { handleUpdateField('description', descInput); setIsEditingDesc(false); }} className="sidebar-btn" style={{ marginRight: '0.5rem', backgroundColor: 'var(--color-teal)', color: 'var(--text-on-accent)' }}>Save</button>
                 <button onClick={() => { setIsEditingDesc(false); setDescInput(issue.description); }} className="sidebar-btn">Cancel</button>
               </div>
             </div>
@@ -838,9 +838,9 @@ export const IssueDetail: React.FC = () => {
 
         {/* Attachments */}
         <div style={{ marginBottom: '2rem' }}>
-          <div style={{ backgroundColor: '#e2e8f0', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '4px' }}>
+          <div style={{ backgroundColor: 'var(--bg-hover)', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '4px' }}>
             <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{issue.attachments.length} Attachments</span>
-            <label style={{ backgroundColor: 'var(--color-mint)', border: 'none', width: '24px', height: '24px', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 'bold' }}>
+            <label style={{ backgroundColor: 'var(--color-mint)', border: 'none', width: '24px', height: '24px', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-on-mint)', fontWeight: 'bold' }}>
               +
               <input type="file" hidden onChange={handleFileUpload} />
             </label>
@@ -860,7 +860,7 @@ export const IssueDetail: React.FC = () => {
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: 'var(--color-teal)',
+                        color: 'var(--accent)',
                         textDecoration: 'none',
                         cursor: attachmentUrl ? 'pointer' : 'not-allowed',
                         font: 'inherit',
@@ -910,7 +910,7 @@ export const IssueDetail: React.FC = () => {
                   style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border-color)', resize: 'vertical', fontFamily: 'inherit', marginBottom: '0.5rem' }} 
                 />
                 <div style={{ textAlign: 'right', marginBottom: '1.5rem' }}>
-                  <button onClick={handlePostComment} className="sidebar-btn" style={{ backgroundColor: 'var(--color-teal)', color: 'white' }}>Post Comment</button>
+                  <button onClick={handlePostComment} className="sidebar-btn" style={{ backgroundColor: 'var(--color-teal)', color: 'var(--text-on-accent)' }}>Post Comment</button>
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -920,7 +920,7 @@ export const IssueDetail: React.FC = () => {
 
                     return (
                     <div key={c.id} style={{ padding: '1rem', backgroundColor: 'var(--bg-primary)', borderRadius: '4px', display: 'flex', gap: '1rem' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#eee', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--bg-active)', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {getUserAvatar(c.user) ? (
                           <img src={getUserAvatar(c.user)!} alt={c.user} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
@@ -965,7 +965,7 @@ export const IssueDetail: React.FC = () => {
                               required
                             />
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                              <button onClick={() => handleUpdateComment(c.id)} className="sidebar-btn" style={{ backgroundColor: 'var(--color-teal)', color: 'white' }}>Save</button>
+                              <button onClick={() => handleUpdateComment(c.id)} className="sidebar-btn" style={{ backgroundColor: 'var(--color-teal)', color: 'var(--text-on-accent)' }}>Save</button>
                               <button onClick={handleCancelEditComment} className="sidebar-btn">Cancel</button>
                             </div>
                           </div>
@@ -989,7 +989,7 @@ export const IssueDetail: React.FC = () => {
                   return (
                     <div key={act.id} style={{ display: 'flex', gap: '1rem', padding: '1rem 0', borderBottom: '1px solid var(--border-color)' }}>
                       {/* Avatar */}
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#eee', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--bg-active)', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {avatarUrl ? (
                           <img src={avatarUrl} alt={act.user} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
@@ -1003,15 +1003,15 @@ export const IssueDetail: React.FC = () => {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: 1 }}>
                         {/* Header: User Display Name & Time */}
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', fontSize: '0.85rem' }}>
-                          <span style={{ fontWeight: 600, color: 'var(--color-teal)' }}>{displayName}</span>
+                          <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{displayName}</span>
                           <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{formatActivityDate(act.created_at)}</span>
                         </div>
 
                         {/* Action badge & text */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                           <span style={{ 
-                            backgroundColor: '#e9ecef', 
-                            color: '#495057', 
+                            backgroundColor: 'var(--bg-active)', 
+                            color: 'var(--text-primary)', 
                             padding: '0.15rem 0.5rem', 
                             borderRadius: '4px', 
                             fontSize: '0.7rem', 
@@ -1041,7 +1041,7 @@ export const IssueDetail: React.FC = () => {
         {/* Status */}
         {(() => {
           const currentStatusItem = statuses.find(s => s.name === issue.status);
-          const statusColor = currentStatusItem?.color || '#cccccc';
+          const statusColor = currentStatusItem?.color || 'var(--border-color)';
           const isClosed = currentStatusItem?.closed || false;
           
           return (
@@ -1076,8 +1076,8 @@ export const IssueDetail: React.FC = () => {
                 </select>
 
                 <span style={{
-                  backgroundColor: isClosed ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
-                  color: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                  backgroundColor: isClosed ? 'var(--danger-bg)' : 'var(--badge-default-bg)',
+                  color: isClosed ? 'var(--danger)' : 'var(--success)',
                   padding: '0.35rem 0.75rem',
                   borderRadius: '16px',
                   fontSize: '0.75rem',
@@ -1087,14 +1087,14 @@ export const IssueDetail: React.FC = () => {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.35rem',
-                  border: `1px solid ${isClosed ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`,
+                  border: `1px solid ${isClosed ? 'var(--danger-border)' : 'var(--badge-default-border)'}`,
                   transition: 'all 0.25s ease'
                 }}>
                   <span style={{
                     width: '6px',
                     height: '6px',
                     borderRadius: '50%',
-                    backgroundColor: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                    backgroundColor: isClosed ? 'var(--danger)' : 'var(--success)',
                     transition: 'all 0.25s ease'
                   }} />
                   {isClosed ? 'Closed' : 'Open'}
@@ -1109,7 +1109,7 @@ export const IssueDetail: React.FC = () => {
           
           {/* Type */}
           {(() => {
-            const selectedColor = types.find(t => t.name === issue.type)?.color || '#cccccc';
+            const selectedColor = types.find(t => t.name === issue.type)?.color || 'var(--border-color)';
             return (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1144,7 +1144,7 @@ export const IssueDetail: React.FC = () => {
           
           {/* Severity */}
           {(() => {
-            const selectedColor = severities.find(s => s.name === issue.severity)?.color || '#cccccc';
+            const selectedColor = severities.find(s => s.name === issue.severity)?.color || 'var(--border-color)';
             return (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1179,7 +1179,7 @@ export const IssueDetail: React.FC = () => {
           
           {/* Priority */}
           {(() => {
-            const selectedColor = priorities.find(p => p.name === issue.priority)?.color || '#cccccc';
+            const selectedColor = priorities.find(p => p.name === issue.priority)?.color || 'var(--border-color)';
             return (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1219,14 +1219,14 @@ export const IssueDetail: React.FC = () => {
           {issue.assigned ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#ffcccc', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', overflow: 'hidden' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--danger-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', overflow: 'hidden' }}>
                   {getUserAvatar(issue.assigned) ? (
                     <img src={getUserAvatar(issue.assigned)!} alt={issue.assigned} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     issue.assigned.charAt(0).toUpperCase()
                   )}
                 </div>
-                <span style={{ color: 'var(--color-teal)', fontWeight: 600 }}>{issue.assigned}</span>
+                <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{issue.assigned}</span>
               </div>
               <button onClick={() => handleUpdateField('assigned', null)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>✕</button>
             </div>
@@ -1252,7 +1252,7 @@ export const IssueDetail: React.FC = () => {
             {issue.watchers.map((w, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', overflow: 'hidden' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--bg-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', overflow: 'hidden' }}>
                     {getUserAvatar(w.username) ? (
                       <img src={getUserAvatar(w.username)!} alt={w.username} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
@@ -1286,8 +1286,8 @@ export const IssueDetail: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.5rem',
-              backgroundColor: issue.blocked ? 'var(--color-normal)' : 'rgba(239, 68, 68, 0.12)', 
-              color: issue.blocked ? '#fff' : 'rgb(220, 38, 38)', 
+              backgroundColor: issue.blocked ? 'var(--color-normal)' : 'var(--danger-bg)', 
+              color: issue.blocked ? 'var(--text-on-accent)' : 'var(--danger)', 
               border: issue.blocked ? 'none' : '1px solid rgba(239, 68, 68, 0.3)', 
               borderRadius: '8px', 
               padding: '0.5rem 1rem', 
@@ -1402,8 +1402,8 @@ export const IssueDetail: React.FC = () => {
               <button 
                 onClick={handleBlockConfirm}
                 style={{ 
-                  backgroundColor: 'rgb(220, 38, 38)', 
-                  color: 'white',
+                  backgroundColor: 'var(--danger)', 
+                  color: 'var(--text-on-accent)',
                   fontWeight: 700,
                   borderRadius: '8px',
                   padding: '0.5rem 1.5rem',
@@ -1425,7 +1425,7 @@ export const IssueDetail: React.FC = () => {
         <div className="modal-overlay">
           <div className="modal-container" style={{ maxWidth: '420px' }}>
             <div className="modal-header">
-              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: 'rgb(220, 38, 38)' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: 'var(--danger)' }}>
                 <span>🗑</span> Delete Issue
               </h3>
               <button onClick={() => setIsDeleteModalOpen(false)} className="modal-close-btn">✕</button>
@@ -1457,8 +1457,8 @@ export const IssueDetail: React.FC = () => {
               <button 
                 onClick={handleDeleteConfirm}
                 style={{ 
-                  backgroundColor: 'rgb(220, 38, 38)', 
-                  color: 'white',
+                  backgroundColor: 'var(--danger)', 
+                  color: 'var(--text-on-accent)',
                   fontWeight: 700,
                   borderRadius: '8px',
                   padding: '0.5rem 1.5rem',

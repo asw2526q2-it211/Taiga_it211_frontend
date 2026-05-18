@@ -64,7 +64,7 @@ export const NewIssue: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<TagResource[]>([])
   const [showAddTag, setShowAddTag] = useState(false)
   const [newTagName, setNewTagName] = useState('')
-  const [newTagColor, setNewTagColor] = useState('#4dc1ae')
+  const [newTagColor, setNewTagColor] = useState('var(--add-btn-bg)')
 
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
 
@@ -160,7 +160,7 @@ export const NewIssue: React.FC = () => {
       setAllTags((prev) => (prev.some((t) => t.name === tag.name) ? prev : [...prev, tag]))
       setSelectedTags((prev) => [...prev, tag])
       setNewTagName('')
-      setNewTagColor('#4dc1ae')
+      setNewTagColor('var(--add-btn-bg)')
       setShowAddTag(false)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to create tag')
@@ -374,14 +374,14 @@ export const NewIssue: React.FC = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {attachedFiles.map((file) => (
                     <div key={file.name} className="new-issue-attachment-item">
-                      <span style={{ color: '#009aa6', fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ color: 'var(--accent)', fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
                         <svg style={{ width: 16, height: 16, stroke: 'currentColor', fill: 'none', strokeWidth: 2 }} viewBox="0 0 24 24">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                           <polyline points="14 2 14 8 20 8" />
                         </svg>
                         {file.name}
                       </span>
-                      <button type="button" onClick={() => removeAttached(file.name)} title="Delete" style={{ background: 'none', border: 'none', padding: 0, color: '#70728f', cursor: 'pointer' }}>
+                      <button type="button" onClick={() => removeAttached(file.name)} title="Delete" style={{ background: 'none', border: 'none', padding: 0, color: 'var(--text-secondary)', cursor: 'pointer' }}>
                         <svg style={{ width: 16, height: 16, stroke: 'currentColor', fill: 'none', strokeWidth: 2 }} viewBox="0 0 24 24">
                           <polyline points="3 6 5 6 21 6" />
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -399,7 +399,7 @@ export const NewIssue: React.FC = () => {
                 <h4 style={{ margin: 0, fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</h4>
                 {(() => {
                   const currentStatusItem = statuses.find(s => s.name === statusName);
-                  const statusColor = currentStatusItem?.color || '#cccccc';
+                  const statusColor = currentStatusItem?.color || 'var(--border-color)';
                   const isClosed = currentStatusItem?.closed || false;
                   
                   return (
@@ -434,8 +434,8 @@ export const NewIssue: React.FC = () => {
                       </div>
 
                       <span style={{
-                        backgroundColor: isClosed ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
-                        color: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                        backgroundColor: isClosed ? 'var(--danger-bg)' : 'var(--badge-default-bg)',
+                        color: isClosed ? 'var(--danger)' : 'var(--success)',
                         padding: '0.35rem 0.6rem',
                         borderRadius: '16px',
                         fontSize: '0.7rem',
@@ -445,14 +445,14 @@ export const NewIssue: React.FC = () => {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '0.3rem',
-                        border: `1px solid ${isClosed ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`,
+                        border: `1px solid ${isClosed ? 'var(--danger-border)' : 'var(--badge-default-border)'}`,
                         transition: 'all 0.25s ease'
                       }}>
                         <span style={{
                           width: '5px',
                           height: '5px',
                           borderRadius: '50%',
-                          backgroundColor: isClosed ? 'rgb(220, 38, 38)' : 'rgb(5, 150, 105)',
+                          backgroundColor: isClosed ? 'var(--danger)' : 'var(--success)',
                           transition: 'all 0.25s ease'
                         }} />
                         {isClosed ? 'Closed' : 'Open'}
@@ -592,7 +592,7 @@ export const NewIssue: React.FC = () => {
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>Type</span>
                   {(() => {
                     const activeType = types.find(t => t.name === typeName);
-                    const color = activeType?.color || '#cccccc';
+                    const color = activeType?.color || 'var(--border-color)';
                     return (
                       <select 
                         value={typeName} 
@@ -619,7 +619,7 @@ export const NewIssue: React.FC = () => {
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>Severity</span>
                   {(() => {
                     const activeSev = severities.find(s => s.name === severityName);
-                    const color = activeSev?.color || '#cccccc';
+                    const color = activeSev?.color || 'var(--border-color)';
                     return (
                       <select 
                         value={severityName} 
@@ -646,7 +646,7 @@ export const NewIssue: React.FC = () => {
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>Priority</span>
                   {(() => {
                     const activePrio = priorities.find(p => p.name === priorityName);
-                    const color = activePrio?.color || '#cccccc';
+                    const color = activePrio?.color || 'var(--border-color)';
                     return (
                       <select 
                         value={priorityName} 
@@ -675,11 +675,11 @@ export const NewIssue: React.FC = () => {
                 {(() => {
                   const defaultRule = dueDateRules.find(r => r.by_default === 'Past' || r.days_to_due === null) 
                                     || dueDateRules.find(r => r.name.toLowerCase() === 'default') 
-                                    || { name: 'Default', color: '#009aa6' };
+                                    || { name: 'Default', color: 'var(--accent)' };
 
-                  let color = '#718096'; // Neutral slate gray
+                  let color = 'var(--text-secondary)'; // Neutral slate gray
                   let text = 'No due date';
-                  let bg = '#f3f4f6';
+                  let bg = 'var(--bg-hover)';
 
                   if (dueDate) {
                     const today = new Date();
@@ -772,8 +772,8 @@ export const NewIssue: React.FC = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '0.5rem',
-                    backgroundColor: isBlocked ? 'var(--color-normal)' : 'rgba(239, 68, 68, 0.12)', 
-                    color: isBlocked ? '#fff' : 'rgb(220, 38, 38)', 
+                    backgroundColor: isBlocked ? 'var(--color-normal)' : 'var(--danger-bg)', 
+                    color: isBlocked ? 'var(--text-on-accent)' : 'var(--danger)', 
                     border: isBlocked ? 'none' : '1px solid rgba(239, 68, 68, 0.3)', 
                     borderRadius: '8px', 
                     padding: '0.45rem 1rem', 
@@ -956,7 +956,7 @@ const newIssueStyles = `
   font-size: 18px;
   font-weight: 600;
   color: var(--text-primary);
-  background: #fff;
+  background: var(--bg-surface);
   outline: none;
   box-sizing: border-box;
   transition: all 0.2s ease;
@@ -972,7 +972,7 @@ const newIssueStyles = `
   padding: 15px;
   font-size: 14px;
   color: var(--text-primary);
-  background: #fff;
+  background: var(--bg-surface);
   min-height: 200px;
   resize: vertical;
   outline: none;
@@ -1009,7 +1009,7 @@ const newIssueStyles = `
 }
 .new-issue-tag-badge {
   border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #fff;
+  color: var(--text-on-accent);
   padding: 4px 10px;
   border-radius: 8px;
   font-size: 12px;
@@ -1021,7 +1021,7 @@ const newIssueStyles = `
 .new-issue-tag-badge button {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--text-on-accent);
   cursor: pointer;
   font-size: 14px;
   line-height: 1;
@@ -1047,7 +1047,7 @@ const newIssueStyles = `
 }
 .new-issue-inline-tag button {
   background: var(--color-teal);
-  color: white;
+  color: var(--text-on-accent);
   border: none;
   border-radius: 0 8px 8px 0;
   font-size: 12px;
@@ -1100,7 +1100,7 @@ const newIssueStyles = `
   background: var(--color-mint);
   border: none;
   border-radius: 0 8px 8px 0;
-  color: #000;
+  color: var(--text-on-mint);
 }
 .new-issue-attachments-actions button.upload:hover {
   filter: brightness(0.95);

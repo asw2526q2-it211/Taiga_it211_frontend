@@ -11,7 +11,7 @@ interface IssueCardProps {
  * ja que el backend retorna només el text en el llistat general.
  */
 const getColorByName = (name: string | null): string => {
-  if (!name) return '#ccc';
+  if (!name) return 'var(--border-color)';
   const n = name.toLowerCase();
   if (n.includes('bug') || n.includes('critical')) return 'var(--color-bug)';
   if (n.includes('question') || n.includes('minor')) return 'var(--color-question)';
@@ -32,12 +32,12 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
       {/* Indicadors laterals de color */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', width: '90px' }}>
         {issue.type && (
-          <span className="badge" style={{ backgroundColor: getColorByName(issue.type), color: '#fff', textAlign: 'center' }}>
+          <span className="badge" style={{ backgroundColor: getColorByName(issue.type), color: 'var(--text-on-accent)', textAlign: 'center' }}>
             {issue.type}
           </span>
         )}
         {issue.severity && (
-          <span className="badge" style={{ backgroundColor: getColorByName(issue.severity), color: '#fff', textAlign: 'center', opacity: 0.9 }}>
+          <span className="badge" style={{ backgroundColor: getColorByName(issue.severity), color: 'var(--text-on-accent)', textAlign: 'center', opacity: 0.9 }}>
             {issue.severity}
           </span>
         )}
@@ -56,7 +56,7 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
           {/* Tags (etiquetes) */}
           <div style={{ display: 'flex', gap: '0.4rem' }}>
             {issue.tags && issue.tags.map((tag, idx) => (
-              <span key={idx} className="badge" style={{ backgroundColor: tag.color || 'var(--color-teal)', color: '#fff', fontSize: '0.7rem' }}>
+              <span key={idx} className="badge" style={{ backgroundColor: tag.color || 'var(--color-teal)', color: 'var(--text-on-accent)', fontSize: '0.7rem' }}>
                 {tag.name}
               </span>
             ))}

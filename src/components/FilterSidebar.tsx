@@ -103,7 +103,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           style={{
             background: 'var(--color-teal)',
             border: 'none',
-            color: 'white',
+            color: 'var(--text-on-accent)',
             fontSize: '0.72rem',
             fontWeight: 700,
             cursor: 'pointer',
@@ -128,9 +128,9 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           padding: '0.45rem 0.75rem',
           marginBottom: '1rem',
           borderRadius: '8px',
-          border: hasActiveFilters ? '1px solid rgba(239,68,68,0.4)' : '1px solid var(--border-color)',
-          background: hasActiveFilters ? 'rgba(239,68,68,0.08)' : 'rgba(0,0,0,0.03)',
-          color: hasActiveFilters ? '#ef4444' : 'var(--text-secondary)',
+          border: hasActiveFilters ? '1px solid var(--danger-border)' : '1px solid var(--border-color)',
+          background: hasActiveFilters ? 'var(--danger-bg)' : 'var(--bg-hover)',
+          color: hasActiveFilters ? 'var(--danger)' : 'var(--text-secondary)',
           fontSize: '0.78rem',
           fontWeight: 600,
           cursor: 'pointer',
@@ -146,8 +146,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         {hasActiveFilters && (
           <span style={{
             marginLeft: '0.2rem',
-            background: '#ef4444',
-            color: 'white',
+            background: 'var(--danger)',
+            color: 'var(--text-on-accent)',
             borderRadius: '10px',
             padding: '0 0.35rem',
             fontSize: '0.65rem',
@@ -172,7 +172,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 return (
                   <label key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-primary)', cursor: 'pointer' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: t.color || '#cccccc', display: 'inline-block' }} />
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: t.color || 'var(--border-color)', display: 'inline-block' }} />
                       <span>{t.name}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -182,7 +182,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         onChange={() => onToggleFilter('types', t.name)}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: '#edf2f7', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: 'var(--bg-active)', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
                         {count}
                       </span>
                     </div>
@@ -204,7 +204,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 return (
                   <label key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-primary)', cursor: 'pointer' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: s.color || '#cccccc', display: 'inline-block' }} />
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: s.color || 'var(--border-color)', display: 'inline-block' }} />
                       <span>{s.name}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -214,7 +214,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         onChange={() => onToggleFilter('severities', s.name)}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: '#edf2f7', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: 'var(--bg-active)', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
                         {count}
                       </span>
                     </div>
@@ -236,7 +236,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 return (
                   <label key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-primary)', cursor: 'pointer' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: p.color || '#cccccc', display: 'inline-block' }} />
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: p.color || 'var(--border-color)', display: 'inline-block' }} />
                       <span>{p.name}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -246,7 +246,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         onChange={() => onToggleFilter('priorities', p.name)}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: '#edf2f7', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: 'var(--bg-active)', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
                         {count}
                       </span>
                     </div>
@@ -268,7 +268,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 return (
                   <label key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-primary)', cursor: 'pointer' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: s.color || '#cccccc', display: 'inline-block' }} />
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: s.color || 'var(--border-color)', display: 'inline-block' }} />
                       <span>{s.name}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -278,7 +278,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         onChange={() => onToggleFilter('statuses', s.name)}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: '#edf2f7', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: 'var(--bg-active)', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
                         {count}
                       </span>
                     </div>
@@ -301,7 +301,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   const isChecked = draftFilters.tags.includes(tagName);
                   const count = issues.filter(issue => (issue.tags || []).some(t => t.name === tagName)).length;
                   // dynamic mock color for tag badges in list
-                  const tagColor = '#009aa6'; 
+                  const tagColor = 'var(--accent)';
                   return (
                     <label key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-primary)', cursor: 'pointer' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -326,7 +326,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                           onChange={() => onToggleFilter('tags', tagName)}
                           style={{ cursor: 'pointer' }}
                         />
-                        <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: '#edf2f7', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
+                        <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: 'var(--bg-active)', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
                           {count}
                         </span>
                       </div>
@@ -357,7 +357,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                           style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover' }} 
                         />
                       ) : (
-                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#c5a3cd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'white', fontWeight: 700 }}>
+                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#c5a3cd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'var(--text-on-accent)', fontWeight: 700 }}>
                           {initial}
                         </div>
                       )}
@@ -370,7 +370,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         onChange={() => onToggleFilter('assignees', u.username)}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: '#edf2f7', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: 'var(--bg-active)', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
                         {count}
                       </span>
                     </div>
@@ -400,7 +400,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                           style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover' }} 
                         />
                       ) : (
-                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#c5a3cd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'white', fontWeight: 700 }}>
+                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#c5a3cd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'var(--text-on-accent)', fontWeight: 700 }}>
                           {initial}
                         </div>
                       )}
@@ -413,7 +413,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         onChange={() => onToggleFilter('creators', u.username)}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: '#edf2f7', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, backgroundColor: 'var(--bg-active)', color: 'var(--text-secondary)', padding: '0.1rem 0.35rem', borderRadius: '10px', minWidth: '16px', textAlign: 'center' }}>
                         {count}
                       </span>
                     </div>

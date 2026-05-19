@@ -134,6 +134,13 @@ export interface TagResource {
   color: string;
 }
 
+/** Tag amb id per a la pantalla de configuració (GET /tags/). */
+export interface TagSettingResource {
+  id: number;
+  name: string;
+  color: string;
+}
+
 /**
  * Interfície que coincideix exactament amb el JSON que retorna el teu backend.
  */
@@ -200,6 +207,17 @@ export type IssueListResponse = Issue[];
  * Representació d'un Priority segons l'API.
  */
 export interface PriorityResource {
+  id: number;
+  name: string;
+  color: string;
+  order: number;
+  is_default: boolean;
+}
+
+/**
+ * Representació d'una Severity segons l'API.
+ */
+export interface SeverityResource {
   id: number;
   name: string;
   color: string;

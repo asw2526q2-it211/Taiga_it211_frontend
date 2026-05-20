@@ -14,10 +14,10 @@ export interface User {
  * Hem configurat el teu usuari real com a opció principal.
  */
 export const MOCK_USERS: User[] = [
-  { 
-    id: 1, 
-    name: 'Joan', 
-    apiKey: env.apiKey || '30e4a9c5cb1aca0ad94ca39c5f138148eff0419b' 
+  {
+    id: 1,
+    name: 'Joan',
+    apiKey: env.apiKey || '30e4a9c5cb1aca0ad94ca39c5f138148eff0419b'
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ export const MOCK_USERS: User[] = [
   {
     id: 4,
     name: 'Lucas',
-    apiKey: 'api-key-placeholder'
+    apiKey: '24a83a5f3dfbd41a98bc3609efdabcc69cb05ccd'
   },
   {
     id: 5,
@@ -40,8 +40,8 @@ export const MOCK_USERS: User[] = [
     apiKey: 'api-key-placeholder'
   },
   {
-    id: 6, 
-    name: 'TEST-USER', 
-    apiKey: 'admin-token-placeholder' 
+    id: 6,
+    name: 'TEST-USER',
+    apiKey: 'admin-token-placeholder'
   }
 ];

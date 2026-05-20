@@ -37,7 +37,7 @@ export const MOCK_USERS: User[] = [
   {
     id: 5,
     name: 'Izan',
-    apiKey: 'api-key-placeholder'
+    apiKey: 'e9d0b83e7739fb7248ca62755ef09ffaf60c30b6'
   },
   {
     id: 6, 

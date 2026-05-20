@@ -3,9 +3,10 @@ import '../styles/issue-detail.css';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../services/client';
 import { env } from '../config/env';
-import type { Attachment, DetailedIssue, StatusItem, TypeItem, SeverityItem, PriorityItem, UserResource } from '../types/api';
+import type { Attachment, DetailedIssue, Issue, StatusItem, TypeItem, SeverityItem, PriorityItem, UserResource } from '../types/api';
 import { useAuth } from '../context/AuthContext';
 import { UserSelectionModal } from '../components/UserSelectionModal';
+import { UserProfileLink } from '../components/UserProfileLink';
 
 export const IssueDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -146,7 +147,22 @@ export const IssueDetail: React.FC = () => {
         apiRequest<{ id: number; name: string; color: string }[]>('tags'),
         apiRequest<{ id: number; name: string; color: string; days_to_due: number | null; by_default: string }[]>('duedates')
       ]);
-      setIssue(issueData);
+
+      // El detall no sempre inclou created_at (API antiga); el llistat sí.
+      let enrichedIssue = issueData;
+      if (!issueData.created_at) {
+        try {
+          const listMatch = await apiRequest<Issue[]>('issues', { params: { id } });
+          const fromList = listMatch.find((item) => item.id === Number(id));
+          if (fromList?.created_at) {
+            enrichedIssue = { ...issueData, created_at: fromList.created_at };
+          }
+        } catch {
+          // Si falla el fallback, es mostra el detall sense data de creació.
+        }
+      }
+
+      setIssue(enrichedIssue);
       setStatuses(statusData);
       setTypes(typeData);
       setSeverities(sevData);
@@ -154,8 +170,8 @@ export const IssueDetail: React.FC = () => {
       setUsers(userData);
       setGlobalTags(tagsData);
       setDueDates(dueDatesData);
-      setDescInput(issueData.description || '');
-      setSubjectInput(issueData.subject || '');
+      setDescInput(enrichedIssue.description || '');
+      setSubjectInput(enrichedIssue.subject || '');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to fetch issue details');
     } finally {
@@ -639,7 +655,41 @@ export const IssueDetail: React.FC = () => {
             </div>
           </div>
           <div className="issue-info-right">
-            <div className="issue-info-created">Created by <span className="issue-info-created-author">{issue.created_by}</span></div>
+            <div className="issue-info-creator-row">
+              <div className="issue-info-created-text">
+                <div className="issue-info-created">
+                  Created by{' '}
+                  <UserProfileLink
+                    username={issue.created_by}
+                    className="issue-info-created-author"
+                  >
+                    {getUserDisplayName(issue.created_by)}
+                  </UserProfileLink>
+                </div>
+                {issue.created_at && (
+                  <div className="issue-info-created-date">
+                    {formatActivityDate(issue.created_at)}
+                  </div>
+                )}
+              </div>
+              <Link
+                to={`/profile/${encodeURIComponent(issue.created_by)}`}
+                className="issue-info-creator-avatar"
+                title={`View ${issue.created_by}'s profile`}
+              >
+                {getUserAvatar(issue.created_by) ? (
+                  <img
+                    src={getUserAvatar(issue.created_by)!}
+                    alt={issue.created_by}
+                    className="issue-avatar-image"
+                  />
+                ) : (
+                  <span className="issue-info-creator-avatar-initial">
+                    {issue.created_by.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </Link>
+            </div>
             {(() => {
               // Resolve due date color, name, and days text
               const defaultRule = dueDates.find(r => r.by_default === 'Past' || r.days_to_due === null) 
@@ -825,7 +875,12 @@ export const IssueDetail: React.FC = () => {
                       <div className="issue-comment-body">
                         <div className="issue-comment-header">
                           <div>
-                            <span className="issue-comment-author">{c.user}</span>
+                            <UserProfileLink
+                              username={c.user}
+                              className="issue-comment-author"
+                            >
+                              {getUserDisplayName(c.user)}
+                            </UserProfileLink>
                             <span className="issue-comment-date"> {new Date(c.created_at).toLocaleString()}</span>
                           </div>
                           {canEditComment && (
@@ -901,7 +956,12 @@ export const IssueDetail: React.FC = () => {
                       <div className="issue-activity-content">
                         {/* Header: User Display Name & Time */}
                         <div className="issue-activity-header">
-                          <span className="issue-activity-author">{displayName}</span>
+                          <UserProfileLink
+                            username={act.user}
+                            className="issue-activity-author"
+                          >
+                            {displayName}
+                          </UserProfileLink>
                           <span className="issue-activity-date">{formatActivityDate(act.created_at)}</span>
                         </div>
 
@@ -1050,7 +1110,12 @@ export const IssueDetail: React.FC = () => {
                     issue.assigned.charAt(0).toUpperCase()
                   )}
                 </div>
-                <span className="issue-username accent">{issue.assigned}</span>
+                <UserProfileLink
+                  username={issue.assigned}
+                  className="issue-username accent"
+                >
+                  {getUserDisplayName(issue.assigned)}
+                </UserProfileLink>
               </div>
               <button onClick={() => handleUpdateField('assigned', null)} className="issue-remove-btn">✕</button>
             </div>
@@ -1082,7 +1147,12 @@ export const IssueDetail: React.FC = () => {
                       w.username.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <span className="issue-username secondary">{w.username}</span>
+                  <UserProfileLink
+                    username={w.username}
+                    className="issue-username secondary"
+                  >
+                    {getUserDisplayName(w.username)}
+                  </UserProfileLink>
                 </div>
                 <button onClick={() => handleRemoveWatcher(w.username)} className="issue-remove-btn">✕</button>
               </div>

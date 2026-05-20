@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Layout } from './components/Layout';
@@ -10,6 +10,12 @@ import { SettingsPage } from './pages/SettingsPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { BulkInsert } from './pages/BulkInsert';
 
+/** Base path de Vite (p. ex. `/Taiga_it211_frontend` en GitHub Pages). */
+const routerBasename =
+  import.meta.env.BASE_URL !== '/'
+    ? import.meta.env.BASE_URL.replace(/\/$/, '')
+    : undefined;
+
 /**
  * Component arrel de l'aplicació.
  * Aquí configurem els proveïdors de context globals i les rutes.
@@ -18,11 +24,12 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
+        <BrowserRouter basename={routerBasename}>
           <Layout>
             <Routes>
-              {/* Pàgina de llistat d'incidències */}
+              {/* Pàgina inicial: llistat d'incidències */}
               <Route path="/" element={<IssueList />} />
+              <Route path="/issues" element={<Navigate to="/" replace />} />
               {/* Pàgina de creació d'incidència */}
               <Route path="/issues/new" element={<NewIssue />} />
               {/* Inserció massiva d'incidències */}
@@ -33,6 +40,8 @@ const App: React.FC = () => {
               <Route path="/settings" element={<SettingsPage />} />
               {/* Pàgina del perfil d'un usuari */}
               <Route path="/profile/:username" element={<ProfilePage />} />
+              {/* Qualsevol altra ruta redirigeix al llistat */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Layout>
         </BrowserRouter>

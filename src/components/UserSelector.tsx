@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useRequiredAuth } from '../context/AuthContext';
 import { MOCK_USERS } from '../config/users';
 
 /**
@@ -7,7 +7,7 @@ import { MOCK_USERS } from '../config/users';
  * Permet testejar l'API amb diferents claus d'autorització ràpidament.
  */
 export const UserSelector: React.FC = () => {
-  const { currentUser, setCurrentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useRequiredAuth();
 
   // Funció que s'executa quan l'usuari tria una opció del desplegable
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

@@ -3,12 +3,15 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { ReactNode } from 'react';
 import { setGlobalApiKey } from '../services/client';
 import { fetchCurrentProfile } from '../services/profile';
-import { MOCK_USERS } from '../config/users';
-import type { User } from '../config/users';
+import {
+  MOCK_USERS,
+  SELECTED_USER_STORAGE_KEY,
+  type User,
+} from '../config/users';
 import type { CurrentProfile } from '../types/api';
 
 interface AuthContextType {
-  currentUser: User;
+  currentUser: User | null;
   setCurrentUser: (user: User) => void;
   /** Perfil real (username, avatar, bio, api_key) de l'usuari actiu, obtingut del backend. */
   profile: CurrentProfile | null;
@@ -20,6 +23,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function readStoredUser(): User | null {
+  try {
+    const raw = sessionStorage.getItem(SELECTED_USER_STORAGE_KEY);
+    if (!raw) return null;
+    const id = parseInt(raw, 10);
+    return MOCK_USERS.find((u) => u.id === id) ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Proveïdor del context d'autenticació (mock).
  * Gestiona quin usuari està actiu, manté la clau d'API del client HTTP sincronitzada
@@ -27,12 +41,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  * el `username`, `avatar` i altres dades del compte logat.
  */
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User>(MOCK_USERS[0]);
+  const [currentUser, setCurrentUserState] = useState<User | null>(readStoredUser);
   const [profile, setProfile] = useState<CurrentProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState<boolean>(true);
+  const [profileLoading, setProfileLoading] = useState<boolean>(false);
+
+  const setCurrentUser = useCallback((user: User) => {
+    setCurrentUserState(user);
+    try {
+      sessionStorage.setItem(SELECTED_USER_STORAGE_KEY, String(user.id));
+    } catch {
+      /* sessionStorage no disponible */
+    }
+  }, []);
 
   // Carrega el perfil real associat a la clau d'API actual.
   const loadProfile = useCallback(async () => {
+    if (!currentUser) {
+      setProfile(null);
+      setProfileLoading(false);
+      return;
+    }
+
     setProfileLoading(true);
     try {
       const data = await fetchCurrentProfile();
@@ -43,10 +72,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } finally {
       setProfileLoading(false);
     }
-  }, []);
+  }, [currentUser]);
 
   // Sincronitza la clau d'API global i recarrega el perfil quan canvia d'usuari.
   useEffect(() => {
+    if (!currentUser) {
+      setGlobalApiKey('');
+      setProfile(null);
+      setProfileLoading(false);
+      return;
+    }
+
     setGlobalApiKey(currentUser.apiKey);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadProfile();
@@ -76,4 +112,15 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+/**
+ * Usuari de sessió obligatori (dins de l'app ja autenticada).
+ */
+export const useRequiredAuth = () => {
+  const auth = useAuth();
+  if (!auth.currentUser) {
+    throw new Error('useRequiredAuth requires a selected user');
+  }
+  return { ...auth, currentUser: auth.currentUser };
 };

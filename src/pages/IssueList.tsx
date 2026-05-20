@@ -23,6 +23,7 @@ export const IssueList: React.FC = () => {
   const [priorities, setPriorities] = useState<ColorResource[]>([]);
   const [statuses, setStatuses] = useState<StatusResource[]>([]);
   const [users, setUsers] = useState<ApiUser[]>([]);
+  const [dueDates, setDueDates] = useState<{ id: number; name: string; color: string; days_to_due: number | null; by_default: string }[]>([]);
 
   // Estats de cerca i visualització
   const [searchQuery, setSearchQuery] = useState('');
@@ -80,12 +81,13 @@ export const IssueList: React.FC = () => {
   useEffect(() => {
     const loadMeta = async () => {
       try {
-        const [typesRes, sevRes, priRes, statRes, usersRes] = await Promise.all([
+        const [typesRes, sevRes, priRes, statRes, usersRes, dueDatesRes] = await Promise.all([
           apiRequest<ColorResource[]>('types/'),
           apiRequest<ColorResource[]>('severities/'),
           apiRequest<ColorResource[]>('priorities/'),
           apiRequest<StatusResource[]>('statuses/'),
           apiRequest<ApiUser[]>('users/'),
+          apiRequest<any[]>('duedates/'),
         ]);
 
         setTypes(typesRes);
@@ -93,6 +95,7 @@ export const IssueList: React.FC = () => {
         setPriorities(priRes);
         setStatuses(statRes);
         setUsers(usersRes);
+        setDueDates(dueDatesRes);
       } catch (err) {
         console.error('Failed to load metadata', err);
       }
@@ -181,15 +184,6 @@ export const IssueList: React.FC = () => {
     }
   };
 
-  const checkIsOverdue = (dueDateStr: string | null) => {
-    if (!dueDateStr) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const due = new Date(dueDateStr);
-    due.setHours(0, 0, 0, 0);
-    return due.getTime() < today.getTime();
-  };
-
   const handleStatusChange = async (issueId: number, newStatus: string) => {
     try {
       setError(null);
@@ -238,12 +232,12 @@ export const IssueList: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingBottom: '3rem' }}>
-      
+
       {/* Títol principal */}
-      <h2 style={{ 
-        color: 'var(--color-teal)', 
-        fontWeight: 800, 
-        margin: '0 0 1.5rem 0', 
+      <h2 style={{
+        color: 'var(--color-teal)',
+        fontWeight: 800,
+        margin: '0 0 1.5rem 0',
         fontSize: '2rem',
         letterSpacing: '-0.02em'
       }}>
@@ -251,23 +245,23 @@ export const IssueList: React.FC = () => {
       </h2>
 
       {/* Barra de controls premium dalt */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        flexWrap: 'wrap', 
-        gap: '1rem', 
-        backgroundColor: 'var(--bg-surface)', 
-        padding: '0.75rem 1rem', 
-        borderRadius: '8px', 
-        border: '1px solid var(--border-color)', 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '1rem',
+        backgroundColor: 'var(--bg-surface)',
+        padding: '0.75rem 1rem',
+        borderRadius: '8px',
+        border: '1px solid var(--border-color)',
         marginBottom: '1.25rem',
         boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: '300px' }}>
-          
+
           {/* Botó de Filtres */}
-          <button 
+          <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
             style={{
@@ -301,9 +295,9 @@ export const IssueList: React.FC = () => {
 
           {/* Input de Cerca */}
           <div style={{ position: 'relative', flex: 1, maxWidth: '280px' }}>
-            <input 
-              type="text" 
-              placeholder="subject or reference" 
+            <input
+              type="text"
+              placeholder="subject or reference"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -413,7 +407,7 @@ export const IssueList: React.FC = () => {
       <div className="main-layout-container">
         {showFilters && (
           <aside className="filters-aside">
-            <FilterSidebar 
+            <FilterSidebar
               types={types}
               severities={severities}
               priorities={priorities}
@@ -464,10 +458,41 @@ export const IssueList: React.FC = () => {
                 const priorityColor = priorities.find(p => p.name === issue.priority)?.color || 'var(--border-color)';
                 const statusColor = statuses.find(s => s.name === issue.status)?.color || '#9f7aea';
                 const assigneeUser = users.find(u => u.username === issue.assigned);
-                const isOverdue = checkIsOverdue(issue.due_date);
+                
+                let dueDateColor = 'var(--text-secondary)';
+                if (issue.due_date) {
+                  const defaultRule = dueDates.find(r => r.by_default === 'Past' || r.days_to_due === null) 
+                                    || dueDates.find(r => r.name.toLowerCase() === 'default') 
+                                    || { name: 'Default', color: '#009aa6' };
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const due = new Date(issue.due_date);
+                  due.setHours(0, 0, 0, 0);
+                  
+                  const diffTime = due.getTime() - today.getTime();
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                  const sortedRules = [...dueDates]
+                    .filter(r => r.days_to_due !== null && r.days_to_due !== undefined)
+                    .sort((a, b) => (a.days_to_due || 0) - (b.days_to_due || 0));
+
+                  let matchedRule = null;
+                  for (const rule of sortedRules) {
+                    if (rule.days_to_due !== null && diffDays <= rule.days_to_due) {
+                      matchedRule = rule;
+                      break;
+                    }
+                  }
+
+                  if (!matchedRule) {
+                    matchedRule = defaultRule;
+                  }
+                  
+                  dueDateColor = matchedRule.color;
+                }
 
                 return (
-                  <div 
+                  <div
                     key={issue.id}
                     onClick={() => navigate(`/issues/${issue.id}`)}
                     className="issue-list-grid"
@@ -530,19 +555,19 @@ export const IssueList: React.FC = () => {
                       <span style={{ color: 'var(--color-teal)', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0 }}>
                         #{issue.id}
                       </span>
-                      <span style={{ 
-                        fontWeight: 600, 
-                        color: 'var(--text-primary)', 
-                        whiteSpace: 'nowrap', 
-                        overflow: 'hidden', 
-                        textOverflow: 'ellipsis', 
-                        fontSize: '0.9rem' 
+                      <span style={{
+                        fontWeight: 600,
+                        color: 'var(--text-primary)',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        fontSize: '0.9rem'
                       }}>
                         {issue.subject}
                       </span>
-                      
-                      {isOverdue && (
-                        <span title="Overdue!" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-critical)', flexShrink: 0 }}>
+
+                      {issue.due_date && (
+                        <span title={`Due Date: ${formatDate(issue.due_date)}`} style={{ display: 'inline-flex', alignItems: 'center', color: dueDateColor, flexShrink: 0 }}>
                           <svg viewBox="0 0 24 24" style={{ width: 14, height: 14, stroke: 'currentColor', fill: 'none', strokeWidth: 2.5 }}>
                             <circle cx="12" cy="12" r="10" />
                             <polyline points="12 6 12 12 16 14" />
@@ -577,13 +602,13 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 5. Status dropdown chevron */}
-                    <div 
+                    <div
                       style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.35rem', overflow: 'hidden' }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <span style={{ 
-                        fontWeight: 700, 
-                        fontSize: '0.8rem', 
+                      <span style={{
+                        fontWeight: 700,
+                        fontSize: '0.8rem',
                         color: statusColor,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -624,7 +649,7 @@ export const IssueList: React.FC = () => {
                     </div>
 
                     {/* 7. Assignee User Avatar + drop indicator */}
-                    <div 
+                    <div
                       style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -643,14 +668,14 @@ export const IssueList: React.FC = () => {
                           )}
                         </div>
                       ) : (
-                        <div style={{ 
-                          width: '24px', 
-                          height: '24px', 
-                          borderRadius: '50%', 
-                          border: '1px dashed var(--border-color)', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center', 
+                        <div style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          border: '1px dashed var(--border-color)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                           color: 'var(--text-secondary)',
                           fontSize: '0.85rem',
                           flexShrink: 0

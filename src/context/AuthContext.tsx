@@ -28,7 +28,12 @@ function readStoredUser(): User | null {
     const raw = sessionStorage.getItem(SELECTED_USER_STORAGE_KEY);
     if (!raw) return null;
     const id = parseInt(raw, 10);
-    return MOCK_USERS.find((u) => u.id === id) ?? null;
+    const user = MOCK_USERS.find((u) => u.id === id) ?? null;
+    // Set the API key synchronously so it is ready before any useEffect fires.
+    // This prevents a race condition where loadMeta (IssueList) calls the API
+    // before AuthContext's useEffect has had a chance to call setGlobalApiKey.
+    if (user) setGlobalApiKey(user.apiKey);
+    return user;
   } catch {
     return null;
   }

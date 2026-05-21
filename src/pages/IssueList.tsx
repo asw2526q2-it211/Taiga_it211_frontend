@@ -24,6 +24,7 @@ export const IssueList: React.FC = () => {
   const [statuses, setStatuses] = useState<StatusResource[]>([]);
   const [users, setUsers] = useState<ApiUser[]>([]);
   const [dueDates, setDueDates] = useState<{ id: number; name: string; color: string; days_to_due: number | null; by_default: string }[]>([]);
+  const [metaReady, setMetaReady] = useState(false);
 
   // Estats de cerca i visualització
   const [searchQuery, setSearchQuery] = useState('');
@@ -108,6 +109,8 @@ export const IssueList: React.FC = () => {
         setDueDates(dueDatesRes);
       } catch (err) {
         console.error('Failed to load metadata', err);
+      } finally {
+        setMetaReady(true);
       }
     };
 
@@ -115,6 +118,8 @@ export const IssueList: React.FC = () => {
   }, [currentUser]);
 
   useEffect(() => {
+    if (!metaReady) return;
+
     const fetchIssues = async () => {
       setLoading(true);
       setError(null);
@@ -159,7 +164,7 @@ export const IssueList: React.FC = () => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, currentUser]);
+  }, [searchQuery, currentUser, metaReady]);
 
   const allTags = Array.from(new Set(
     issues.flatMap(issue => (issue.tags || []).map(t => t.name))

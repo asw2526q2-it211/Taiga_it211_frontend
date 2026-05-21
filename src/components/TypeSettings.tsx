@@ -157,7 +157,7 @@ export const TypeSettings: React.FC = () => {
 
     try {
       if (editing.id === null) {
-        const created = await apiRequest<TypeResource>('types/', {
+        await apiRequest<TypeResource>('types/', {
           method: 'POST',
           body: {
             name: editing.name.trim(),
@@ -166,7 +166,7 @@ export const TypeSettings: React.FC = () => {
             is_default: editing.is_default,
           },
         });
-        setTypes((prev) => [...prev, created].sort((a, b) => a.order - b.order));
+        await fetchTypes();
       } else {
         await apiRequest<TypeResource>(`types/${editing.id}/`, {
           method: 'PUT',
@@ -208,7 +208,7 @@ export const TypeSettings: React.FC = () => {
     setIsDeleting(true);
     try {
       await apiRequest(`types/${pendingDelete.id}/`, { method: 'DELETE' });
-      setTypes((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+      await fetchTypes();
       setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete type');

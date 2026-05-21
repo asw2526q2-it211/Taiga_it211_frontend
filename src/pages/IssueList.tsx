@@ -29,6 +29,9 @@ export const IssueList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showTags, setShowTags] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Sort State
+  const [sortConfig, setSortConfig] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);
 
   // Draft and committed filter selections for the dynamic sidebar
   const [draftFilters, setDraftFilters] = useState({
@@ -170,6 +173,58 @@ export const IssueList: React.FC = () => {
     return true;
   });
 
+  const sortedIssues = React.useMemo(() => {
+    let sortableItems = [...filteredIssues];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        let aVal: any = 0;
+        let bVal: any = 0;
+
+        switch (sortConfig.field) {
+          case 'type':
+            aVal = types.find(t => t.name === a.type)?.order ?? 999;
+            bVal = types.find(t => t.name === b.type)?.order ?? 999;
+            break;
+          case 'severity':
+            aVal = severities.find(s => s.name === a.severity)?.order ?? 999;
+            bVal = severities.find(s => s.name === b.severity)?.order ?? 999;
+            break;
+          case 'priority':
+            aVal = priorities.find(p => p.name === a.priority)?.order ?? 999;
+            bVal = priorities.find(p => p.name === b.priority)?.order ?? 999;
+            break;
+          case 'issue':
+            aVal = a.id;
+            bVal = b.id;
+            break;
+          case 'status':
+            aVal = statuses.find(s => s.name === a.status)?.order ?? 999;
+            bVal = statuses.find(s => s.name === b.status)?.order ?? 999;
+            break;
+          case 'modified':
+            aVal = new Date(a.modified).getTime();
+            bVal = new Date(b.modified).getTime();
+            break;
+          case 'assignee':
+            const uA = users.find(u => u.username === a.assigned);
+            const uB = users.find(u => u.username === b.assigned);
+            const nameA = uA ? uA.first_name || uA.username : a.assigned || '';
+            const nameB = uB ? uB.first_name || uB.username : b.assigned || '';
+            aVal = nameA.toLowerCase();
+            bVal = nameB.toLowerCase();
+            if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        }
+
+        if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [filteredIssues, sortConfig, types, severities, priorities, statuses, users]);
+
   // Helpers de format i colors
   const formatDate = (isoStr: string) => {
     try {
@@ -182,6 +237,35 @@ export const IssueList: React.FC = () => {
     } catch {
       return '—';
     }
+  };
+
+  const handleSort = (field: string) => {
+    if (sortConfig && sortConfig.field === field) {
+      if (sortConfig.direction === 'asc') {
+        setSortConfig({ field, direction: 'desc' });
+      } else {
+        setSortConfig(null);
+      }
+    } else {
+      setSortConfig({ field, direction: 'asc' });
+    }
+  };
+
+  const renderSortArrow = (field: string) => {
+    const isActive = sortConfig && sortConfig.field === field;
+    const isAsc = isActive && sortConfig.direction === 'asc';
+    const isDesc = isActive && sortConfig.direction === 'desc';
+
+    return (
+      <span style={{ display: 'inline-flex', flexDirection: 'column', marginLeft: '4px', verticalAlign: 'middle', gap: '2px', paddingBottom: '1px' }}>
+        <svg width="7" height="5" viewBox="0 0 7 5">
+          <polygon points="3.5,0 7,5 0,5" fill={isAsc ? 'var(--color-teal)' : 'var(--text-secondary)'} style={{ opacity: isAsc ? 1 : 0.4 }} />
+        </svg>
+        <svg width="7" height="5" viewBox="0 0 7 5">
+          <polygon points="0,0 7,0 3.5,5" fill={isDesc ? 'var(--color-teal)' : 'var(--text-secondary)'} style={{ opacity: isDesc ? 1 : 0.4 }} />
+        </svg>
+      </span>
+    );
   };
 
   const handleStatusChange = async (issueId: number, newStatus: string) => {
@@ -442,17 +526,17 @@ export const IssueList: React.FC = () => {
                 marginBottom: '0.35rem',
                 opacity: 0.85
               }}>
-                <div style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Type</div>
-                <div style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Severity</div>
-                <div style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Priority</div>
-                <div style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Issue</div>
-                <div style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</div>
-                <div style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Modified</div>
-                <div style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Assign To</div>
+                <div onClick={() => handleSort('type')} style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none' }}>Type {renderSortArrow('type')}</div>
+                <div onClick={() => handleSort('severity')} style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none' }}>Severity {renderSortArrow('severity')}</div>
+                <div onClick={() => handleSort('priority')} style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none' }}>Priority {renderSortArrow('priority')}</div>
+                <div onClick={() => handleSort('issue')} style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none' }}>Issue {renderSortArrow('issue')}</div>
+                <div onClick={() => handleSort('status')} style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none' }}>Status {renderSortArrow('status')}</div>
+                <div onClick={() => handleSort('modified')} style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none' }}>Modified {renderSortArrow('modified')}</div>
+                <div onClick={() => handleSort('assignee')} style={{ textAlign: 'left', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none' }}>Assign To {renderSortArrow('assignee')}</div>
               </div>
 
               {/* Llista d'incidències */}
-              {filteredIssues.map(issue => {
+              {sortedIssues.map(issue => {
                 const typeColor = types.find(t => t.name === issue.type)?.color || 'var(--border-color)';
                 const severityColor = severities.find(s => s.name === issue.severity)?.color || 'var(--border-color)';
                 const priorityColor = priorities.find(p => p.name === issue.priority)?.color || 'var(--border-color)';

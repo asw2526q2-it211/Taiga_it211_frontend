@@ -282,7 +282,6 @@ export const IssueList: React.FC = () => {
 
   const handleStatusChange = async (issueId: number, newStatus: string) => {
     try {
-      setError(null);
       await apiRequest(`issues/${issueId}/`, {
         method: 'PUT',
         body: { status: newStatus }
@@ -295,20 +294,18 @@ export const IssueList: React.FC = () => {
       }));
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message);
+        alert(err.message);
       } else {
-        setError('Failed to update status.');
+        alert('Failed to update status.');
       }
-      setTimeout(() => setError(null), 5000);
     }
   };
 
   const handleAssigneeChange = async (issueId: number, newAssignee: string) => {
     try {
-      setError(null);
-      await apiRequest(`issues/${issueId}/`, {
+      await apiRequest(`issues/${issueId}/assigned`, {
         method: 'PUT',
-        body: { assigned: newAssignee || null }
+        body: { username: newAssignee || '' }
       });
       setIssues(prev => prev.map(issue => {
         if (issue.id === issueId) {
@@ -318,11 +315,10 @@ export const IssueList: React.FC = () => {
       }));
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message);
+        alert(err.message);
       } else {
-        setError('Failed to update assignee.');
+        alert('Failed to update assignee.');
       }
-      setTimeout(() => setError(null), 5000);
     }
   };
 

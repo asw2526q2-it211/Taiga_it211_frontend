@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { apiRequest } from '../services/client';
 import type { SeverityResource } from '../types/api';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import '../styles/settings.css';
 
 /* ─── Estat intern per al formulari d'edició ─── */
@@ -32,6 +33,8 @@ export const SeveritySettings: React.FC = () => {
 
   const [editing, setEditing] = useState<EditingState>({ ...INITIAL_EDITING });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<SeverityResource | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   /* ── Carregar llistat ── */
   const fetchSeverities = async () => {
@@ -196,13 +199,21 @@ export const SeveritySettings: React.FC = () => {
   };
 
   /* ── Eliminar ── */
-  const handleDelete = async (s: SeverityResource) => {
-    if (!window.confirm(`Are you sure you want to delete "${s.name}"?`)) return;
+  const handleDeleteClick = (s: SeverityResource) => {
+    setPendingDelete(s);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setIsDeleting(true);
     try {
-      await apiRequest(`severities/${s.id}/`, { method: 'DELETE' });
-      setSeverities((prev) => prev.filter((x) => x.id !== s.id));
+      await apiRequest(`severities/${pendingDelete.id}/`, { method: 'DELETE' });
+      setSeverities((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+      setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete severity');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -361,7 +372,7 @@ export const SeveritySettings: React.FC = () => {
                       <button
                         className="set-action-btn delete"
                         title="Delete"
-                        onClick={() => handleDelete(s)}
+                        onClick={() => handleDeleteClick(s)}
                       >
                         🗑
                       </button>
@@ -446,6 +457,15 @@ export const SeveritySettings: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={pendingDelete !== null}
+        itemName={pendingDelete?.name ?? ''}
+        entityLabel="Severity"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

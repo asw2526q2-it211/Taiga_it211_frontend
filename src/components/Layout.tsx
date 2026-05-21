@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { UserSelector } from './UserSelector';
-import { useAuth } from '../context/AuthContext';
+import { useRequiredAuth } from '../context/AuthContext';
 import { resolveMediaUrl } from '../config/env';
 import { useTheme } from '../context/ThemeContext';
 
@@ -18,7 +18,7 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { profile } = useAuth();
+  const { profile } = useRequiredAuth();
   const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -84,7 +84,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              TAIGA IT211
+              ISSUE TRACKER
             </div>
           </button>
 

@@ -581,7 +581,7 @@ input[type="date"]:hover {
     gap: 0.5rem !important;
   }
   .app-logo {
-    font-size: 0px !important; /* Hide "TAIGA IT211" text, keep logo icon */
+    font-size: 0px !important; /* Hide "ISSUE TRACKER" text, keep logo icon */
   }
   .app-logo svg {
     width: 26px !important;

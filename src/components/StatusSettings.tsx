@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { apiRequest } from '../services/client';
 import type { StatusResource } from '../types/api';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import '../styles/settings.css';
 
 /* ─── Estat intern per al formulari d'edició ─── */
@@ -34,6 +35,8 @@ export const StatusSettings: React.FC = () => {
 
   const [editing, setEditing] = useState<EditingState>({ ...INITIAL_EDITING });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<StatusResource | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   /* ── Carregar llistat ── */
   const fetchStatuses = async () => {
@@ -210,13 +213,21 @@ export const StatusSettings: React.FC = () => {
   };
 
   /* ── Eliminar ── */
-  const handleDelete = async (st: StatusResource) => {
-    if (!window.confirm(`Are you sure you want to delete "${st.name}"?`)) return;
+  const handleDeleteClick = (st: StatusResource) => {
+    setPendingDelete(st);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setIsDeleting(true);
     try {
-      await apiRequest(`statuses/${st.id}/`, { method: 'DELETE' });
-      setStatuses((prev) => prev.filter((s) => s.id !== st.id));
+      await apiRequest(`statuses/${pendingDelete.id}/`, { method: 'DELETE' });
+      setStatuses((prev) => prev.filter((s) => s.id !== pendingDelete.id));
+      setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete status');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -409,7 +420,7 @@ export const StatusSettings: React.FC = () => {
                       <button
                         className="set-action-btn delete"
                         title="Delete"
-                        onClick={() => handleDelete(st)}
+                        onClick={() => handleDeleteClick(st)}
                       >
                         🗑
                       </button>
@@ -510,6 +521,15 @@ export const StatusSettings: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={pendingDelete !== null}
+        itemName={pendingDelete?.name ?? ''}
+        entityLabel="Status"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiRequest } from '../services/client';
 import type { DueDateRule } from '../types/api';
+import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import '../styles/settings.css';
 
 interface EditingState {
@@ -37,6 +38,8 @@ export const DueDateSettings: React.FC = () => {
 
   const [editing, setEditing] = useState<EditingState>({ ...INITIAL_EDITING });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<DueDateRule | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchDueDates = async () => {
     setLoading(true);
@@ -162,14 +165,22 @@ export const DueDateSettings: React.FC = () => {
     }
   };
 
-  const handleDelete = async (d: DueDateRule) => {
+  const handleDeleteClick = (d: DueDateRule) => {
     if (isOffsetlessPreset(d)) return;
-    if (!window.confirm(`Are you sure you want to delete "${d.name}"?`)) return;
+    setPendingDelete(d);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setIsDeleting(true);
     try {
-      await apiRequest(`duedates/${d.id}/`, { method: 'DELETE' });
-      setDueDates((prev) => prev.filter((x) => x.id !== d.id));
+      await apiRequest(`duedates/${pendingDelete.id}/`, { method: 'DELETE' });
+      setDueDates((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+      setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete due date');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -327,7 +338,7 @@ export const DueDateSettings: React.FC = () => {
                           type="button"
                           className="set-action-btn delete"
                           title="Delete"
-                          onClick={() => handleDelete(d)}
+                          onClick={() => handleDeleteClick(d)}
                         >
                           🗑
                         </button>
@@ -407,6 +418,15 @@ export const DueDateSettings: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={pendingDelete !== null}
+        itemName={pendingDelete?.name ?? ''}
+        entityLabel="Due Date"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

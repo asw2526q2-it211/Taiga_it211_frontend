@@ -51,6 +51,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [profileLoading, setProfileLoading] = useState<boolean>(false);
 
   const setCurrentUser = useCallback((user: User) => {
+    // Set the API key synchronously BEFORE updating state, so that when
+    // IssueList mounts and its useEffect fires loadMeta, the key is already
+    // configured. This prevents the first-visit race condition.
+    setGlobalApiKey(user.apiKey);
     setCurrentUserState(user);
     try {
       sessionStorage.setItem(SELECTED_USER_STORAGE_KEY, String(user.id));

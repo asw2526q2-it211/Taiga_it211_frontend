@@ -27,8 +27,15 @@ export const IssueList: React.FC = () => {
 
   // Estats de cerca i visualització
   const [searchQuery, setSearchQuery] = useState('');
-  const [showTags, setShowTags] = useState(true);
+  const [showTags, setShowTags] = useState(() => {
+    const saved = localStorage.getItem('issueList_showTags');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('issueList_showTags', JSON.stringify(showTags));
+  }, [showTags]);
   
   // Sort State
   const [sortConfig, setSortConfig] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);

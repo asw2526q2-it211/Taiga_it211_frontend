@@ -222,10 +222,31 @@ export const StatusSettings: React.FC = () => {
     setIsDeleting(true);
     try {
       await apiRequest(`statuses/${pendingDelete.id}/`, { method: 'DELETE' });
-      await fetchStatuses();
+
+      // Fetch remaining statuses and re-sequence their order values to close gaps
+      const remaining = await apiRequest<StatusResource[]>('statuses/');
+      remaining.sort((a, b) => a.order - b.order);
+
+      await Promise.all(
+        remaining.map((st, idx) => {
+          const expectedOrder = idx + 1;
+          if (st.order !== expectedOrder) {
+            return apiRequest<StatusResource>(`statuses/${st.id}/`, {
+              method: 'PUT',
+              body: { order: expectedOrder },
+            });
+          }
+          return Promise.resolve();
+        }),
+      );
+
+      // Update local state with consecutive orders
+      setStatuses(remaining.map((st, idx) => ({ ...st, order: idx + 1 })));
+      setLoading(false);
       setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete status');
+      await fetchStatuses();
     } finally {
       setIsDeleting(false);
     }

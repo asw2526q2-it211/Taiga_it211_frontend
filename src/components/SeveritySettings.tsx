@@ -208,10 +208,30 @@ export const SeveritySettings: React.FC = () => {
     setIsDeleting(true);
     try {
       await apiRequest(`severities/${pendingDelete.id}/`, { method: 'DELETE' });
-      await fetchSeverities();
+
+      // Fetch remaining severities and re-sequence their order values to close gaps
+      const remaining = await apiRequest<SeverityResource[]>('severities/');
+      remaining.sort((a, b) => a.order - b.order);
+
+      await Promise.all(
+        remaining.map((s, idx) => {
+          const expectedOrder = idx + 1;
+          if (s.order !== expectedOrder) {
+            return apiRequest<SeverityResource>(`severities/${s.id}/`, {
+              method: 'PUT',
+              body: { order: expectedOrder },
+            });
+          }
+          return Promise.resolve();
+        }),
+      );
+
+      setSeverities(remaining.map((s, idx) => ({ ...s, order: idx + 1 })));
+      setLoading(false);
       setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete severity');
+      await fetchSeverities();
     } finally {
       setIsDeleting(false);
     }

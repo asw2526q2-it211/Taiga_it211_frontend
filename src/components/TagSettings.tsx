@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiRequest } from '../services/client';
 import type { TagSettingResource } from '../types/api';
+import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import '../styles/settings.css';
 
 interface EditingState {
@@ -28,6 +29,8 @@ export const TagSettings: React.FC = () => {
   const [mergeTargetId, setMergeTargetId] = useState<number | null>(null);
   const [mergeSourceIds, setMergeSourceIds] = useState<Set<number>>(new Set());
   const [merging, setMerging] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<TagSettingResource | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchTags = async () => {
     setLoading(true);
@@ -122,23 +125,31 @@ export const TagSettings: React.FC = () => {
     }
   };
 
-  const handleDelete = async (tag: TagSettingResource) => {
-    if (!window.confirm(`Are you sure you want to delete "${tag.name}"?`)) return;
+  const handleDeleteClick = (tag: TagSettingResource) => {
+    setPendingDelete(tag);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setIsDeleting(true);
     try {
-      await apiRequest(`tags/${tag.id}/`, { method: 'DELETE' });
-      setTags((prev) => prev.filter((t) => t.id !== tag.id));
-      if (mergeTargetId === tag.id) {
+      await apiRequest(`tags/${pendingDelete.id}/`, { method: 'DELETE' });
+      setTags((prev) => prev.filter((t) => t.id !== pendingDelete.id));
+      if (mergeTargetId === pendingDelete.id) {
         setMergeTargetId(null);
         setMergeSourceIds(new Set());
       } else {
         setMergeSourceIds((prev) => {
           const next = new Set(prev);
-          next.delete(tag.id);
+          next.delete(pendingDelete.id);
           return next;
         });
       }
+      setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete tag');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -338,7 +349,7 @@ export const TagSettings: React.FC = () => {
                             type="button"
                             className="set-action-btn delete"
                             title="Delete"
-                            onClick={() => handleDelete(tag)}
+                            onClick={() => handleDeleteClick(tag)}
                           >
                             🗑
                           </button>
@@ -361,6 +372,15 @@ export const TagSettings: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={pendingDelete !== null}
+        itemName={pendingDelete?.name ?? ''}
+        entityLabel="Tag"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

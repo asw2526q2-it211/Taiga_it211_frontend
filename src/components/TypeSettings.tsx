@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { apiRequest } from '../services/client';
 import type { TypeResource } from '../types/api';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import '../styles/settings.css';
 
 /* ─── Estat intern per al formulari d'edició ─── */
@@ -32,6 +33,8 @@ export const TypeSettings: React.FC = () => {
 
   const [editing, setEditing] = useState<EditingState>({ ...INITIAL_EDITING });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<TypeResource | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   /* ── Carregar llistat ── */
   const fetchTypes = async () => {
@@ -196,13 +199,21 @@ export const TypeSettings: React.FC = () => {
   };
 
   /* ── Eliminar ── */
-  const handleDelete = async (t: TypeResource) => {
-    if (!window.confirm(`Are you sure you want to delete "${t.name}"?`)) return;
+  const handleDeleteClick = (t: TypeResource) => {
+    setPendingDelete(t);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setIsDeleting(true);
     try {
-      await apiRequest(`types/${t.id}/`, { method: 'DELETE' });
-      setTypes((prev) => prev.filter((x) => x.id !== t.id));
+      await apiRequest(`types/${pendingDelete.id}/`, { method: 'DELETE' });
+      setTypes((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+      setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete type');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -361,7 +372,7 @@ export const TypeSettings: React.FC = () => {
                       <button
                         className="set-action-btn delete"
                         title="Delete"
-                        onClick={() => handleDelete(t)}
+                        onClick={() => handleDeleteClick(t)}
                       >
                         🗑
                       </button>
@@ -446,6 +457,15 @@ export const TypeSettings: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={pendingDelete !== null}
+        itemName={pendingDelete?.name ?? ''}
+        entityLabel="Type"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

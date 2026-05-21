@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { apiRequest } from '../services/client';
 import type { PriorityResource } from '../types/api';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import '../styles/settings.css';
 
 /* ─── Estat intern per al formulari d'edició ─── */
@@ -32,6 +33,8 @@ export const PrioritySettings: React.FC = () => {
 
   const [editing, setEditing] = useState<EditingState>({ ...INITIAL_EDITING });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<PriorityResource | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   /* ── Carregar llistat ── */
   const fetchPriorities = async () => {
@@ -196,13 +199,21 @@ export const PrioritySettings: React.FC = () => {
   };
 
   /* ── Eliminar ── */
-  const handleDelete = async (p: PriorityResource) => {
-    if (!window.confirm(`Are you sure you want to delete "${p.name}"?`)) return;
+  const handleDeleteClick = (p: PriorityResource) => {
+    setPendingDelete(p);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setIsDeleting(true);
     try {
-      await apiRequest(`priorities/${p.id}/`, { method: 'DELETE' });
-      setPriorities((prev) => prev.filter((x) => x.id !== p.id));
+      await apiRequest(`priorities/${pendingDelete.id}/`, { method: 'DELETE' });
+      setPriorities((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+      setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete priority');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -361,7 +372,7 @@ export const PrioritySettings: React.FC = () => {
                       <button
                         className="set-action-btn delete"
                         title="Delete"
-                        onClick={() => handleDelete(p)}
+                        onClick={() => handleDeleteClick(p)}
                       >
                         🗑
                       </button>
@@ -446,6 +457,15 @@ export const PrioritySettings: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={pendingDelete !== null}
+        itemName={pendingDelete?.name ?? ''}
+        entityLabel="Priority"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

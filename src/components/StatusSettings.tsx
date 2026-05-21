@@ -169,7 +169,7 @@ export const StatusSettings: React.FC = () => {
 
     try {
       if (editing.id === null) {
-        const created = await apiRequest<StatusResource>('statuses/', {
+        await apiRequest<StatusResource>('statuses/', {
           method: 'POST',
           body: {
             name: editing.name.trim(),
@@ -179,7 +179,7 @@ export const StatusSettings: React.FC = () => {
             is_default: editing.is_default,
           },
         });
-        setStatuses((prev) => [...prev, created].sort((a, b) => a.order - b.order));
+        await fetchStatuses();
       } else {
         await apiRequest<StatusResource>(`statuses/${editing.id}/`, {
           method: 'PUT',
@@ -222,7 +222,7 @@ export const StatusSettings: React.FC = () => {
     setIsDeleting(true);
     try {
       await apiRequest(`statuses/${pendingDelete.id}/`, { method: 'DELETE' });
-      setStatuses((prev) => prev.filter((s) => s.id !== pendingDelete.id));
+      await fetchStatuses();
       setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete status');

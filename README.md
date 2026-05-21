@@ -19,6 +19,10 @@ El backend (Django) vive en el repositorio [Taiga_it211](https://github.com/asw2
 
 El frontend está desplegado en [GitHub Pages](https://asw2526q2-it211.github.io/Taiga_it211_frontend/).
 
+# Taiga
+https://tree.taiga.io/project/lucasoliveira-fib-asw2526q2-it211/timeline
+
+
 ## Requisitos
 
 - [Node.js](https://nodejs.org/) 20+

@@ -1,5 +1,3 @@
-import { env } from './env';
-
 /**
  * Interfície per definir un usuari del sistema (Mock).
  */
@@ -19,7 +17,7 @@ export function getBootstrapApiKey(): string {
   const configured = MOCK_USERS.find(
     (u) => u.apiKey && !u.apiKey.includes('placeholder'),
   );
-  return env.apiKey || configured?.apiKey || '';
+  return configured?.apiKey || '';
 }
 
 /** Resol l'usuari de sessió a partir del username del backend */
@@ -42,7 +40,7 @@ export const MOCK_USERS: User[] = [
     id: 1,
     name: 'Joan',
     username: 'joan',
-    apiKey: env.apiKey || '30e4a9c5cb1aca0ad94ca39c5f138148eff0419b'
+    apiKey: '30e4a9c5cb1aca0ad94ca39c5f138148eff0419b'
   },
   {
     id: 2,

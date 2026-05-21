@@ -157,7 +157,7 @@ export const PrioritySettings: React.FC = () => {
 
     try {
       if (editing.id === null) {
-        const created = await apiRequest<PriorityResource>('priorities/', {
+        await apiRequest<PriorityResource>('priorities/', {
           method: 'POST',
           body: {
             name: editing.name.trim(),
@@ -166,7 +166,7 @@ export const PrioritySettings: React.FC = () => {
             is_default: editing.is_default,
           },
         });
-        setPriorities((prev) => [...prev, created].sort((a, b) => a.order - b.order));
+        await fetchPriorities();
       } else {
         await apiRequest<PriorityResource>(`priorities/${editing.id}/`, {
           method: 'PUT',
@@ -208,10 +208,30 @@ export const PrioritySettings: React.FC = () => {
     setIsDeleting(true);
     try {
       await apiRequest(`priorities/${pendingDelete.id}/`, { method: 'DELETE' });
-      setPriorities((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+
+      // Fetch remaining priorities and re-sequence their order values to close gaps
+      const remaining = await apiRequest<PriorityResource[]>('priorities/');
+      remaining.sort((a, b) => a.order - b.order);
+
+      await Promise.all(
+        remaining.map((p, idx) => {
+          const expectedOrder = idx + 1;
+          if (p.order !== expectedOrder) {
+            return apiRequest<PriorityResource>(`priorities/${p.id}/`, {
+              method: 'PUT',
+              body: { order: expectedOrder },
+            });
+          }
+          return Promise.resolve();
+        }),
+      );
+
+      setPriorities(remaining.map((p, idx) => ({ ...p, order: idx + 1 })));
+      setLoading(false);
       setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete priority');
+      await fetchPriorities();
     } finally {
       setIsDeleting(false);
     }

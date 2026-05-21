@@ -157,7 +157,7 @@ export const SeveritySettings: React.FC = () => {
 
     try {
       if (editing.id === null) {
-        const created = await apiRequest<SeverityResource>('severities/', {
+        await apiRequest<SeverityResource>('severities/', {
           method: 'POST',
           body: {
             name: editing.name.trim(),
@@ -166,7 +166,7 @@ export const SeveritySettings: React.FC = () => {
             is_default: editing.is_default,
           },
         });
-        setSeverities((prev) => [...prev, created].sort((a, b) => a.order - b.order));
+        await fetchSeverities();
       } else {
         await apiRequest<SeverityResource>(`severities/${editing.id}/`, {
           method: 'PUT',
@@ -208,10 +208,30 @@ export const SeveritySettings: React.FC = () => {
     setIsDeleting(true);
     try {
       await apiRequest(`severities/${pendingDelete.id}/`, { method: 'DELETE' });
-      setSeverities((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+
+      // Fetch remaining severities and re-sequence their order values to close gaps
+      const remaining = await apiRequest<SeverityResource[]>('severities/');
+      remaining.sort((a, b) => a.order - b.order);
+
+      await Promise.all(
+        remaining.map((s, idx) => {
+          const expectedOrder = idx + 1;
+          if (s.order !== expectedOrder) {
+            return apiRequest<SeverityResource>(`severities/${s.id}/`, {
+              method: 'PUT',
+              body: { order: expectedOrder },
+            });
+          }
+          return Promise.resolve();
+        }),
+      );
+
+      setSeverities(remaining.map((s, idx) => ({ ...s, order: idx + 1 })));
+      setLoading(false);
       setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete severity');
+      await fetchSeverities();
     } finally {
       setIsDeleting(false);
     }

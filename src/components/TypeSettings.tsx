@@ -157,7 +157,7 @@ export const TypeSettings: React.FC = () => {
 
     try {
       if (editing.id === null) {
-        const created = await apiRequest<TypeResource>('types/', {
+        await apiRequest<TypeResource>('types/', {
           method: 'POST',
           body: {
             name: editing.name.trim(),
@@ -166,7 +166,7 @@ export const TypeSettings: React.FC = () => {
             is_default: editing.is_default,
           },
         });
-        setTypes((prev) => [...prev, created].sort((a, b) => a.order - b.order));
+        await fetchTypes();
       } else {
         await apiRequest<TypeResource>(`types/${editing.id}/`, {
           method: 'PUT',
@@ -208,10 +208,30 @@ export const TypeSettings: React.FC = () => {
     setIsDeleting(true);
     try {
       await apiRequest(`types/${pendingDelete.id}/`, { method: 'DELETE' });
-      setTypes((prev) => prev.filter((x) => x.id !== pendingDelete.id));
+
+      // Fetch remaining types and re-sequence their order values to close gaps
+      const remaining = await apiRequest<TypeResource[]>('types/');
+      remaining.sort((a, b) => a.order - b.order);
+
+      await Promise.all(
+        remaining.map((t, idx) => {
+          const expectedOrder = idx + 1;
+          if (t.order !== expectedOrder) {
+            return apiRequest<TypeResource>(`types/${t.id}/`, {
+              method: 'PUT',
+              body: { order: expectedOrder },
+            });
+          }
+          return Promise.resolve();
+        }),
+      );
+
+      setTypes(remaining.map((t, idx) => ({ ...t, order: idx + 1 })));
+      setLoading(false);
       setPendingDelete(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to delete type');
+      await fetchTypes();
     } finally {
       setIsDeleting(false);
     }

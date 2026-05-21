@@ -41,6 +41,7 @@ export const MOCK_USERS: User[] = [
   {
     id: 1,
     name: 'Joan',
+    username: 'joan',
     apiKey: env.apiKey || '30e4a9c5cb1aca0ad94ca39c5f138148eff0419b'
   },
   {
@@ -58,6 +59,7 @@ export const MOCK_USERS: User[] = [
   {
     id: 4,
     name: 'Lucas',
+    username: 'lucas',
     apiKey: '24a83a5f3dfbd41a98bc3609efdabcc69cb05ccd'
   },
   {
@@ -69,6 +71,7 @@ export const MOCK_USERS: User[] = [
   {
     id: 6,
     name: 'TEST-USER',
+    username: 'test-user',
     apiKey: 'admin-token-placeholder'
   }
 ];

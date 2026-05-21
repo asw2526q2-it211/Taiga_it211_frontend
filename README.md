@@ -1,5 +1,18 @@
 # Taiga IT211 — Frontend
 
+# Integrants
+Joan Garvin
+
+Hadeer Abbas Khalil
+
+Yimin Jin
+
+Lucas Oliveira
+
+Izan Guerrero
+
+# Desplegament
+
 Frontend en **React + TypeScript + Vite** para el Issue Tracker del proyecto ASW IT211.
 
 El backend (Django) vive en el repositorio [Taiga_it211](https://github.com/asw2526q2-it211/Taiga_it211) y está desplegado en [Render](https://taiga-it211.onrender.com). Este proyecto consume su API REST en `/api`.

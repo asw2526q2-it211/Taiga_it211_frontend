@@ -313,8 +313,11 @@ export const IssueDetail: React.FC = () => {
           body: { duedate: dateStr, reason: 'Updated via UI' }
         });
       } else {
-        // Remove due date (using PUT fallback)
-        await handleUpdateField('duedate', null);
+        // Remove due date
+        await apiRequest(`issues/${issue.id}/duedate`, {
+          method: 'POST',
+          body: { duedate: "", reason: 'Removed via UI' }
+        });
       }
       fetchAllData();
     } catch (error) {
@@ -758,7 +761,18 @@ export const IssueDetail: React.FC = () => {
                     <div className="issue-due-date-display">
                       <span>{text} (Rule: <strong>{name}</strong>)</span>
                       <button 
-                        onClick={() => handleUpdateField('duedate', null)}
+                        onClick={async () => {
+                          try {
+                            await apiRequest(`issues/${issue.id}/duedate`, {
+                              method: 'POST',
+                              body: { duedate: "", reason: 'Removed via UI' }
+                            });
+                            fetchAllData();
+                          } catch (err) {
+                            console.error(err);
+                            alert('Error removing due date');
+                          }
+                        }}
                         className="issue-due-date-remove"
                         title="Remove due date"
                       >

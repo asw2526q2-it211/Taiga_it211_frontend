@@ -328,16 +328,12 @@ export const IssueDetail: React.FC = () => {
 
   const handleAssignUser = async (selectedUsers: string[]) => {
     if (!issue) return;
-    const username = selectedUsers.length > 0 ? selectedUsers[0] : null;
+    const username = selectedUsers.length > 0 ? selectedUsers[0] : '';
     try {
-      if (username) {
-        await apiRequest(`issues/${issue.id}/assigned`, {
-          method: 'PUT',
-          body: { username }
-        });
-      } else {
-        await handleUpdateField('assigned', null);
-      }
+      await apiRequest(`issues/${issue.id}/assigned`, {
+        method: 'PUT',
+        body: { username }
+      });
       fetchAllData();
     } catch (error) {
       console.error(error);
@@ -1131,7 +1127,7 @@ export const IssueDetail: React.FC = () => {
                   {getUserDisplayName(issue.assigned)}
                 </UserProfileLink>
               </div>
-              <button onClick={() => handleUpdateField('assigned', null)} className="issue-remove-btn">✕</button>
+              <button onClick={() => handleAssignUser([])} className="issue-remove-btn">✕</button>
             </div>
           ) : (
             <div className="issue-unassigned-text">Unassigned</div>
